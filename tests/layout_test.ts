@@ -1,6 +1,7 @@
 /// <reference lib="deno.ns" />
 
 import { chromium, type Page } from "npm:playwright@1.60.0"
+import { mapModes } from "../src/data/guide.ts"
 
 type Metrics = {
   hero: string | undefined
@@ -122,7 +123,7 @@ const clickHeroAndMeasure = async (page: Page, name: string) => {
 }
 
 Deno.test({
-  name: "navbar exposes synergies and attack/defense map recommendations",
+  name: "navbar exposes synergies and disables missing map recommendations",
   timeout: 60_000,
   async fn() {
     const { child, url } = await startServer()
@@ -157,37 +158,25 @@ Deno.test({
         "synergy good group was not visible",
       )
 
-      await page.getByRole("button", { name: "맵별 추천 영웅" }).click()
-      assert(
-        await page.getByLabel("맵 선택").getByText("쟁탈", { exact: true })
-          .isVisible(),
-        "control map group was not visible",
+      const hasFabricatedRecommendations = mapModes.some((mode) =>
+        mode.maps.some((map) => map.attack.length > 0 || map.defense.length > 0)
       )
       assert(
-        await page.getByLabel("맵 선택").getByText("호위", { exact: true })
-          .isVisible(),
-        "escort map group was not visible",
+        !hasFabricatedRecommendations,
+        "map recommendations must stay empty until sourced",
       )
+
+      const mapNav = page.getByRole("button", { name: "맵별 추천 영웅" })
       assert(
-        await page.locator(".map-button img").first().isVisible(),
-        "map image was not visible",
+        await mapNav.isDisabled(),
+        "map recommendations nav should be disabled",
       )
-      await page.getByRole("button", { name: "왕의 길" }).click()
+      await mapNav.click({ force: true })
       assert(
-        await page.getByText("공격").isVisible(),
-        "attack group was not visible",
-      )
-      assert(
-        await page.getByText("방어").isVisible(),
-        "defense group was not visible",
-      )
-      assert(
-        await page.getByText("라인하르트").first().isVisible(),
-        "attack recommendation was not visible",
-      )
-      assert(
-        await page.getByText("바티스트").first().isVisible(),
-        "defense recommendation was not visible",
+        await page.getByRole("button", { name: "궁합" }).evaluate((button) =>
+          button.classList.contains("is-selected")
+        ),
+        "disabled map nav changed the active view",
       )
 
       const overflow = await page.evaluate(() => {

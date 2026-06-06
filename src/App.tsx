@@ -43,6 +43,9 @@ const heroById = new Map(heroes.map((hero) => [hero.id, hero]))
 const allMaps = mapModes.flatMap((mode) =>
   mode.maps.map((map) => ({ ...map, mode }))
 )
+const hasMapRecommendations = allMaps.some((map) =>
+  map.attack.length > 0 || map.defense.length > 0
+)
 
 const heroesFromIds = (ids: string[]) =>
   ids.map((id) => heroById.get(id)).filter((hero): hero is Hero =>
@@ -355,16 +358,21 @@ function App() {
       <nav class="navbar" aria-label="주요 메뉴">
         <strong>OWC</strong>
         <For each={views}>
-          {(view) => (
-            <button
-              class="nav-button"
-              classList={{ "is-selected": activeView() === view.key }}
-              onClick={() => setActiveView(view.key)}
-              type="button"
-            >
-              {view.label}
-            </button>
-          )}
+          {(view) => {
+            const disabled = view.key === "maps" && !hasMapRecommendations
+            return (
+              <button
+                class="nav-button"
+                classList={{ "is-selected": activeView() === view.key }}
+                disabled={disabled}
+                onClick={() => !disabled && setActiveView(view.key)}
+                title={disabled ? "추천 영웅 데이터 없음" : view.label}
+                type="button"
+              >
+                {view.label}
+              </button>
+            )
+          }}
         </For>
       </nav>
 

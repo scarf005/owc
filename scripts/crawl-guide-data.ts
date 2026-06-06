@@ -41,35 +41,6 @@ const modeColors: Record<string, string> = {
   "플래시포인트": "#eb5757",
   "격돌": "#00a7a7",
 }
-const modeRecommendations: Record<
-  string,
-  { attack: string[]; defense: string[] }
-> = {
-  "쟁탈": {
-    attack: ["junker-queen", "tracer", "sojourn", "lucio", "kiriko", "moira"],
-    defense: ["winston", "mei", "reaper", "lucio", "brigitte", "ana"],
-  },
-  "호위": {
-    attack: ["winston", "d-va", "tracer", "sombra", "ana", "kiriko"],
-    defense: ["sigma", "widowmaker", "ashe", "baptiste", "zenyatta", "mercy"],
-  },
-  "혼합": {
-    attack: ["reinhardt", "mei", "reaper", "lucio", "kiriko", "baptiste"],
-    defense: ["sigma", "junkrat", "torbjorn", "baptiste", "ana", "ashe"],
-  },
-  "밀기": {
-    attack: ["winston", "d-va", "tracer", "sojourn", "lucio", "kiriko"],
-    defense: ["junker-queen", "mei", "cassidy", "brigitte", "ana", "baptiste"],
-  },
-  "플래시포인트": {
-    attack: ["junker-queen", "tracer", "sombra", "lucio", "kiriko", "juno"],
-    defense: ["winston", "d-va", "sojourn", "mei", "ana", "brigitte"],
-  },
-  "격돌": {
-    attack: ["winston", "tracer", "genji", "lucio", "kiriko", "juno"],
-    defense: ["sigma", "mei", "cassidy", "baptiste", "brigitte", "ana"],
-  },
-}
 
 const heroBySlug = new Map<string, Hero>()
 const heroByName = new Map<string, Hero>()
@@ -280,7 +251,6 @@ const parseMapModes = async (html: string) => {
         table[0].match(/<img\b[^>]*data-src=['"]([^'"]+)['"][^>]*>/)?.[1] ??
           table[0].match(/<img\b[^>]*src=['"]([^'"]+)['"][^>]*>/)?.[1]
       const page = absoluteUrl(href)
-      const recommendation = modeRecommendations[label]
       maps.push({
         id: slugify(name),
         name,
@@ -289,8 +259,8 @@ const parseMapModes = async (html: string) => {
           page,
           fallbackImage ? absoluteUrl(fallbackImage) : "",
         ),
-        attack: recommendation.attack,
-        defense: recommendation.defense,
+        attack: [],
+        defense: [],
       })
     }
 
