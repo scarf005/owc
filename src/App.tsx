@@ -38,7 +38,7 @@ function HeroButton(
   return (
     <button
       class="hero-button"
-      classList={{ selected: props.selected }}
+      classList={{ "is-selected": props.selected }}
       onClick={props.onClick}
       title={props.hero.name}
       type="button"
@@ -150,7 +150,7 @@ function App() {
         <Show when={selectedHero()}>
           {(hero) => (
             <>
-              <div class="selected">
+              <div class="selected-hero">
                 <img
                   alt={hero().name}
                   referrerpolicy="no-referrer"
