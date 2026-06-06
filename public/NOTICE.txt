@@ -1,7 +1,1 @@
-OWC is an unofficial fan tool and is not affiliated with, endorsed by, or sponsored by Blizzard Entertainment.
-
-Overwatch, hero names, hero portraits, icons, and related assets are trademarks and/or copyrighted materials of Blizzard Entertainment. All such assets remain the property of Blizzard Entertainment and are used only to identify heroes for gameplay reference.
-
-Matchup data is derived from Namu Wiki pages linked in the app data. Namu Wiki content may have its own license and revision history.
-
-OWC source code is provided under AGPL-3.0-or-later with no warranty. See LICENSE.
+Unofficial fan tool. Overwatch assets © Blizzard Entertainment. Code: AGPL-3.0-or-later, no warranty.

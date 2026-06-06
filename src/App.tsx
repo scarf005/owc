@@ -120,10 +120,8 @@ function App() {
       </section>
 
       <footer>
-        비공식 팬 도구입니다. Overwatch 및 영웅 이름·이미지는 Blizzard
-        Entertainment의 자산입니다. Blizzard와 무관하며 보증 없이
-        AGPL-3.0-or-later로 제공됩니다. <a href="./NOTICE.txt">NOTICE</a> ·{" "}
-        <a href="./LICENSE">LICENSE</a>
+        비공식 팬 도구 · Overwatch assets © Blizzard ·{" "}
+        <a href="./NOTICE.txt">NOTICE</a> · <a href="./LICENSE">LICENSE</a>
       </footer>
     </main>
   )
