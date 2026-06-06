@@ -31,6 +31,7 @@ export const synergyRatings: { key: SynergyRating; label: string }[] = [
   { key: "veryBad", label: "매우 나쁨" },
 ]
 
+// 궁합 등급은 나무위키 궁합 본문을 수집한 뒤 키워드로 자동 분류합니다.
 export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
   "d-va": [
     {
@@ -9872,6 +9873,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
   ],
 }
 
+// 나무위키 전장 목록은 모드/전장/이미지를 제공하지만 공격/방어 추천 영웅 출처는 없습니다.
 export const mapModes: MapMode[] = [
   {
     "id": "쟁탈",

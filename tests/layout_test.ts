@@ -1,7 +1,8 @@
 /// <reference lib="deno.ns" />
 
 import { chromium, type Page } from "npm:playwright@1.60.0"
-import { mapModes } from "../src/data/guide.ts"
+import { heroSynergies, mapModes } from "../src/data/guide.ts"
+import { matchups } from "../src/data/overwatch.ts"
 
 type Metrics = {
   hero: string | undefined
@@ -72,6 +73,41 @@ const startServer = async () => {
   }
 }
 
+Deno.test("generated Namu datasets keep required source-backed invariants", () => {
+  assert(Object.keys(matchups).length === 51, "matchups must cover 51 heroes")
+  assert(
+    Object.keys(heroSynergies).length === 51,
+    "synergies must cover 51 heroes",
+  )
+  assert(
+    matchups.orisa?.find((matchup) => matchup.target === "sigma")?.rating ===
+      "veryBad",
+    "Orisa vs Sigma matchup must be veryBad from Namu crawl",
+  )
+  assert(
+    matchups.orisa?.find((matchup) => matchup.target === "junker-queen")
+      ?.rating === "veryGood",
+    "Orisa vs Junker Queen matchup must be veryGood from Namu crawl",
+  )
+  assert(mapModes.length > 0, "map modes must be crawled")
+  assert(
+    mapModes.every((mode) => mode.maps.length > 0),
+    "each map mode must include maps",
+  )
+  assert(
+    mapModes.every((mode) => mode.maps.every((map) => map.image.length > 0)),
+    "each crawled map must include an image",
+  )
+  assert(
+    mapModes.every((mode) =>
+      mode.maps.every((map) =>
+        map.attack.length === 0 && map.defense.length === 0
+      )
+    ),
+    "map attack/defense recommendations must stay empty until sourced",
+  )
+})
+
 const clickHeroAndMeasure = async (page: Page, name: string) => {
   return await page.evaluate((heroName): Metrics => {
     const heroButton = [...document.querySelectorAll<HTMLButtonElement>(
@@ -123,7 +159,8 @@ const clickHeroAndMeasure = async (page: Page, name: string) => {
 }
 
 Deno.test({
-  name: "navbar exposes synergies and disables missing map recommendations",
+  name:
+    "navbar exposes synergies and sourced map data without fake recommendations",
   timeout: 60_000,
   async fn() {
     const { child, url } = await startServer()
@@ -167,16 +204,32 @@ Deno.test({
       )
 
       const mapNav = page.getByRole("button", { name: "맵별 추천 영웅" })
+      assert(!(await mapNav.isDisabled()), "map nav should stay enabled")
+      await mapNav.click()
       assert(
-        await mapNav.isDisabled(),
-        "map recommendations nav should be disabled",
-      )
-      await mapNav.click({ force: true })
-      assert(
-        await page.getByRole("button", { name: "궁합" }).evaluate((button) =>
+        await mapNav.evaluate((button) =>
           button.classList.contains("is-selected")
         ),
-        "disabled map nav changed the active view",
+        "map nav did not become active",
+      )
+      assert(
+        await page.getByLabel("맵 선택").getByText("쟁탈", { exact: true })
+          .isVisible(),
+        "control map group was not visible",
+      )
+      assert(
+        await page.getByLabel("맵 선택").getByText("호위", { exact: true })
+          .isVisible(),
+        "escort map group was not visible",
+      )
+      assert(
+        await page.locator(".map-button img").first().isVisible(),
+        "map image was not visible",
+      )
+      assert(
+        await page.getByText("추천 영웅 데이터 없음", { exact: true })
+          .isVisible(),
+        "empty recommendation state was not visible",
       )
 
       const overflow = await page.evaluate(() => {

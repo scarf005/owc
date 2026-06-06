@@ -3,11 +3,11 @@
 import { heroes, type Role } from "../src/data/overwatch.ts"
 
 type Hero = typeof heroes[number]
-type SynergyRating = "veryGood" | "good" | "neutral" | "bad" | "veryBad"
+type Rating = "veryGood" | "good" | "neutral" | "bad" | "veryBad"
 
-type SynergyEntry = {
+type RatedHero = {
   target: string
-  rating: SynergyRating
+  rating: Rating
 }
 
 type MapMode = {
@@ -144,23 +144,13 @@ const heroIdFromAnchor = (anchor: string) => {
   return undefined
 }
 
-const classifySynergy = (text: string): SynergyRating => {
-  if (/최악|좋지 않|궁합이 나빠|궁합도 나빠|잘 맞지|메리트는 없다/.test(text)) {
-    return "veryBad"
-  }
-  if (
-    /미미|어렵|힘들|단점|달갑지는|활용하기 어려|나쁜 것은 아니다/.test(text)
-  ) return "bad"
-  if (/최상|최고|가장 뛰어난|매우 좋|훌륭|보배|말살|강력하다/.test(text)) {
-    return "veryGood"
-  }
-  if (/좋|준수|도움|가능|상호보완|유리|보완|연계/.test(text)) return "good"
-  return "neutral"
-}
-
-const parseSynergies = (html: string) => {
-  const block = sectionByHeading(html, 2, "궁합")
-  const result: Record<Role, SynergyEntry[]> = {
+const parseRatedHeroSections = (
+  html: string,
+  sectionId: "상성" | "궁합",
+  classify: (text: string) => Rating,
+) => {
+  const block = sectionByHeading(html, 2, sectionId)
+  const result: Record<Role, RatedHero[]> = {
     tank: [],
     damage: [],
     support: [],
@@ -181,14 +171,44 @@ const parseSynergies = (html: string) => {
       if (
         !target || result[role].some((entry) => entry.target === target)
       ) continue
-      result[role].push({
-        target,
-        rating: classifySynergy(cleanText(listItem[0])),
-      })
+      result[role].push({ target, rating: classify(cleanText(listItem[0])) })
     }
   }
 
   return result
+}
+
+const classifyMatchup = (text: string): Rating => {
+  const firstLine = text.split("\n")[0] ?? text
+  const primary = firstLine.match(
+    /매우\s*유리|매우\s*불리|약간\s*유리|약간\s*불리|유리|불리|중립|비슷|동등|최악/,
+  )?.[0]
+
+  if (primary) {
+    if (/매우\s*유리/.test(primary)) return "veryGood"
+    if (/매우\s*불리|최악/.test(primary)) return "veryBad"
+    if (/약간\s*유리|유리/.test(primary)) return "good"
+    if (/약간\s*불리|불리/.test(primary)) return "bad"
+    return "neutral"
+  }
+
+  if (/쉽|카운터|유리|까다롭|우위/.test(text)) return "good"
+  if (/불리|어렵|힘들|약하다|취약|최악/.test(text)) return "bad"
+  return "neutral"
+}
+
+const classifySynergy = (text: string): Rating => {
+  if (/최악|좋지 않|궁합이 나빠|궁합도 나빠|잘 맞지|메리트는 없다/.test(text)) {
+    return "veryBad"
+  }
+  if (
+    /미미|어렵|힘들|단점|달갑지는|활용하기 어려|나쁜 것은 아니다/.test(text)
+  ) return "bad"
+  if (/최상|최고|가장 뛰어난|매우 좋|훌륭|보배|말살|강력하다/.test(text)) {
+    return "veryGood"
+  }
+  if (/좋|준수|도움|가능|상호보완|유리|보완|연계/.test(text)) return "good"
+  return "neutral"
 }
 
 const slugify = (text: string) =>
@@ -270,7 +290,7 @@ const parseMapModes = async (html: string) => {
   return modes
 }
 
-const uniqueEntries = (entries: SynergyEntry[]) => {
+const uniqueEntries = (entries: RatedHero[]) => {
   const seen = new Set<string>()
   return entries.filter((entry) => {
     if (seen.has(entry.target)) return false
@@ -279,21 +299,54 @@ const uniqueEntries = (entries: SynergyEntry[]) => {
   })
 }
 
-const heroSynergies: Record<string, SynergyEntry[]> = {}
+const matchups: Record<string, RatedHero[]> = {}
+const heroSynergies: Record<string, RatedHero[]> = {}
 for (const [index, hero] of heroes.entries()) {
   console.error(`[${index + 1}/${heroes.length}] ${hero.name}`)
-  const groups = parseSynergies(await fetchNamu(hero.page))
+  const html = await fetchNamu(hero.page)
+  const matchupGroups = parseRatedHeroSections(html, "상성", classifyMatchup)
+  const synergyGroups = parseRatedHeroSections(html, "궁합", classifySynergy)
+  matchups[hero.id] = uniqueEntries([
+    ...matchupGroups.tank,
+    ...matchupGroups.damage,
+    ...matchupGroups.support,
+  ])
   heroSynergies[hero.id] = uniqueEntries([
-    ...groups.tank,
-    ...groups.damage,
-    ...groups.support,
+    ...synergyGroups.tank,
+    ...synergyGroups.damage,
+    ...synergyGroups.support,
   ])
   await new Promise((resolve) => setTimeout(resolve, 120))
 }
 
 const mapModes = await parseMapModes(await fetchNamu(mapsUrl))
 
-const source = `export type HeroId = string
+const overwriteSource = `export type Role = "tank" | "damage" | "support"
+
+export type Rating = "veryBad" | "bad" | "neutral" | "good" | "veryGood"
+
+export type Hero = {
+  id: string
+  name: string
+  role: Role
+  avatar: string
+  page: string
+}
+
+export type Matchup = {
+  target: string
+  rating: Rating
+  note?: string
+}
+
+export const heroes: Hero[] = ${JSON.stringify(heroes, null, 2)}
+
+export const matchups: Record<string, Matchup[]> = ${
+  JSON.stringify(matchups, null, 2)
+}
+`
+
+const guideSource = `export type HeroId = string
 
 export type SynergyRating = "veryGood" | "good" | "neutral" | "bad" | "veryBad"
 
@@ -326,16 +379,19 @@ export const synergyRatings: { key: SynergyRating; label: string }[] = [
   { key: "veryBad", label: "매우 나쁨" },
 ]
 
+// 궁합 등급은 나무위키 궁합 본문을 수집한 뒤 키워드로 자동 분류합니다.
 export const heroSynergies: Record<HeroId, SynergyEntry[]> = ${
   JSON.stringify(heroSynergies, null, 2)
 }
 
+// 나무위키 전장 목록은 모드/전장/이미지를 제공하지만 공격/방어 추천 영웅 출처는 없습니다.
 export const mapModes: MapMode[] = ${JSON.stringify(mapModes, null, 2)}
 `
 
-await Deno.writeTextFile("src/data/guide.ts", source)
+await Deno.writeTextFile("src/data/overwatch.ts", overwriteSource)
+await Deno.writeTextFile("src/data/guide.ts", guideSource)
 console.error(
-  `wrote ${
+  `wrote ${Object.keys(matchups).length} matchup sets, ${
     Object.keys(heroSynergies).length
-  } hero synergy sets and ${mapModes.length} map modes`,
+  } synergy sets, and ${mapModes.length} map modes`,
 )

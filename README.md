@@ -6,10 +6,14 @@
 
 ```sh
 deno task dev
-deno task crawl:guide
+deno task crawl:namu
 deno task test
 deno task validate
 ```
+
+## 데이터
+
+`deno task crawl:namu`가 나무위키 영웅 문서의 상성/궁합과 전장 문서의 모드·전장·이미지를 재생성합니다. 상성 등급은 문서 항목의 첫 등급 표기를 사용하고, 궁합 등급은 본문 키워드로 자동 분류합니다. 전장별 공격/방어 추천 영웅은 확인된 출처가 없어 비워 두며, 화면에는 `추천 영웅 데이터 없음`으로 표시합니다.
 
 ## 배포
 

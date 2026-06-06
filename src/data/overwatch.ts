@@ -455,11 +455,15 @@ export const heroes: Hero[] = [
 export const matchups: Record<string, Matchup[]> = {
   "d-va": [
     {
+      "target": "domina",
+      "rating": "bad",
+    },
+    {
       "target": "doomfist",
       "rating": "neutral",
     },
     {
-      "target": "ana",
+      "target": "ramattra",
       "rating": "bad",
     },
     {
@@ -476,6 +480,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "mauga",
+      "rating": "good",
+    },
+    {
+      "target": "sigma",
       "rating": "good",
     },
     {
@@ -567,6 +575,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "cassidy",
+      "rating": "veryGood",
+    },
+    {
       "target": "torbjorn",
       "rating": "bad",
     },
@@ -576,6 +588,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "pharah",
+      "rating": "veryGood",
+    },
+    {
+      "target": "freja",
       "rating": "veryGood",
     },
     {
@@ -595,6 +611,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "veryGood",
     },
     {
+      "target": "moira",
+      "rating": "veryGood",
+    },
+    {
       "target": "mizuki",
       "rating": "bad",
     },
@@ -605,6 +625,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "brigitte",
       "rating": "veryBad",
+    },
+    {
+      "target": "ana",
+      "rating": "veryGood",
     },
     {
       "target": "wuyang",
@@ -633,7 +657,7 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "doomfist": [
     {
-      "target": "bastion",
+      "target": "d-va",
       "rating": "neutral",
     },
     {
@@ -693,6 +717,14 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
+      "target": "mei",
+      "rating": "neutral",
+    },
+    {
+      "target": "bastion",
+      "rating": "good",
+    },
+    {
       "target": "vendetta",
       "rating": "neutral",
     },
@@ -747,6 +779,14 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "cassidy",
       "rating": "neutral",
+    },
+    {
+      "target": "torbjorn",
+      "rating": "bad",
+    },
+    {
+      "target": "tracer",
+      "rating": "good",
     },
     {
       "target": "pharah",
@@ -819,7 +859,7 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "wrecking-ball": [
     {
-      "target": "winston",
+      "target": "d-va",
       "rating": "neutral",
     },
     {
@@ -853,6 +893,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "orisa",
       "rating": "bad",
+    },
+    {
+      "target": "winston",
+      "rating": "good",
     },
     {
       "target": "zarya",
@@ -911,6 +955,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "anran",
+      "rating": "neutral",
+    },
+    {
       "target": "ashe",
       "rating": "good",
     },
@@ -959,7 +1007,15 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "lucio",
+      "rating": "neutral",
+    },
+    {
       "target": "mercy",
+      "rating": "good",
+    },
+    {
+      "target": "moira",
       "rating": "good",
     },
     {
@@ -975,6 +1031,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
+      "target": "ana",
+      "rating": "neutral",
+    },
+    {
       "target": "wuyang",
       "rating": "good",
     },
@@ -984,6 +1044,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "jetpack-cat",
+      "rating": "good",
+    },
+    {
+      "target": "zenyatta",
       "rating": "good",
     },
     {
@@ -1251,10 +1315,6 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
-      "target": "hazard",
-      "rating": "neutral",
-    },
-    {
       "target": "genji",
       "rating": "neutral",
     },
@@ -1296,6 +1356,14 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
+      "rating": "neutral",
+    },
+    {
+      "target": "ashe",
       "rating": "good",
     },
     {
@@ -1304,6 +1372,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "emre",
+      "rating": "neutral",
+    },
+    {
+      "target": "widowmaker",
       "rating": "good",
     },
     {
@@ -1352,6 +1424,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "mizuki",
+      "rating": "neutral",
+    },
+    {
+      "target": "baptiste",
       "rating": "veryGood",
     },
     {
@@ -1364,6 +1440,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "wuyang",
+      "rating": "neutral",
+    },
+    {
+      "target": "illari",
       "rating": "good",
     },
     {
@@ -1490,6 +1570,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "emre",
+      "rating": "neutral",
+    },
+    {
+      "target": "widowmaker",
       "rating": "bad",
     },
     {
@@ -1549,6 +1633,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "veryBad",
     },
     {
+      "target": "wuyang",
+      "rating": "good",
+    },
+    {
       "target": "illari",
       "rating": "neutral",
     },
@@ -1597,6 +1685,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "roadhog",
       "rating": "neutral",
+    },
+    {
+      "target": "sigma",
+      "rating": "veryBad",
     },
     {
       "target": "orisa",
@@ -1728,6 +1820,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "mizuki",
+      "rating": "neutral",
+    },
+    {
+      "target": "baptiste",
       "rating": "bad",
     },
     {
@@ -1748,6 +1844,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "jetpack-cat",
+      "rating": "neutral",
+    },
+    {
+      "target": "zenyatta",
       "rating": "bad",
     },
     {
@@ -2007,7 +2107,7 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "veryBad",
     },
     {
-      "target": "brigitte",
+      "target": "junker-queen",
       "rating": "veryGood",
     },
     {
@@ -2029,6 +2129,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "bastion",
       "rating": "good",
+    },
+    {
+      "target": "vendetta",
+      "rating": "neutral",
     },
     {
       "target": "venture",
@@ -2127,6 +2231,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
+      "target": "brigitte",
+      "rating": "good",
+    },
+    {
       "target": "ana",
       "rating": "good",
     },
@@ -2141,6 +2249,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "jetpack-cat",
       "rating": "veryBad",
+    },
+    {
+      "target": "zenyatta",
+      "rating": "bad",
     },
     {
       "target": "juno",
@@ -2249,11 +2361,19 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "ashe",
+      "rating": "neutral",
+    },
+    {
       "target": "echo",
       "rating": "bad",
     },
     {
       "target": "emre",
+      "rating": "neutral",
+    },
+    {
+      "target": "widowmaker",
       "rating": "good",
     },
     {
@@ -2262,10 +2382,26 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "cassidy",
+      "rating": "neutral",
+    },
+    {
+      "target": "torbjorn",
+      "rating": "neutral",
+    },
+    {
+      "target": "tracer",
+      "rating": "neutral",
+    },
+    {
+      "target": "pharah",
       "rating": "bad",
     },
     {
       "target": "freja",
+      "rating": "neutral",
+    },
+    {
+      "target": "hanzo",
       "rating": "bad",
     },
     {
@@ -2306,11 +2442,23 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "illari",
+      "rating": "neutral",
+    },
+    {
+      "target": "jetpack-cat",
       "rating": "veryBad",
     },
     {
       "target": "zenyatta",
       "rating": "veryBad",
+    },
+    {
+      "target": "juno",
+      "rating": "good",
+    },
+    {
+      "target": "kiriko",
+      "rating": "neutral",
     },
   ],
   "ramattra": [
@@ -2569,6 +2717,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
+      "target": "genji",
+      "rating": "veryGood",
+    },
+    {
       "target": "reaper",
       "rating": "bad",
     },
@@ -2657,6 +2809,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
+      "target": "lifeweaver",
+      "rating": "veryBad",
+    },
+    {
       "target": "lucio",
       "rating": "bad",
     },
@@ -2711,6 +2867,10 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "sigma": [
     {
+      "target": "d-va",
+      "rating": "good",
+    },
+    {
       "target": "domina",
       "rating": "good",
     },
@@ -2737,6 +2897,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "mauga",
       "rating": "veryGood",
+    },
+    {
+      "target": "sigma",
+      "rating": "neutral",
     },
     {
       "target": "orisa",
@@ -2800,11 +2964,19 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
       "rating": "bad",
     },
     {
       "target": "ashe",
       "rating": "good",
+    },
+    {
+      "target": "echo",
+      "rating": "veryBad",
     },
     {
       "target": "emre",
@@ -2863,6 +3035,18 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "baptiste",
+      "rating": "neutral",
+    },
+    {
+      "target": "brigitte",
+      "rating": "good",
+    },
+    {
+      "target": "ana",
+      "rating": "good",
+    },
+    {
       "target": "wuyang",
       "rating": "bad",
     },
@@ -2889,7 +3073,7 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "junker-queen": [
     {
-      "target": "roadhog",
+      "target": "d-va",
       "rating": "good",
     },
     {
@@ -2913,6 +3097,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
+      "target": "roadhog",
+      "rating": "neutral",
+    },
+    {
       "target": "mauga",
       "rating": "good",
     },
@@ -2934,6 +3122,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "hazard",
+      "rating": "good",
+    },
+    {
+      "target": "genji",
       "rating": "good",
     },
     {
@@ -3147,6 +3339,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
+      "target": "vendetta",
+      "rating": "neutral",
+    },
+    {
       "target": "venture",
       "rating": "neutral",
     },
@@ -3180,6 +3376,14 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "junkrat",
+      "rating": "bad",
+    },
+    {
+      "target": "cassidy",
+      "rating": "bad",
+    },
+    {
+      "target": "torbjorn",
       "rating": "bad",
     },
     {
@@ -3447,6 +3651,10 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "soldier-76": [
     {
+      "target": "d-va",
+      "rating": "good",
+    },
+    {
       "target": "domina",
       "rating": "good",
     },
@@ -3536,6 +3744,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "anran",
+      "rating": "neutral",
+    },
+    {
+      "target": "ashe",
       "rating": "bad",
     },
     {
@@ -3544,6 +3756,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "emre",
+      "rating": "neutral",
+    },
+    {
+      "target": "widowmaker",
       "rating": "bad",
     },
     {
@@ -3560,6 +3776,14 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "tracer",
+      "rating": "good",
+    },
+    {
+      "target": "pharah",
+      "rating": "good",
+    },
+    {
+      "target": "freja",
       "rating": "good",
     },
     {
@@ -3584,6 +3808,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "mizuki",
+      "rating": "neutral",
+    },
+    {
+      "target": "baptiste",
       "rating": "neutral",
     },
     {
@@ -3705,6 +3933,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "veryBad",
     },
     {
+      "target": "soldier-76",
+      "rating": "good",
+    },
+    {
       "target": "sombra",
       "rating": "neutral",
     },
@@ -3747,6 +3979,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "tracer",
       "rating": "bad",
+    },
+    {
+      "target": "pharah",
+      "rating": "veryBad",
     },
     {
       "target": "freja",
@@ -3799,6 +4035,14 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "jetpack-cat",
       "rating": "veryBad",
+    },
+    {
+      "target": "zenyatta",
+      "rating": "good",
+    },
+    {
+      "target": "juno",
+      "rating": "bad",
     },
     {
       "target": "kiriko",
@@ -3867,7 +4111,7 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
-      "target": "pharah",
+      "target": "reaper",
       "rating": "neutral",
     },
     {
@@ -3932,6 +4176,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "tracer",
+      "rating": "good",
+    },
+    {
+      "target": "pharah",
       "rating": "good",
     },
     {
@@ -4117,6 +4365,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
+      "target": "cassidy",
+      "rating": "neutral",
+    },
+    {
       "target": "torbjorn",
       "rating": "neutral",
     },
@@ -4195,7 +4447,7 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "torbjorn": [
     {
-      "target": "hanzo",
+      "target": "d-va",
       "rating": "good",
     },
     {
@@ -4243,6 +4495,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
+      "target": "junker-queen",
+      "rating": "bad",
+    },
+    {
       "target": "hazard",
       "rating": "good",
     },
@@ -4283,7 +4539,15 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "symmetra",
+      "rating": "good",
+    },
+    {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
       "rating": "good",
     },
     {
@@ -4321,6 +4585,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "freja",
       "rating": "bad",
+    },
+    {
+      "target": "hanzo",
+      "rating": "veryBad",
     },
     {
       "target": "lifeweaver",
@@ -4381,11 +4649,15 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "sombra": [
     {
-      "target": "winston",
+      "target": "d-va",
       "rating": "neutral",
     },
     {
       "target": "domina",
+      "rating": "neutral",
+    },
+    {
+      "target": "doomfist",
       "rating": "veryGood",
     },
     {
@@ -4415,6 +4687,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "orisa",
       "rating": "neutral",
+    },
+    {
+      "target": "winston",
+      "rating": "veryBad",
     },
     {
       "target": "zarya",
@@ -4466,6 +4742,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
       "rating": "good",
     },
     {
@@ -4523,6 +4803,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "mercy",
       "rating": "good",
+    },
+    {
+      "target": "moira",
+      "rating": "bad",
     },
     {
       "target": "mizuki",
@@ -4769,7 +5053,7 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "echo": [
     {
-      "target": "pharah",
+      "target": "d-va",
       "rating": "good",
     },
     {
@@ -4857,11 +5141,19 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
+      "target": "sombra",
+      "rating": "veryBad",
+    },
+    {
       "target": "symmetra",
       "rating": "veryGood",
     },
     {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
       "rating": "good",
     },
     {
@@ -4891,6 +5183,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "tracer",
       "rating": "veryBad",
+    },
+    {
+      "target": "pharah",
+      "rating": "good",
     },
     {
       "target": "freja",
@@ -4959,6 +5255,10 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "pharah": [
     {
+      "target": "d-va",
+      "rating": "veryBad",
+    },
+    {
       "target": "domina",
       "rating": "good",
     },
@@ -4973,6 +5273,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "reinhardt",
       "rating": "good",
+    },
+    {
+      "target": "wrecking-ball",
+      "rating": "bad",
     },
     {
       "target": "roadhog",
@@ -5048,6 +5352,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
       "rating": "veryGood",
     },
     {
@@ -5081,6 +5389,14 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "tracer",
       "rating": "good",
+    },
+    {
+      "target": "pharah",
+      "rating": "good",
+    },
+    {
+      "target": "freja",
+      "rating": "bad",
     },
     {
       "target": "hanzo",
@@ -5150,6 +5466,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "domina",
+      "rating": "neutral",
+    },
+    {
+      "target": "doomfist",
       "rating": "good",
     },
     {
@@ -5238,6 +5558,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "anran",
+      "rating": "neutral",
+    },
+    {
+      "target": "ashe",
       "rating": "veryBad",
     },
     {
@@ -5258,6 +5582,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "cassidy",
+      "rating": "neutral",
+    },
+    {
+      "target": "torbjorn",
       "rating": "veryGood",
     },
     {
@@ -5290,6 +5618,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "mizuki",
+      "rating": "neutral",
+    },
+    {
+      "target": "baptiste",
       "rating": "bad",
     },
     {
@@ -5310,6 +5642,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "jetpack-cat",
+      "rating": "neutral",
+    },
+    {
+      "target": "zenyatta",
       "rating": "good",
     },
     {
@@ -5323,7 +5659,7 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "genji": [
     {
-      "target": "winston",
+      "target": "d-va",
       "rating": "veryGood",
     },
     {
@@ -5363,6 +5699,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "winston",
+      "rating": "veryBad",
+    },
+    {
       "target": "zarya",
       "rating": "veryBad",
     },
@@ -5372,6 +5712,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "hazard",
+      "rating": "neutral",
+    },
+    {
+      "target": "reaper",
       "rating": "neutral",
     },
     {
@@ -5431,6 +5775,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "veryGood",
     },
     {
+      "target": "junkrat",
+      "rating": "neutral",
+    },
+    {
       "target": "cassidy",
       "rating": "neutral",
     },
@@ -5445,6 +5793,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "pharah",
       "rating": "veryBad",
+    },
+    {
+      "target": "freja",
+      "rating": "neutral",
     },
     {
       "target": "hanzo",
@@ -5483,6 +5835,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
+      "target": "wuyang",
+      "rating": "good",
+    },
+    {
       "target": "illari",
       "rating": "neutral",
     },
@@ -5505,7 +5861,7 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "reaper": [
     {
-      "target": "cassidy",
+      "target": "d-va",
       "rating": "neutral",
     },
     {
@@ -5565,6 +5921,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "mei",
+      "rating": "good",
+    },
+    {
       "target": "bastion",
       "rating": "good",
     },
@@ -5617,6 +5977,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
+      "target": "cassidy",
+      "rating": "bad",
+    },
+    {
       "target": "torbjorn",
       "rating": "bad",
     },
@@ -5626,6 +5990,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "pharah",
+      "rating": "veryBad",
+    },
+    {
+      "target": "freja",
       "rating": "veryBad",
     },
     {
@@ -5784,6 +6152,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "anran",
+      "rating": "neutral",
+    },
+    {
+      "target": "ashe",
       "rating": "neutral",
     },
     {
@@ -6029,6 +6401,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "moira",
+      "rating": "good",
+    },
+    {
       "target": "mizuki",
       "rating": "bad",
     },
@@ -6239,6 +6615,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "veryBad",
     },
     {
+      "target": "ana",
+      "rating": "good",
+    },
+    {
       "target": "wuyang",
       "rating": "neutral",
     },
@@ -6265,11 +6645,15 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "tracer": [
     {
-      "target": "mercy",
+      "target": "d-va",
       "rating": "veryBad",
     },
     {
       "target": "domina",
+      "rating": "good",
+    },
+    {
+      "target": "doomfist",
       "rating": "good",
     },
     {
@@ -6303,6 +6687,14 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "winston",
       "rating": "bad",
+    },
+    {
+      "target": "zarya",
+      "rating": "veryBad",
+    },
+    {
+      "target": "junker-queen",
+      "rating": "good",
     },
     {
       "target": "hazard",
@@ -6401,6 +6793,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "mercy",
+      "rating": "good",
+    },
+    {
       "target": "moira",
       "rating": "neutral",
     },
@@ -6418,6 +6814,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "ana",
+      "rating": "good",
+    },
+    {
+      "target": "wuyang",
       "rating": "good",
     },
     {
@@ -6567,6 +6967,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
+      "target": "freja",
+      "rating": "good",
+    },
+    {
       "target": "hanzo",
       "rating": "neutral",
     },
@@ -6603,6 +7007,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "illari",
+      "rating": "neutral",
+    },
+    {
       "target": "zenyatta",
       "rating": "good",
     },
@@ -6622,6 +7030,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "domina",
+      "rating": "neutral",
+    },
+    {
+      "target": "doomfist",
       "rating": "bad",
     },
     {
@@ -6639,6 +7051,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "roadhog",
       "rating": "neutral",
+    },
+    {
+      "target": "mauga",
+      "rating": "good",
     },
     {
       "target": "sigma",
@@ -6706,10 +7122,18 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "anran",
+      "rating": "neutral",
+    },
+    {
+      "target": "echo",
       "rating": "good",
     },
     {
       "target": "emre",
+      "rating": "neutral",
+    },
+    {
+      "target": "widowmaker",
       "rating": "bad",
     },
     {
@@ -6730,6 +7154,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "pharah",
+      "rating": "good",
+    },
+    {
+      "target": "freja",
       "rating": "good",
     },
     {
@@ -6754,6 +7182,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "mizuki",
+      "rating": "neutral",
+    },
+    {
+      "target": "baptiste",
       "rating": "good",
     },
     {
@@ -6774,6 +7206,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "jetpack-cat",
+      "rating": "neutral",
+    },
+    {
+      "target": "zenyatta",
       "rating": "good",
     },
     {
@@ -6804,6 +7240,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "wrecking-ball",
+      "rating": "veryBad",
+    },
+    {
+      "target": "roadhog",
       "rating": "good",
     },
     {
@@ -6881,6 +7321,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "echo",
       "rating": "neutral",
+    },
+    {
+      "target": "junkrat",
+      "rating": "good",
     },
     {
       "target": "cassidy",
@@ -6962,6 +7406,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "domina",
+      "rating": "neutral",
+    },
+    {
+      "target": "doomfist",
       "rating": "good",
     },
     {
@@ -6983,6 +7431,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "mauga",
       "rating": "veryBad",
+    },
+    {
+      "target": "sigma",
+      "rating": "bad",
     },
     {
       "target": "orisa",
@@ -7050,6 +7502,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "anran",
+      "rating": "neutral",
+    },
+    {
+      "target": "ashe",
       "rating": "veryBad",
     },
     {
@@ -7106,6 +7562,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "mizuki",
+      "rating": "neutral",
+    },
+    {
+      "target": "baptiste",
       "rating": "bad",
     },
     {
@@ -7118,10 +7578,18 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "wuyang",
+      "rating": "neutral",
+    },
+    {
+      "target": "illari",
       "rating": "bad",
     },
     {
       "target": "jetpack-cat",
+      "rating": "neutral",
+    },
+    {
+      "target": "zenyatta",
       "rating": "good",
     },
     {
@@ -7143,6 +7611,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "doomfist",
+      "rating": "neutral",
+    },
+    {
       "target": "ramattra",
       "rating": "bad",
     },
@@ -7151,7 +7623,7 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
-      "target": "tracer",
+      "target": "wrecking-ball",
       "rating": "bad",
     },
     {
@@ -7231,11 +7703,19 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "ashe",
+      "rating": "neutral",
+    },
+    {
       "target": "echo",
       "rating": "bad",
     },
     {
       "target": "emre",
+      "rating": "neutral",
+    },
+    {
+      "target": "widowmaker",
       "rating": "neutral",
     },
     {
@@ -7251,12 +7731,24 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
+      "target": "tracer",
+      "rating": "neutral",
+    },
+    {
       "target": "pharah",
       "rating": "bad",
     },
     {
       "target": "freja",
       "rating": "bad",
+    },
+    {
+      "target": "hanzo",
+      "rating": "good",
+    },
+    {
+      "target": "lifeweaver",
+      "rating": "veryGood",
     },
     {
       "target": "lucio",
@@ -7272,6 +7764,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "mizuki",
+      "rating": "neutral",
+    },
+    {
+      "target": "baptiste",
       "rating": "good",
     },
     {
@@ -7287,7 +7783,15 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "illari",
+      "rating": "neutral",
+    },
+    {
       "target": "jetpack-cat",
+      "rating": "neutral",
+    },
+    {
+      "target": "zenyatta",
       "rating": "good",
     },
     {
@@ -7369,6 +7873,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
+      "target": "bastion",
+      "rating": "neutral",
+    },
+    {
       "target": "vendetta",
       "rating": "neutral",
     },
@@ -7381,7 +7889,7 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
-      "target": "zenyatta",
+      "target": "soldier-76",
       "rating": "bad",
     },
     {
@@ -7394,6 +7902,14 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
+      "rating": "neutral",
+    },
+    {
+      "target": "ashe",
       "rating": "good",
     },
     {
@@ -7441,6 +7957,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
+      "target": "lucio",
+      "rating": "good",
+    },
+    {
       "target": "mercy",
       "rating": "neutral",
     },
@@ -7450,6 +7970,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "mizuki",
+      "rating": "neutral",
+    },
+    {
+      "target": "baptiste",
       "rating": "bad",
     },
     {
@@ -7461,7 +7985,7 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
-      "target": "soldier-76",
+      "target": "wuyang",
       "rating": "good",
     },
     {
@@ -7470,6 +7994,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "jetpack-cat",
+      "rating": "neutral",
+    },
+    {
+      "target": "zenyatta",
       "rating": "neutral",
     },
     {
@@ -7485,6 +8013,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "d-va",
       "rating": "good",
+    },
+    {
+      "target": "domina",
+      "rating": "bad",
     },
     {
       "target": "doomfist",
@@ -7639,6 +8171,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
+      "target": "moira",
+      "rating": "neutral",
+    },
+    {
       "target": "mizuki",
       "rating": "neutral",
     },
@@ -7703,6 +8239,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "mauga",
       "rating": "veryGood",
+    },
+    {
+      "target": "sigma",
+      "rating": "bad",
     },
     {
       "target": "orisa",
@@ -7777,7 +8317,7 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "veryBad",
     },
     {
-      "target": "pharah",
+      "target": "junkrat",
       "rating": "neutral",
     },
     {
@@ -7791,6 +8331,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "tracer",
       "rating": "neutral",
+    },
+    {
+      "target": "pharah",
+      "rating": "good",
     },
     {
       "target": "freja",
@@ -7823,6 +8367,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "brigitte",
       "rating": "veryGood",
+    },
+    {
+      "target": "ana",
+      "rating": "good",
     },
     {
       "target": "wuyang",
@@ -7944,6 +8492,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
       "rating": "veryGood",
     },
     {
@@ -8210,6 +8762,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "mizuki",
+      "rating": "neutral",
+    },
+    {
+      "target": "baptiste",
       "rating": "bad",
     },
     {
@@ -8248,6 +8804,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "domina",
+      "rating": "neutral",
+    },
+    {
+      "target": "doomfist",
       "rating": "good",
     },
     {
@@ -8336,6 +8896,14 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
+      "rating": "neutral",
+    },
+    {
+      "target": "ashe",
       "rating": "bad",
     },
     {
@@ -8344,6 +8912,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "emre",
+      "rating": "neutral",
+    },
+    {
+      "target": "widowmaker",
       "rating": "bad",
     },
     {
@@ -8525,6 +9097,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
+      "target": "anran",
+      "rating": "good",
+    },
+    {
       "target": "ashe",
       "rating": "bad",
     },
@@ -8589,6 +9165,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "bad",
     },
     {
+      "target": "brigitte",
+      "rating": "good",
+    },
+    {
       "target": "ana",
       "rating": "bad",
     },
@@ -8606,6 +9186,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "zenyatta",
+      "rating": "bad",
+    },
+    {
+      "target": "juno",
       "rating": "bad",
     },
     {
@@ -8635,6 +9219,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
+      "target": "wrecking-ball",
+      "rating": "bad",
+    },
+    {
       "target": "roadhog",
       "rating": "veryBad",
     },
@@ -8651,7 +9239,15 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
+      "target": "winston",
+      "rating": "bad",
+    },
+    {
       "target": "zarya",
+      "rating": "neutral",
+    },
+    {
+      "target": "junker-queen",
       "rating": "neutral",
     },
     {
@@ -8700,6 +9296,14 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
+      "rating": "neutral",
+    },
+    {
+      "target": "ashe",
       "rating": "bad",
     },
     {
@@ -8708,7 +9312,15 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "emre",
+      "rating": "neutral",
+    },
+    {
+      "target": "widowmaker",
       "rating": "bad",
+    },
+    {
+      "target": "junkrat",
+      "rating": "neutral",
     },
     {
       "target": "cassidy",
@@ -8743,7 +9355,15 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "mercy",
+      "rating": "good",
+    },
+    {
       "target": "mizuki",
+      "rating": "neutral",
+    },
+    {
+      "target": "baptiste",
       "rating": "neutral",
     },
     {
@@ -8759,7 +9379,15 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "illari",
+      "rating": "neutral",
+    },
+    {
       "target": "jetpack-cat",
+      "rating": "neutral",
+    },
+    {
+      "target": "zenyatta",
       "rating": "neutral",
     },
     {
@@ -8987,6 +9615,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "veryGood",
     },
     {
+      "target": "ramattra",
+      "rating": "good",
+    },
+    {
       "target": "reinhardt",
       "rating": "bad",
     },
@@ -8997,6 +9629,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "roadhog",
       "rating": "veryBad",
+    },
+    {
+      "target": "mauga",
+      "rating": "neutral",
     },
     {
       "target": "sigma",
@@ -9064,6 +9700,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
       "rating": "good",
     },
     {
@@ -9195,6 +9835,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "mauga",
       "rating": "bad",
+    },
+    {
+      "target": "sigma",
+      "rating": "good",
     },
     {
       "target": "orisa",
@@ -9456,6 +10100,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "sierra",
+      "rating": "neutral",
+    },
+    {
+      "target": "anran",
       "rating": "good",
     },
     {
@@ -9491,6 +10139,10 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "neutral",
     },
     {
+      "target": "pharah",
+      "rating": "veryBad",
+    },
+    {
       "target": "freja",
       "rating": "bad",
     },
@@ -9508,6 +10160,10 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "mercy",
+      "rating": "bad",
+    },
+    {
+      "target": "moira",
       "rating": "bad",
     },
     {
@@ -9731,12 +10387,16 @@ export const matchups: Record<string, Matchup[]> = {
   ],
   "juno": [
     {
-      "target": "mercy",
+      "target": "d-va",
       "rating": "veryBad",
     },
     {
       "target": "domina",
       "rating": "bad",
+    },
+    {
+      "target": "doomfist",
+      "rating": "neutral",
     },
     {
       "target": "ramattra",
@@ -9789,6 +10449,10 @@ export const matchups: Record<string, Matchup[]> = {
     {
       "target": "reaper",
       "rating": "good",
+    },
+    {
+      "target": "mei",
+      "rating": "bad",
     },
     {
       "target": "bastion",
@@ -9867,12 +10531,20 @@ export const matchups: Record<string, Matchup[]> = {
       "rating": "good",
     },
     {
-      "target": "lucio",
+      "target": "hanzo",
       "rating": "neutral",
     },
     {
       "target": "lifeweaver",
       "rating": "neutral",
+    },
+    {
+      "target": "lucio",
+      "rating": "neutral",
+    },
+    {
+      "target": "mercy",
+      "rating": "good",
     },
     {
       "target": "moira",

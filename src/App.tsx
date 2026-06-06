@@ -43,9 +43,6 @@ const heroById = new Map(heroes.map((hero) => [hero.id, hero]))
 const allMaps = mapModes.flatMap((mode) =>
   mode.maps.map((map) => ({ ...map, mode }))
 )
-const hasMapRecommendations = allMaps.some((map) =>
-  map.attack.length > 0 || map.defense.length > 0
-)
 
 const heroesFromIds = (ids: string[]) =>
   ids.map((id) => heroById.get(id)).filter((hero): hero is Hero =>
@@ -241,6 +238,18 @@ function MapPanel(props: { mapId: string }) {
   const selectedMap = createMemo(() =>
     allMaps.find((map) => map.id === props.mapId) ?? allMaps[0]
   )
+  const recommendationGroups = createMemo(() => {
+    const map = selectedMap()
+    return map
+      ? [
+        { key: "attack", label: "공격", heroes: heroesFromIds(map.attack) },
+        { key: "defense", label: "방어", heroes: heroesFromIds(map.defense) },
+      ]
+      : []
+  })
+  const hasRecommendations = createMemo(() =>
+    recommendationGroups().some((group) => group.heroes.length > 0)
+  )
 
   return (
     <Show when={selectedMap()}>
@@ -260,20 +269,12 @@ function MapPanel(props: { mapId: string }) {
               <strong>{map().name}</strong>
             </div>
           </div>
-          <HeroRows
-            groups={[
-              {
-                key: "attack",
-                label: "공격",
-                heroes: heroesFromIds(map().attack),
-              },
-              {
-                key: "defense",
-                label: "방어",
-                heroes: heroesFromIds(map().defense),
-              },
-            ]}
-          />
+          <Show
+            when={hasRecommendations()}
+            fallback={<div class="empty-state">추천 영웅 데이터 없음</div>}
+          >
+            <HeroRows groups={recommendationGroups()} />
+          </Show>
         </>
       )}
     </Show>
@@ -358,21 +359,16 @@ function App() {
       <nav class="navbar" aria-label="주요 메뉴">
         <strong>OWC</strong>
         <For each={views}>
-          {(view) => {
-            const disabled = view.key === "maps" && !hasMapRecommendations
-            return (
-              <button
-                class="nav-button"
-                classList={{ "is-selected": activeView() === view.key }}
-                disabled={disabled}
-                onClick={() => !disabled && setActiveView(view.key)}
-                title={disabled ? "추천 영웅 데이터 없음" : view.label}
-                type="button"
-              >
-                {view.label}
-              </button>
-            )
-          }}
+          {(view) => (
+            <button
+              class="nav-button"
+              classList={{ "is-selected": activeView() === view.key }}
+              onClick={() => setActiveView(view.key)}
+              type="button"
+            >
+              {view.label}
+            </button>
+          )}
         </For>
       </nav>
 
