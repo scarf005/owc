@@ -8,7 +8,7 @@ import {
   onMount,
   Show,
 } from "solid-js"
-import { getSynergyGroups, mapRecommendations } from "./data/guide.ts"
+import { heroSynergies, mapModes, synergyRatings } from "./data/guide.ts"
 import {
   type Hero,
   heroes,
@@ -40,6 +40,9 @@ const ratingOrder: { key: Rating; label: string }[] = [
 ]
 
 const heroById = new Map(heroes.map((hero) => [hero.id, hero]))
+const allMaps = mapModes.flatMap((mode) =>
+  mode.maps.map((map) => ({ ...map, mode }))
+)
 
 const heroesFromIds = (ids: string[]) =>
   ids.map((id) => heroById.get(id)).filter((hero): hero is Hero =>
@@ -100,23 +103,34 @@ function MapPicker(
 ) {
   return (
     <section class="pick" aria-label="맵 선택">
-      <div class="role">
-        <div class="label">맵</div>
-        <div class="map-list">
-          <For each={mapRecommendations}>
-            {(map) => (
-              <button
-                class="map-button"
-                classList={{ "is-selected": props.selectedId === map.id }}
-                onClick={() => props.onSelect(map.id)}
-                type="button"
-              >
-                {map.name}
-              </button>
-            )}
-          </For>
-        </div>
-      </div>
+      <For each={mapModes}>
+        {(mode) => (
+          <div class="role map-mode" style={{ "--mode-color": mode.color }}>
+            <div class="label">{mode.label}</div>
+            <div class="map-list">
+              <For each={mode.maps}>
+                {(map) => (
+                  <button
+                    class="map-button"
+                    classList={{ "is-selected": props.selectedId === map.id }}
+                    onClick={() => props.onSelect(map.id)}
+                    style={{ "--mode-color": mode.color }}
+                    type="button"
+                  >
+                    <img
+                      alt={map.name}
+                      loading="lazy"
+                      referrerpolicy="no-referrer"
+                      src={map.image}
+                    />
+                    <span>{map.name}</span>
+                  </button>
+                )}
+              </For>
+            </div>
+          </div>
+        )}
+      </For>
     </section>
   )
 }
@@ -186,14 +200,20 @@ function MatchupPanel(props: {
 }
 
 function SynergyPanel(props: { hero: Hero | undefined }) {
-  const groups = createMemo(() =>
-    props.hero
-      ? getSynergyGroups(props.hero.id, props.hero.role).map((group) => ({
-        label: group.label,
-        heroes: heroesFromIds(group.heroes),
+  const groups = createMemo(() => {
+    const hero = props.hero
+    return hero
+      ? synergyRatings.map((rating) => ({
+        key: rating.key,
+        label: rating.label,
+        heroes: heroesFromIds(
+          (heroSynergies[hero.id] ?? [])
+            .filter((entry) => entry.rating === rating.key)
+            .map((entry) => entry.target),
+        ),
       }))
       : []
-  )
+  })
 
   return (
     <Show when={props.hero}>
@@ -216,21 +236,39 @@ function SynergyPanel(props: { hero: Hero | undefined }) {
 
 function MapPanel(props: { mapId: string }) {
   const selectedMap = createMemo(() =>
-    mapRecommendations.find((map) => map.id === props.mapId) ??
-      mapRecommendations[0]
+    allMaps.find((map) => map.id === props.mapId) ?? allMaps[0]
   )
 
   return (
     <Show when={selectedMap()}>
       {(map) => (
         <>
-          <div class="selected-hero map-title">
-            <strong>{map().name}</strong>
+          <div
+            class="selected-map"
+            style={{ "--mode-color": map().mode.color }}
+          >
+            <img
+              alt={map().name}
+              referrerpolicy="no-referrer"
+              src={map().image}
+            />
+            <div>
+              <span>{map().mode.label}</span>
+              <strong>{map().name}</strong>
+            </div>
           </div>
           <HeroRows
             groups={[
-              { label: "공격", heroes: heroesFromIds(map().attack) },
-              { label: "방어", heroes: heroesFromIds(map().defense) },
+              {
+                key: "attack",
+                label: "공격",
+                heroes: heroesFromIds(map().attack),
+              },
+              {
+                key: "defense",
+                label: "방어",
+                heroes: heroesFromIds(map().defense),
+              },
             ]}
           />
         </>
@@ -242,9 +280,7 @@ function MapPanel(props: { mapId: string }) {
 function App() {
   const [activeView, setActiveView] = createSignal<View>("matchups")
   const [selectedId, setSelectedId] = createSignal(heroes[0]?.id ?? "")
-  const [selectedMapId, setSelectedMapId] = createSignal(
-    mapRecommendations[0]?.id ?? "",
-  )
+  const [selectedMapId, setSelectedMapId] = createSignal(allMaps[0]?.id ?? "")
   const selectedHero = createMemo(() => heroById.get(selectedId()))
   let resultRef: HTMLElement | undefined
   let fitFrame = 0

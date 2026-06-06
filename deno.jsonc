@@ -2,6 +2,7 @@
   "tasks": {
     "dev": "deno run -A --node-modules-dir npm:vite",
     "check": "deno check src/main.tsx",
+    "crawl:guide": "deno run -A scripts/crawl-guide-data.ts",
     "build": "deno run -A --node-modules-dir npm:vite build",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
     "serve": "deno run --allow-net --allow-read jsr:@std/http@1/file-server dist/",

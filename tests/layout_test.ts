@@ -146,17 +146,32 @@ Deno.test({
       )
 
       await page.getByRole("button", { name: "궁합" }).click()
-      await page.getByRole("button", { name: "오리사" }).click()
+      await page.getByLabel("영웅 선택").getByRole("button", { name: "오리사" })
+        .click()
       assert(
-        await page.getByText("최고 궁합").isVisible(),
-        "synergy best group was not visible",
+        await page.getByText("매우 좋음", { exact: true }).isVisible(),
+        "synergy very-good group was not visible",
       )
       assert(
-        await page.getByText("좋은 궁합").isVisible(),
+        await page.getByText("좋음", { exact: true }).isVisible(),
         "synergy good group was not visible",
       )
 
       await page.getByRole("button", { name: "맵별 추천 영웅" }).click()
+      assert(
+        await page.getByLabel("맵 선택").getByText("쟁탈", { exact: true })
+          .isVisible(),
+        "control map group was not visible",
+      )
+      assert(
+        await page.getByLabel("맵 선택").getByText("호위", { exact: true })
+          .isVisible(),
+        "escort map group was not visible",
+      )
+      assert(
+        await page.locator(".map-button img").first().isVisible(),
+        "map image was not visible",
+      )
       await page.getByRole("button", { name: "왕의 길" }).click()
       assert(
         await page.getByText("공격").isVisible(),
