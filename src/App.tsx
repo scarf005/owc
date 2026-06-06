@@ -1,5 +1,13 @@
 import "./App.css"
-import { createMemo, createSignal, For, Show } from "solid-js"
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  For,
+  onCleanup,
+  onMount,
+  Show,
+} from "solid-js"
 import {
   type Hero,
   heroes,
@@ -49,6 +57,62 @@ function HeroButton(
 function App() {
   const [selectedId, setSelectedId] = createSignal(heroes[0]?.id ?? "")
   const selectedHero = createMemo(() => heroById.get(selectedId()))
+  let resultRef: HTMLElement | undefined
+  let fitFrame = 0
+  const setCounterSize = (size: number) => {
+    resultRef?.style.setProperty("--counter-icon", `${size}px`)
+    resultRef?.style.setProperty(
+      "--counter-cell",
+      `${Math.max(38, size - 2)}px`,
+    )
+  }
+  const counterSizeFits = (size: number) => {
+    if (!resultRef) return true
+    setCounterSize(size)
+    return resultRef.scrollHeight <= resultRef.clientHeight
+  }
+  const fitCounterSize = () => {
+    if (!resultRef) return
+    const max = globalThis.matchMedia?.("(max-width: 1500px)").matches ? 56 : 64
+    const min = 34
+
+    if (counterSizeFits(max)) return
+
+    let low = min
+    let high = max
+    let best = min
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2)
+      if (counterSizeFits(mid)) {
+        best = mid
+        low = mid + 1
+      } else {
+        high = mid - 1
+      }
+    }
+    setCounterSize(best)
+  }
+  const queueFitCounterSize = () => {
+    cancelAnimationFrame(fitFrame)
+    fitFrame = requestAnimationFrame(() => {
+      fitFrame = requestAnimationFrame(fitCounterSize)
+    })
+  }
+
+  createEffect(() => {
+    selectedId()
+    queueFitCounterSize()
+  })
+
+  onMount(() => {
+    globalThis.addEventListener("resize", queueFitCounterSize)
+    queueFitCounterSize()
+  })
+
+  onCleanup(() => {
+    cancelAnimationFrame(fitFrame)
+    globalThis.removeEventListener("resize", queueFitCounterSize)
+  })
   const grouped = createMemo(() =>
     ratingOrder.map((rating) => ({
       ...rating,
@@ -82,7 +146,7 @@ function App() {
         </For>
       </section>
 
-      <section class="result" aria-label="상성">
+      <section class="result" aria-label="상성" ref={resultRef}>
         <Show when={selectedHero()}>
           {(hero) => (
             <>

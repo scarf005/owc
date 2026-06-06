@@ -45,6 +45,8 @@ footer {
 }
 
 .result {
+  --counter-cell: 54px;
+  --counter-icon: 56px;
   position: sticky;
   top: 16px;
 }
@@ -63,10 +65,11 @@ footer {
 }
 
 .grid.small {
-  grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--counter-cell), 1fr));
 }
 
 .hero-button {
+  position: relative;
   display: grid;
   gap: 3px;
   min-width: 0;
@@ -81,11 +84,20 @@ footer {
 }
 
 .hero-button:hover,
-.hero-button:focus-visible,
-.hero-button.selected {
+.hero-button:focus-visible {
   border-color: var(--line);
   outline: none;
   background: var(--selected);
+}
+
+.hero-button.selected::after {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  left: 3px;
+  height: 3px;
+  background: var(--accent);
+  content: "";
 }
 
 .hero-button img,
@@ -115,7 +127,7 @@ footer {
 }
 
 .grid.small .hero-button img {
-  height: 56px;
+  height: var(--counter-icon);
 }
 
 .selected {
@@ -174,6 +186,11 @@ footer a {
     padding: 12px;
   }
 
+  .result {
+    --counter-cell: 42px;
+    --counter-icon: 44px;
+  }
+
   .pick,
   .role,
   .result,
@@ -187,7 +204,7 @@ footer a {
   }
 
   .grid.small {
-    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--counter-cell), 1fr));
   }
 
   .hero-button img {
@@ -201,7 +218,7 @@ footer a {
   }
 
   .grid.small .hero-button img {
-    height: 44px;
+    height: var(--counter-icon);
   }
 
   .selected {
