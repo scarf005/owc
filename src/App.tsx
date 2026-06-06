@@ -1,7 +1,7 @@
 import "./App.css"
 import {
-  createEffect,
   createMemo,
+  createRenderEffect,
   createSignal,
   For,
   onCleanup,
@@ -99,9 +99,9 @@ function App() {
     })
   }
 
-  createEffect(() => {
+  createRenderEffect(() => {
     selectedId()
-    queueFitCounterSize()
+    fitCounterSize()
   })
 
   onMount(() => {

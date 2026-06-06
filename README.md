@@ -6,6 +6,7 @@
 
 ```sh
 deno task dev
+deno task test
 deno task validate
 ```
 
