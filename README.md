@@ -1,19 +1,8 @@
-# Vite + Deno + Solid + TypeScript
+# OWC
 
-## Running
+오버워치 영웅 상성 선택기입니다.
 
-You need to have Deno v2.0.0 or later installed to run this repo.
-
-Start a dev server:
-
-```
-$ deno task dev
-```
-
-## Deploy
-
-Build production assets:
-
-```
-$ deno task build
+```sh
+deno task dev
+deno task build
 ```
