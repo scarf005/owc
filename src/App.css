@@ -14,14 +14,21 @@
 
 .app {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(640px, 50vw);
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 16px;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 12px;
   height: 100svh;
   overflow: hidden;
   padding: 16px;
 }
 
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(640px, 50vw);
+  gap: 16px;
+  min-height: 0;
+}
+
+.navbar,
 .pick,
 .result,
 footer {
@@ -34,6 +41,44 @@ footer {
   align-self: start;
   max-height: 100%;
   padding: 16px;
+}
+
+.navbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+}
+
+.navbar strong {
+  margin-right: 6px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.nav-button,
+.map-button {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.nav-button {
+  padding: 5px 8px;
+}
+
+.nav-button:hover,
+.nav-button:focus-visible,
+.nav-button.is-selected,
+.map-button:hover,
+.map-button:focus-visible,
+.map-button.is-selected {
+  border-color: var(--accent);
+  outline: none;
 }
 
 .pick,
@@ -66,6 +111,18 @@ footer {
 
 .grid.small {
   grid-template-columns: repeat(auto-fill, minmax(var(--counter-cell), 1fr));
+}
+
+.map-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(138px, 1fr));
+  gap: 6px;
+}
+
+.map-button {
+  min-height: 36px;
+  padding: 6px 8px;
+  text-align: left;
 }
 
 .hero-button {
@@ -135,6 +192,10 @@ footer {
   line-height: 1;
 }
 
+.map-title {
+  grid-template-columns: 1fr;
+}
+
 .row {
   border-left: 4px solid var(--line);
   padding-left: 8px;
@@ -155,7 +216,6 @@ footer {
 }
 
 footer {
-  grid-column: 1 / -1;
   padding: 8px 10px;
   color: var(--muted);
   font-size: 11px;
@@ -167,7 +227,7 @@ footer a {
 }
 
 @media (max-width: 1500px) {
-  .app {
+  .workspace {
     grid-template-columns: minmax(0, 1fr) minmax(620px, 50vw);
   }
 
@@ -217,12 +277,27 @@ footer a {
     padding-bottom: 6px;
   }
 
+  .map-title {
+    grid-template-columns: 1fr;
+  }
+
   .selected-hero strong {
     font-size: 24px;
   }
 
   .row {
     padding-left: 6px;
+  }
+
+  .map-list {
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 5px;
+  }
+
+  .map-button {
+    min-height: 32px;
+    padding: 5px 7px;
+    font-size: 11px;
   }
 
   footer {
@@ -233,11 +308,13 @@ footer a {
 
 @media (max-width: 1100px) {
   .app {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
     height: auto;
     min-height: 100svh;
     overflow: visible;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
   }
 
   .result {

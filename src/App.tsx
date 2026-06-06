@@ -8,6 +8,7 @@ import {
   onMount,
   Show,
 } from "solid-js"
+import { getSynergyGroups, mapRecommendations } from "./data/guide.ts"
 import {
   type Hero,
   heroes,
@@ -16,10 +17,18 @@ import {
   type Role,
 } from "./data/overwatch.ts"
 
+type View = "matchups" | "synergies" | "maps"
+
 const roles: { key: Role; label: string }[] = [
   { key: "tank", label: "돌격" },
   { key: "damage", label: "공격" },
   { key: "support", label: "지원" },
+]
+
+const views: { key: View; label: string }[] = [
+  { key: "matchups", label: "상성" },
+  { key: "synergies", label: "궁합" },
+  { key: "maps", label: "맵별 추천 영웅" },
 ]
 
 const ratingOrder: { key: Rating; label: string }[] = [
@@ -31,6 +40,11 @@ const ratingOrder: { key: Rating; label: string }[] = [
 ]
 
 const heroById = new Map(heroes.map((hero) => [hero.id, hero]))
+
+const heroesFromIds = (ids: string[]) =>
+  ids.map((id) => heroById.get(id)).filter((hero): hero is Hero =>
+    Boolean(hero)
+  )
 
 function HeroButton(
   props: { hero: Hero; selected?: boolean; onClick: () => void },
@@ -54,8 +68,183 @@ function HeroButton(
   )
 }
 
+function HeroPicker(
+  props: { selectedId: string; onSelect: (id: string) => void },
+) {
+  return (
+    <section class="pick" aria-label="영웅 선택">
+      <For each={roles}>
+        {(role) => (
+          <div class="role">
+            <div class="label">{role.label}</div>
+            <div class="grid">
+              <For each={heroes.filter((hero) => hero.role === role.key)}>
+                {(hero) => (
+                  <HeroButton
+                    hero={hero}
+                    onClick={() => props.onSelect(hero.id)}
+                    selected={props.selectedId === hero.id}
+                  />
+                )}
+              </For>
+            </div>
+          </div>
+        )}
+      </For>
+    </section>
+  )
+}
+
+function MapPicker(
+  props: { selectedId: string; onSelect: (id: string) => void },
+) {
+  return (
+    <section class="pick" aria-label="맵 선택">
+      <div class="role">
+        <div class="label">맵</div>
+        <div class="map-list">
+          <For each={mapRecommendations}>
+            {(map) => (
+              <button
+                class="map-button"
+                classList={{ "is-selected": props.selectedId === map.id }}
+                onClick={() => props.onSelect(map.id)}
+                type="button"
+              >
+                {map.name}
+              </button>
+            )}
+          </For>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function HeroRows(
+  props: { groups: { key?: string; label: string; heroes: Hero[] }[] },
+) {
+  return (
+    <For each={props.groups}>
+      {(group) => (
+        <Show when={group.heroes.length > 0}>
+          <div class={`row ${group.key ?? ""}`}>
+            <div class="label">{group.label}</div>
+            <div class="grid small">
+              <For each={group.heroes}>
+                {(hero) => <HeroButton hero={hero} onClick={() => undefined} />}
+              </For>
+            </div>
+          </div>
+        </Show>
+      )}
+    </For>
+  )
+}
+
+function MatchupPanel(props: {
+  hero: Hero | undefined
+  groups: { key: Rating; label: string; heroes: Hero[] }[]
+  onSelect: (id: string) => void
+}) {
+  return (
+    <Show when={props.hero}>
+      {(hero) => (
+        <>
+          <div class="selected-hero">
+            <img
+              alt={hero().name}
+              referrerpolicy="no-referrer"
+              src={hero().avatar}
+            />
+            <strong>{hero().name}</strong>
+          </div>
+
+          <For each={props.groups}>
+            {(group) => (
+              <Show when={group.heroes.length > 0}>
+                <div class={`row ${group.key}`}>
+                  <div class="label">{group.label}</div>
+                  <div class="grid small">
+                    <For each={group.heroes}>
+                      {(hero) => (
+                        <HeroButton
+                          hero={hero}
+                          onClick={() => props.onSelect(hero.id)}
+                        />
+                      )}
+                    </For>
+                  </div>
+                </div>
+              </Show>
+            )}
+          </For>
+        </>
+      )}
+    </Show>
+  )
+}
+
+function SynergyPanel(props: { hero: Hero | undefined }) {
+  const groups = createMemo(() =>
+    props.hero
+      ? getSynergyGroups(props.hero.id, props.hero.role).map((group) => ({
+        label: group.label,
+        heroes: heroesFromIds(group.heroes),
+      }))
+      : []
+  )
+
+  return (
+    <Show when={props.hero}>
+      {(hero) => (
+        <>
+          <div class="selected-hero">
+            <img
+              alt={hero().name}
+              referrerpolicy="no-referrer"
+              src={hero().avatar}
+            />
+            <strong>{hero().name}</strong>
+          </div>
+          <HeroRows groups={groups()} />
+        </>
+      )}
+    </Show>
+  )
+}
+
+function MapPanel(props: { mapId: string }) {
+  const selectedMap = createMemo(() =>
+    mapRecommendations.find((map) => map.id === props.mapId) ??
+      mapRecommendations[0]
+  )
+
+  return (
+    <Show when={selectedMap()}>
+      {(map) => (
+        <>
+          <div class="selected-hero map-title">
+            <strong>{map().name}</strong>
+          </div>
+          <HeroRows
+            groups={[
+              { label: "공격", heroes: heroesFromIds(map().attack) },
+              { label: "방어", heroes: heroesFromIds(map().defense) },
+            ]}
+          />
+        </>
+      )}
+    </Show>
+  )
+}
+
 function App() {
+  const [activeView, setActiveView] = createSignal<View>("matchups")
   const [selectedId, setSelectedId] = createSignal(heroes[0]?.id ?? "")
+  const [selectedMapId, setSelectedMapId] = createSignal(
+    mapRecommendations[0]?.id ?? "",
+  )
   const selectedHero = createMemo(() => heroById.get(selectedId()))
   let resultRef: HTMLElement | undefined
   let fitFrame = 0
@@ -101,6 +290,8 @@ function App() {
 
   createRenderEffect(() => {
     selectedId()
+    selectedMapId()
+    activeView()
     fitCounterSize()
   })
 
@@ -125,63 +316,48 @@ function App() {
 
   return (
     <main class="app">
-      <section class="pick" aria-label="영웅 선택">
-        <For each={roles}>
-          {(role) => (
-            <div class="role">
-              <div class="label">{role.label}</div>
-              <div class="grid">
-                <For each={heroes.filter((hero) => hero.role === role.key)}>
-                  {(hero) => (
-                    <HeroButton
-                      hero={hero}
-                      onClick={() => setSelectedId(hero.id)}
-                      selected={selectedId() === hero.id}
-                    />
-                  )}
-                </For>
-              </div>
-            </div>
+      <nav class="navbar" aria-label="주요 메뉴">
+        <strong>OWC</strong>
+        <For each={views}>
+          {(view) => (
+            <button
+              class="nav-button"
+              classList={{ "is-selected": activeView() === view.key }}
+              onClick={() => setActiveView(view.key)}
+              type="button"
+            >
+              {view.label}
+            </button>
           )}
         </For>
-      </section>
+      </nav>
 
-      <section class="result" aria-label="상성" ref={resultRef}>
-        <Show when={selectedHero()}>
-          {(hero) => (
-            <>
-              <div class="selected-hero">
-                <img
-                  alt={hero().name}
-                  referrerpolicy="no-referrer"
-                  src={hero().avatar}
-                />
-                <strong>{hero().name}</strong>
-              </div>
-
-              <For each={grouped()}>
-                {(group) => (
-                  <Show when={group.heroes.length > 0}>
-                    <div class={`row ${group.key}`}>
-                      <div class="label">{group.label}</div>
-                      <div class="grid small">
-                        <For each={group.heroes}>
-                          {(hero) => (
-                            <HeroButton
-                              hero={hero}
-                              onClick={() => setSelectedId(hero.id)}
-                            />
-                          )}
-                        </For>
-                      </div>
-                    </div>
-                  </Show>
-                )}
-              </For>
-            </>
-          )}
+      <div class="workspace">
+        <Show
+          when={activeView() === "maps"}
+          fallback={
+            <HeroPicker selectedId={selectedId()} onSelect={setSelectedId} />
+          }
+        >
+          <MapPicker selectedId={selectedMapId()} onSelect={setSelectedMapId} />
         </Show>
-      </section>
+
+        <section class="result" aria-label={activeView()} ref={resultRef}>
+          <Show when={activeView() === "matchups"}>
+            <MatchupPanel
+              hero={selectedHero()}
+              groups={grouped()}
+              onSelect={setSelectedId}
+            />
+          </Show>
+          <Show when={activeView() === "synergies"}>
+            <SynergyPanel hero={selectedHero()} />
+          </Show>
+          <Show when={activeView() === "maps"}>
+            <MapPanel mapId={selectedMapId()} />
+          </Show>
+        </section>
+      </div>
 
       <footer>
         비공식 팬 도구 · Overwatch assets © Blizzard ·{" "}

@@ -122,6 +122,82 @@ const clickHeroAndMeasure = async (page: Page, name: string) => {
 }
 
 Deno.test({
+  name: "navbar exposes synergies and attack/defense map recommendations",
+  timeout: 60_000,
+  async fn() {
+    const { child, url } = await startServer()
+    const browser = await chromium.launch()
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 1000 },
+    })
+
+    try {
+      await page.goto(url)
+      await page.waitForSelector(".navbar")
+
+      const navLabels = await page.$$eval(
+        ".nav-button",
+        (buttons) => buttons.map((button) => button.textContent?.trim()),
+      )
+      assert(
+        JSON.stringify(navLabels) ===
+          JSON.stringify(["상성", "궁합", "맵별 추천 영웅"]),
+        `unexpected nav labels: ${JSON.stringify(navLabels)}`,
+      )
+
+      await page.getByRole("button", { name: "궁합" }).click()
+      await page.getByRole("button", { name: "오리사" }).click()
+      assert(
+        await page.getByText("최고 궁합").isVisible(),
+        "synergy best group was not visible",
+      )
+      assert(
+        await page.getByText("좋은 궁합").isVisible(),
+        "synergy good group was not visible",
+      )
+
+      await page.getByRole("button", { name: "맵별 추천 영웅" }).click()
+      await page.getByRole("button", { name: "왕의 길" }).click()
+      assert(
+        await page.getByText("공격").isVisible(),
+        "attack group was not visible",
+      )
+      assert(
+        await page.getByText("방어").isVisible(),
+        "defense group was not visible",
+      )
+      assert(
+        await page.getByText("라인하르트").first().isVisible(),
+        "attack recommendation was not visible",
+      )
+      assert(
+        await page.getByText("바티스트").first().isVisible(),
+        "defense recommendation was not visible",
+      )
+
+      const overflow = await page.evaluate(() => {
+        const pick = document.querySelector<HTMLElement>(".pick")
+        const result = document.querySelector<HTMLElement>(".result")
+        return {
+          page: document.documentElement.scrollHeight > window.innerHeight ||
+            document.body.scrollHeight > window.innerHeight,
+          pick: pick ? pick.scrollHeight > pick.clientHeight : true,
+          result: result ? result.scrollHeight > result.clientHeight : true,
+        }
+      })
+      assert(!overflow.page, "page overflowed on map recommendations")
+      assert(!overflow.pick, "map picker overflowed")
+      assert(!overflow.result, "map recommendations overflowed")
+    } finally {
+      await page.close().catch(() => undefined)
+      await browser.close().catch(() => undefined)
+      child.kill("SIGTERM")
+      await child.status.catch(() => undefined)
+    }
+  },
+})
+
+Deno.test({
   name: "hero changes do not render a transient broken counter layout",
   timeout: 60_000,
   async fn() {
