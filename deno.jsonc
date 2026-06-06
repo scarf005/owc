@@ -1,9 +1,11 @@
 {
   "tasks": {
     "dev": "deno run -A --node-modules-dir npm:vite",
+    "check": "deno check src/main.tsx",
     "build": "deno run -A --node-modules-dir npm:vite build",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
-    "serve": "deno run --allow-net --allow-read jsr:@std/http@1/file-server dist/"
+    "serve": "deno run --allow-net --allow-read jsr:@std/http@1/file-server dist/",
+    "validate": "deno fmt --check && deno task check && deno task build"
   },
   "fmt": { "semiColons": false, "proseWrap": "never" },
   "compilerOptions": {
