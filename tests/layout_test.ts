@@ -103,8 +103,19 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
   )
   if (!nepal) throw new Error("Nepal map must be crawled")
   assert(
-    nepal.attack.includes("roadhog") && nepal.defense.includes("cassidy"),
+    nepal.attack.some((entry) => entry.id === "roadhog") &&
+      nepal.defense.some((entry) => entry.id === "cassidy"),
     "Nepal attack/defense recommendations must be crawled from Namu",
+  )
+  const busan = mapModes.flatMap((mode) => mode.maps).find((map) =>
+    map.name === "부산"
+  )
+  if (!busan) throw new Error("Busan map must be crawled")
+  assert(
+    busan.attack.find((entry) => entry.id === "symmetra")?.note?.includes(
+      "사찰맵 한정",
+    ),
+    "Busan Symmetra recommendation note must be crawled from Namu",
   )
   const antarctic = mapModes.flatMap((mode) => mode.maps).find((map) =>
     map.name === "남극 반도"
@@ -132,9 +143,8 @@ Deno.test({
       )
       await page.waitForSelector(".navbar")
       assert(
-        await page.getByRole("button", { name: "궁합" }).evaluate((button) =>
-          button.classList.contains("is-selected")
-        ),
+        await page.getByLabel("주요 메뉴").getByRole("button", { name: "궁합" })
+          .evaluate((button) => button.classList.contains("is-selected")),
         "synergy view was not restored from query params",
       )
       assert(
@@ -144,7 +154,9 @@ Deno.test({
         "hero was not restored from query params",
       )
 
-      await page.getByRole("button", { name: "맵별 추천 영웅" }).click()
+      await page.getByLabel("주요 메뉴").getByRole("button", {
+        name: "맵별 추천 영웅",
+      }).click()
       assert(
         await page.locator(".selected-map strong").getByText("네팔", {
           exact: true,
@@ -157,7 +169,8 @@ Deno.test({
         "map query param was not updated",
       )
 
-      await page.getByRole("button", { name: "상성" }).click()
+      await page.getByLabel("주요 메뉴").getByRole("button", { name: "상성" })
+        .click()
       await page.getByLabel("영웅 선택").getByRole("button", {
         name: "라마트라",
       })
@@ -258,7 +271,8 @@ Deno.test({
         `unexpected nav labels: ${JSON.stringify(navLabels)}`,
       )
 
-      await page.getByRole("button", { name: "궁합" }).click()
+      await page.getByLabel("주요 메뉴").getByRole("button", { name: "궁합" })
+        .click()
       await page.getByLabel("영웅 선택").getByRole("button", { name: "오리사" })
         .click()
       assert(
@@ -270,7 +284,9 @@ Deno.test({
         "synergy good group was not visible",
       )
 
-      const mapNav = page.getByRole("button", { name: "맵별 추천 영웅" })
+      const mapNav = page.getByLabel("주요 메뉴").getByRole("button", {
+        name: "맵별 추천 영웅",
+      })
       assert(!(await mapNav.isDisabled()), "map nav should stay enabled")
       await mapNav.click()
       assert(
@@ -330,6 +346,21 @@ Deno.test({
           .isVisible()),
         "empty recommendation state should not show for sourced maps",
       )
+
+      await page.locator(".map-button").filter({ hasText: "부산" }).click()
+      const symmetraNote = result.getByLabel(/추천 주석: 사찰맵 한정/)
+      assert(
+        await symmetraNote.isVisible(),
+        "recommendation note icon was not visible",
+      )
+      await symmetraNote.hover()
+      assert(
+        await symmetraNote.locator(".tooltip").evaluate((tooltip) =>
+          getComputedStyle(tooltip).opacity === "1"
+        ),
+        "recommendation note tooltip was not shown on hover",
+      )
+      await page.mouse.move(0, 0)
 
       const overflow = await page.evaluate(() => {
         const pick = document.querySelector<HTMLElement>(".pick")

@@ -205,10 +205,53 @@ footer {
   aspect-ratio: 1;
 }
 
-.hero-button span {
+.hero-button > span:first-of-type {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.info-note {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--accent);
+  font-size: 10px;
+  line-height: 1;
+  z-index: 1;
+}
+
+.tooltip {
+  position: absolute;
+  top: 17px;
+  right: 0;
+  display: none;
+  width: max-content;
+  max-width: 240px;
+  border: 1px solid var(--line);
+  padding: 6px 7px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  text-align: left;
+  white-space: normal;
+  z-index: 10;
+}
+
+.info-note:hover .tooltip,
+.info-note:focus .tooltip {
+  display: block;
+  opacity: 1;
 }
 
 .grid.small .hero-button {

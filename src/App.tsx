@@ -9,7 +9,12 @@ import {
   onMount,
   Show,
 } from "solid-js"
-import { heroSynergies, mapModes, synergyRatings } from "./data/guide.ts"
+import {
+  heroSynergies,
+  mapModes,
+  type MapRecommendation,
+  synergyRatings,
+} from "./data/guide.ts"
 import {
   type Hero,
   heroes,
@@ -19,6 +24,7 @@ import {
 } from "./data/overwatch.ts"
 
 type View = "matchups" | "synergies" | "maps"
+type HeroRowItem = { hero: Hero; note?: string }
 
 const roles: { key: Role; label: string; color: string }[] = [
   { key: "tank", label: "돌격", color: "#2f80ed" },
@@ -44,8 +50,9 @@ const heroById = new Map(heroes.map((hero) => [hero.id, hero]))
 const allMaps = mapModes.flatMap((mode) =>
   mode.maps.map((map) => ({ ...map, mode }))
 )
-const hasMapRecommendations = (map: { attack: string[]; defense: string[] }) =>
-  map.attack.length > 0 || map.defense.length > 0
+const hasMapRecommendations = (
+  map: { attack: MapRecommendation[]; defense: MapRecommendation[] },
+) => map.attack.length > 0 || map.defense.length > 0
 const hasAnyMapRecommendations = allMaps.some(hasMapRecommendations)
 const firstRecommendedMap = allMaps.find(hasMapRecommendations) ?? allMaps[0]
 const defaultHeroId = heroes[0]?.id ?? ""
@@ -91,13 +98,24 @@ const writeQueryState = (
   }
 }
 
-const heroesFromIds = (ids: string[]) =>
+const heroItemsFromIds = (ids: string[]): HeroRowItem[] =>
   ids.map((id) => heroById.get(id)).filter((hero): hero is Hero =>
     Boolean(hero)
-  )
+  ).map((hero) => ({ hero }))
+
+const heroItemsFromMapRecommendations = (
+  entries: MapRecommendation[],
+): HeroRowItem[] => {
+  const items: HeroRowItem[] = []
+  for (const entry of entries) {
+    const hero = heroById.get(entry.id)
+    if (hero) items.push({ hero, ...(entry.note ? { note: entry.note } : {}) })
+  }
+  return items
+}
 
 function HeroButton(
-  props: { hero: Hero; selected?: boolean; onClick: () => void },
+  props: { hero: Hero; note?: string; selected?: boolean; onClick: () => void },
 ) {
   return (
     <button
@@ -114,6 +132,20 @@ function HeroButton(
         src={props.hero.avatar}
       />
       <span>{props.hero.name}</span>
+      <Show when={props.note}>
+        {(note) => (
+          <span
+            aria-label={`추천 주석: ${note()}`}
+            class="info-note"
+            data-note={note()}
+            tabIndex={0}
+            title={note()}
+          >
+            i
+            <span class="tooltip" role="tooltip">{note()}</span>
+          </span>
+        )}
+      </Show>
     </button>
   )
 }
@@ -191,7 +223,7 @@ function MapPicker(
 }
 
 function HeroRows(
-  props: { groups: { key?: string; label: string; heroes: Hero[] }[] },
+  props: { groups: { key?: string; label: string; heroes: HeroRowItem[] }[] },
 ) {
   return (
     <For each={props.groups}>
@@ -201,7 +233,13 @@ function HeroRows(
             <div class="label">{group.label}</div>
             <div class="grid small">
               <For each={group.heroes}>
-                {(hero) => <HeroButton hero={hero} onClick={() => undefined} />}
+                {(entry) => (
+                  <HeroButton
+                    hero={entry.hero}
+                    note={entry.note}
+                    onClick={() => undefined}
+                  />
+                )}
               </For>
             </div>
           </div>
@@ -213,7 +251,7 @@ function HeroRows(
 
 function MatchupPanel(props: {
   hero: Hero | undefined
-  groups: { key: Rating; label: string; heroes: Hero[] }[]
+  groups: { key: Rating; label: string; heroes: HeroRowItem[] }[]
   onSelect: (id: string) => void
 }) {
   return (
@@ -236,10 +274,11 @@ function MatchupPanel(props: {
                   <div class="label">{group.label}</div>
                   <div class="grid small">
                     <For each={group.heroes}>
-                      {(hero) => (
+                      {(entry) => (
                         <HeroButton
-                          hero={hero}
-                          onClick={() => props.onSelect(hero.id)}
+                          hero={entry.hero}
+                          note={entry.note}
+                          onClick={() => props.onSelect(entry.hero.id)}
                         />
                       )}
                     </For>
@@ -261,7 +300,7 @@ function SynergyPanel(props: { hero: Hero | undefined }) {
       ? synergyRatings.map((rating) => ({
         key: rating.key,
         label: rating.label,
-        heroes: heroesFromIds(
+        heroes: heroItemsFromIds(
           (heroSynergies[hero.id] ?? [])
             .filter((entry) => entry.rating === rating.key)
             .map((entry) => entry.target),
@@ -297,8 +336,16 @@ function MapPanel(props: { mapId: string }) {
     const map = selectedMap()
     return map
       ? [
-        { key: "attack", label: "공격", heroes: heroesFromIds(map.attack) },
-        { key: "defense", label: "방어", heroes: heroesFromIds(map.defense) },
+        {
+          key: "attack",
+          label: "공격",
+          heroes: heroItemsFromMapRecommendations(map.attack),
+        },
+        {
+          key: "defense",
+          label: "방어",
+          heroes: heroItemsFromMapRecommendations(map.defense),
+        },
       ]
       : []
   })
@@ -423,7 +470,8 @@ function App() {
       heroes: (matchups[selectedId()] ?? [])
         .filter((matchup) => matchup.rating === rating.key)
         .map((matchup) => heroById.get(matchup.target))
-        .filter((hero): hero is Hero => Boolean(hero)),
+        .filter((hero): hero is Hero => Boolean(hero))
+        .map((hero) => ({ hero })),
     }))
   )
 

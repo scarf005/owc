@@ -17,13 +17,18 @@ type MapMode = {
   maps: MapInfo[]
 }
 
+type MapRecommendation = {
+  id: string
+  note?: string
+}
+
 type MapInfo = {
   id: string
   name: string
   page: string
   image: string
-  attack: string[]
-  defense: string[]
+  attack: MapRecommendation[]
+  defense: MapRecommendation[]
 }
 
 const namuOrigin = "https://namu.wiki"
@@ -216,37 +221,61 @@ const slugify = (text: string) =>
     .replace(/[^a-z0-9가-힣]+/g, "-")
     .replace(/^-|-$/g, "")
 
-const parseHeroIds = (text: string) => {
-  const ids: string[] = []
-  for (const chunk of text.split(/[,，]/)) {
-    const name = chunk
-      .replace(/\[[^\]]+\]/g, "")
-      .replace(/\([^)]*\)/g, "")
-      .replace(/[\u00a0 \t\n]+/g, " ")
-      .trim()
-    if (!name) continue
-    const hero = heroByName.get(name) ?? heroByName.get(name.replace(": ", ":"))
-    if (hero && !ids.includes(hero.id)) ids.push(hero.id)
+const parseNoteTitles = (html: string) =>
+  [...html.matchAll(/<a\b[^>]*href=['"]#fn-[^'"]+['"][^>]*>/g)]
+    .map((match) => attr(match[0], "title"))
+    .filter((note): note is string => Boolean(note))
+    .map((note) => cleanText(note))
+
+const parseMapRecommendationCell = (html: string) => {
+  const anchors = [...html.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)]
+    .map((match) => ({ html: match[0], index: match.index ?? 0 }))
+  const heroAnchors: { html: string; index: number; heroId: string }[] = []
+  for (const anchor of anchors) {
+    const heroId = heroIdFromAnchor(anchor.html)
+    if (heroId) heroAnchors.push({ ...anchor, heroId })
   }
-  return ids
+  const recommendations: MapRecommendation[] = []
+
+  for (const [index, anchor] of heroAnchors.entries()) {
+    if (recommendations.some((entry) => entry.id === anchor.heroId)) continue
+    const noteHtml = html.slice(
+      anchor.index + anchor.html.length,
+      heroAnchors[index + 1]?.index ?? html.length,
+    )
+    const note = parseNoteTitles(noteHtml).join("\n")
+    recommendations.push({ id: anchor.heroId, ...(note ? { note } : {}) })
+  }
+
+  return recommendations
 }
 
 const parseMapRecommendations = (html: string) => {
-  const text = cleanText(html)
-    .replace(/\[[^\]]+\]/g, " ")
-    .replace(/\s+/g, " ")
-  const match = text.match(
-    /공격 추천\s*(.*?)\s*(?:방어|수비) 추천\s*(.*?)(?:\s*1\.\s*개요|$)/,
-  )
-  return {
-    attack: match ? parseHeroIds(match[1]) : [],
-    defense: match ? parseHeroIds(match[2]) : [],
+  const result: { attack: MapRecommendation[]; defense: MapRecommendation[] } =
+    {
+      attack: [],
+      defense: [],
+    }
+
+  for (const row of html.matchAll(/<tr\b[^>]*>[\s\S]*?<\/tr>/g)) {
+    const cells = [...row[0].matchAll(/<td\b[^>]*>[\s\S]*?<\/td>/g)].map((
+      cell,
+    ) => cell[0])
+    if (cells.length < 2) continue
+    const label = cleanText(cells[0])
+    if (label.includes("공격 추천")) {
+      result.attack = parseMapRecommendationCell(cells[1])
+    } else if (label.includes("방어 추천") || label.includes("수비 추천")) {
+      result.defense = parseMapRecommendationCell(cells[1])
+    }
   }
+
+  return result
 }
 
 const mapDetailsCache = new Map<
   string,
-  { image: string; attack: string[]; defense: string[] }
+  { image: string; attack: MapRecommendation[]; defense: MapRecommendation[] }
 >()
 
 const fetchMapDetails = async (page: string, fallback: string) => {
@@ -392,13 +421,18 @@ export type SynergyEntry = {
   rating: SynergyRating
 }
 
+export type MapRecommendation = {
+  id: HeroId
+  note?: string
+}
+
 export type MapInfo = {
   id: string
   name: string
   page: string
   image: string
-  attack: HeroId[]
-  defense: HeroId[]
+  attack: MapRecommendation[]
+  defense: MapRecommendation[]
 }
 
 export type MapMode = {
