@@ -524,6 +524,43 @@ Deno.test({
 })
 
 Deno.test({
+  name: "right-column hero selection resizes result cards before clipping",
+  timeout: 60_000,
+  async fn() {
+    const { child, url } = await startServer()
+    const browser = await chromium.launch()
+    const page = await browser.newPage({
+      viewport: { width: 1512, height: 884 },
+    })
+
+    try {
+      await page.goto(`${url}?view=matchups&hero=d-va&map=부산`)
+      await page.waitForSelector(".result .hero-button")
+
+      const result = page.locator(".result")
+      await result.getByRole("button", { name: "안란" }).click()
+      await page.waitForTimeout(50)
+
+      assert(
+        await page.locator(".selected-hero strong").getByText("안란", {
+          exact: true,
+        }).isVisible(),
+        "right-column hero pick was not reflected",
+      )
+      assert(
+        await result.evaluate((node) => node.scrollHeight <= node.clientHeight),
+        "result cards were not resized after a right-column hero pick",
+      )
+    } finally {
+      await page.close().catch(() => undefined)
+      await browser.close().catch(() => undefined)
+      child.kill("SIGTERM")
+      await child.status.catch(() => undefined)
+    }
+  },
+})
+
+Deno.test({
   name: "desktop zoom keeps lower hero picker cards reachable by scrolling",
   timeout: 60_000,
   async fn() {
