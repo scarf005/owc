@@ -16,7 +16,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  validate:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,22 +25,25 @@ jobs:
         with:
           deno-version: v2.x
           cache: true
-      - uses: actions/configure-pages@v5
-        if: github.event_name != 'pull_request'
       - run: deno run -A npm:playwright@1.60.0 install --with-deps chromium
       - run: deno task validate
-      - uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'pull_request'
-        with:
-          path: dist
 
   deploy:
     if: github.event_name != 'pull_request'
-    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+          cache: true
+      - uses: actions/configure-pages@v5
+      - run: deno task build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
       - id: deployment
         uses: actions/deploy-pages@v4
