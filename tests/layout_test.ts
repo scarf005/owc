@@ -484,6 +484,64 @@ const clickHeroAndMeasure = async (page: Page, name: string) => {
 }
 
 Deno.test({
+  name: "desktop zoom keeps lower hero picker cards reachable by scrolling",
+  timeout: 60_000,
+  async fn() {
+    const { child, url } = await startServer()
+    const browser = await chromium.launch()
+    const page = await browser.newPage({
+      viewport: { width: 1512, height: 884 },
+    })
+
+    try {
+      await page.goto(`${url}?view=matchups&hero=d-va&map=부산`)
+      await page.waitForSelector(".pick .hero-button")
+
+      const picker = page.getByLabel("영웅 선택")
+      const lastSupportHero = picker.getByRole("button", { name: "주노" })
+      assert(
+        await picker.evaluate((node) => {
+          const style = getComputedStyle(node)
+          return style.overflowY !== "hidden" && style.overflowY !== "clip"
+        }),
+        "hero picker must allow vertical scrolling when it overflows",
+      )
+      assert(
+        await picker.evaluate((node) => node.scrollHeight > node.clientHeight),
+        "150% zoom viewport should exercise a clipped hero picker",
+      )
+
+      await picker.hover()
+      await page.mouse.wheel(0, 1_200)
+      await page.waitForTimeout(50)
+
+      const scrollResult = await picker.evaluate((node) => {
+        const lastButton = [...node.querySelectorAll<HTMLButtonElement>(
+          ".hero-button",
+        )].at(-1)
+        const pickerRect = node.getBoundingClientRect()
+        const buttonRect = lastButton?.getBoundingClientRect()
+        return {
+          scrollTop: Math.round(node.scrollTop),
+          lastVisible: Boolean(
+            buttonRect && buttonRect.bottom <= pickerRect.bottom &&
+              buttonRect.top >= pickerRect.top,
+          ),
+        }
+      })
+      assert(scrollResult.scrollTop > 0, "mouse wheel did not scroll picker")
+      assert(scrollResult.lastVisible, "lower support heroes stayed hidden")
+      assert(await lastSupportHero.isVisible(), "Juno card was not reachable")
+    } finally {
+      await page.close().catch(() => undefined)
+      await browser.close().catch(() => undefined)
+      child.kill("SIGTERM")
+      await child.status.catch(() => undefined)
+    }
+  },
+})
+
+Deno.test({
   name:
     "navbar exposes synergies and sourced map data without fake recommendations",
   timeout: 60_000,
