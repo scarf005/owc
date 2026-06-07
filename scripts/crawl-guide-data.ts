@@ -8,6 +8,7 @@ type Rating = "veryGood" | "good" | "neutral" | "bad" | "veryBad"
 type RatedHero = {
   target: string
   rating: Rating
+  note?: string
 }
 
 type MapMode = {
@@ -176,7 +177,12 @@ const parseRatedHeroSections = (
       if (
         !target || result[role].some((entry) => entry.target === target)
       ) continue
-      result[role].push({ target, rating: classify(cleanText(listItem[0])) })
+      const note = parseNoteTitles(listItem[0]).join("\n")
+      result[role].push({
+        target,
+        rating: classify(cleanText(listItem[0])),
+        ...(note ? { note } : {}),
+      })
     }
   }
 
@@ -419,6 +425,7 @@ export type SynergyRating = "veryGood" | "good" | "neutral" | "bad" | "veryBad"
 export type SynergyEntry = {
   target: HeroId
   rating: SynergyRating
+  note?: string
 }
 
 export type MapRecommendation = {

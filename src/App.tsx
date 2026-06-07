@@ -98,13 +98,8 @@ const writeQueryState = (
   }
 }
 
-const heroItemsFromIds = (ids: string[]): HeroRowItem[] =>
-  ids.map((id) => heroById.get(id)).filter((hero): hero is Hero =>
-    Boolean(hero)
-  ).map((hero) => ({ hero }))
-
-const heroItemsFromMapRecommendations = (
-  entries: MapRecommendation[],
+const heroItemsFromEntries = (
+  entries: { id: string; note?: string }[],
 ): HeroRowItem[] => {
   const items: HeroRowItem[] = []
   for (const entry of entries) {
@@ -113,6 +108,10 @@ const heroItemsFromMapRecommendations = (
   }
   return items
 }
+
+const heroItemsFromMapRecommendations = (
+  entries: MapRecommendation[],
+): HeroRowItem[] => heroItemsFromEntries(entries)
 
 function HeroButton(
   props: { hero: Hero; note?: string; selected?: boolean; onClick: () => void },
@@ -299,10 +298,10 @@ function SynergyPanel(props: { hero: Hero | undefined }) {
       ? synergyRatings.map((rating) => ({
         key: rating.key,
         label: rating.label,
-        heroes: heroItemsFromIds(
+        heroes: heroItemsFromEntries(
           (heroSynergies[hero.id] ?? [])
             .filter((entry) => entry.rating === rating.key)
-            .map((entry) => entry.target),
+            .map((entry) => ({ id: entry.target, note: entry.note })),
         ),
       }))
       : []
@@ -466,11 +465,11 @@ function App() {
   const grouped = createMemo(() =>
     ratingOrder.map((rating) => ({
       ...rating,
-      heroes: (matchups[selectedId()] ?? [])
-        .filter((matchup) => matchup.rating === rating.key)
-        .map((matchup) => heroById.get(matchup.target))
-        .filter((hero): hero is Hero => Boolean(hero))
-        .map((hero) => ({ hero })),
+      heroes: heroItemsFromEntries(
+        (matchups[selectedId()] ?? [])
+          .filter((matchup) => matchup.rating === rating.key)
+          .map((matchup) => ({ id: matchup.target, note: matchup.note })),
+      ),
     }))
   )
 

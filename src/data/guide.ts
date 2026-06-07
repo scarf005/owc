@@ -5,6 +5,7 @@ export type SynergyRating = "veryGood" | "good" | "neutral" | "bad" | "veryBad"
 export type SynergyEntry = {
   target: HeroId
   rating: SynergyRating
+  note?: string
 }
 
 export type MapRecommendation = {
@@ -174,6 +175,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "pharah",
       "rating": "veryGood",
+      "note":
+        "참고로 파라는 모든 디바 카운터 영웅 상대로 상성상 우위 또는 절대 우위에 있다.\n다만 이쪽은 재수 없이 튕겨내기에 맞거나 고지대에서 용검을 킨 채로 들어가면 되레 당할 수 있으니 주의.",
     },
     {
       "target": "freja",
@@ -182,6 +185,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "hanzo",
       "rating": "good",
+      "note":
+        "이전 버전 서술에선 디바를 따라갈 만큼 빠르지 않아서 합이 안 맞는다 서술되었지만, 한조는 애초에 공격사거리가 긴 지정사수이기 때문에 일일이 디바와 가까이 붙지 않아도 디바를 지원해 줄 수 있다.",
     },
     {
       "target": "lifeweaver",
@@ -194,6 +199,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mercy",
       "rating": "good",
+      "note":
+        "특히 겐지와 정크랫의 궁극기로부터 메르시를 보호할 때 유용한데, 만약 폭탄 받아라나 류승룡 기모찌가 들리면 메르시에게 수호천사를 쓰라고 말한 후 부스터를 써서 하늘로 대피시켜주자.",
     },
     {
       "target": "moira",
@@ -214,6 +221,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ana",
       "rating": "good",
+      "note":
+        "강화제를 받은 건 D.va의 메카이지 송하나가 아니기 때문에 자폭을 쓰는 순간 강화효과가 풀려버린다.",
     },
     {
       "target": "wuyang",
@@ -316,6 +325,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "venture",
       "rating": "veryGood",
+      "note":
+        "낙사를 제외한 모든 공격을 막는 절대방어인 자리야의 입자 방벽 제외.",
     },
     {
       "target": "sojourn",
@@ -522,6 +533,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "sojourn",
       "rating": "good",
+      "note":
+        "특히 이들 중에선 레킹볼이랑 운영 포지션이 같은 소전이나 캐서디랑 같이 쓰이는 경우가 많다.",
     },
     {
       "target": "sombra",
@@ -656,10 +669,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mei",
       "rating": "good",
+      "note":
+        "예를 들면 윈스턴이 적 로드호그의 갈고리에 끌려가서 위험해졌을 때 메이가 윈스턴 앞에 빙벽을 쳐서 포커싱당하지 못하게 하든가, 윈스턴을 집요하게 쫓아오는 적군 디바를 냉각총으로 감속시켜서 윈스턴이 살아남을 수 있게 해주던가.",
     },
     {
       "target": "bastion",
       "rating": "neutral",
+      "note":
+        "다만, 한조의 리메이크로 인해서 윈스턴이 유리한 건 아니니 주의하자. 가뜩이나 한조 상대로는 윈스턴보다 겐지나 디바가 더 낫다.\n다만, 아나와 젠야타의 경우 저 둘 이상의 극악의 상성 관계이므로 논외, 거기다 수면총과 부조화의 구슬로 인해서 윈스턴한테까지 까다롭다. 다만 이 둘을 절대 이길 수 없는 경우가 대다수인 바스티온과는 달리 윈스턴은 제대로 기습만 했다면 물몸 뚜벅이인 저 둘을 이길 수 있다.",
     },
     {
       "target": "vendetta",
@@ -976,6 +993,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "d-va",
       "rating": "veryBad",
+      "note":
+        "리퍼, 로드호그, 정커퀸 등등\n뚜벅이와 가까이 다가온 힐러가 보통 이에 해당하며 예시로는 라인하르트, 라마트라, 아나를 들 수 있다.",
     },
     {
       "target": "domina",
@@ -992,6 +1011,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mauga",
       "rating": "veryBad",
+      "note":
+        "마우가는 지속피해와 사거리에서 강점을 보이고 호그는 순간피해와 변수에서 더 능하다.",
     },
     {
       "target": "sigma",
@@ -1020,10 +1041,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "reaper",
       "rating": "bad",
+      "note":
+        "사실 공격 패턴은 로드호그가 리퍼보다 더 유연성이 큰 편이다. 근접화력은 둘 다 강력하지만, 반드시 붙어서 평타로 치고 빠지거나 사각을 노리고 궁으로 적들을 쓸어담는 것이 전부인 리퍼에 비해서 로드호그는 거리만 확보되면 갈고리로 중거리나 고지대에서의 적을 캐치할 수 있는 변수가 있다. 리퍼보다는 짧은 사거리의 제한을 어느 정도 커버할 수 있는 수단이 있는 셈. 다만 그것을 제외하면 그래도 기본 무기가 제법 안정된 리퍼에 비해서, 로드호그는 기본 무기의 성능이 심히 불안정하여 갈고리에 대부분 의존하는 성향이 있다. 결국 둘 다 큰 차이는 없는 셈.",
     },
     {
       "target": "mei",
       "rating": "good",
+      "note":
+        "이 연계는 로드호그가 아닌 다른 딜러들과도 궁합이 맞는 콤보이지만, 갈고리콤보를 베이스로 삼는 로드호그가 갈고리 없이도 쉽게 킬을 할 수 있는 점이 진정한 메리트이다.\n메이의 체력은 300, 로드호그의 체력은 600이므로 정확히는 2배이다.",
     },
     {
       "target": "bastion",
@@ -1044,10 +1069,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "soldier-76",
       "rating": "good",
+      "note":
+        "겐지, 트레이서, 둠피스트 같은 암살자들은 모두 맥과 로드호그에게 취약하며, 솔저가 쏘는 120뎀의 나선 로켓도 요주의 대상이다.",
     },
     {
       "target": "sombra",
       "rating": "good",
+      "note":
+        "돌격군이라도 보호막이 체력에 포함된 자리야는 맨몸으로 EMP 맞으면 체력이 400에서 200으로 깎여버리므로 갈고리 원콤에 처치할 수 있다.",
     },
     {
       "target": "symmetra",
@@ -1128,6 +1157,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ana",
       "rating": "bad",
+      "note":
+        "예를 들어, 자리야의 중력자탄과 연계하면 적들이 2초 만에 갈려나가는 것을 볼 수 있다.\n흔한 상황은 아니지만 이럴 경우 펠릿을 온전히 머리에만 맞게 되어 탱커급이 아닌 이상 끔살 확정.",
     },
     {
       "target": "wuyang",
@@ -1182,6 +1213,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "roadhog",
       "rating": "good",
+      "note":
+        "특히 이 둘은 라이프위버나 키리코가 반필수로 기용되어야 본전을 뽑는 게 가능하다.",
     },
     {
       "target": "sigma",
@@ -1542,6 +1575,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "doomfist",
       "rating": "good",
+      "note":
+        "파워 블락 펀치 172.5+자리야 고에너지 광선 190\n그런데 둠피가 파워 블락 쓸 때는 체력 적은 경우가 많은지라 겹치더라도 방벽 줘야되는 경우가 생긴다. 자유역할에선 최대체력깍이는지라 더더욱.",
     },
     {
       "target": "ramattra",
@@ -1586,6 +1621,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "genji",
       "rating": "veryBad",
+      "note":
+        "나노 강화제를 받은 상태라면 용검 + 질풍참(180 + 75) 콤보로 피 250이하의 영웅은 초월을 받아도 처치할 수 있다.",
     },
     {
       "target": "reaper",
@@ -1594,6 +1631,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mei",
       "rating": "bad",
+      "note": "라인하르트의 방벽도 내리게 만들어버린다.",
     },
     {
       "target": "bastion",
@@ -1618,6 +1656,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "sombra",
       "rating": "good",
+      "note":
+        "루시우의 궁극기 소리 방벽은 시전 후에 EMP를 사용해도 무력화가 가능하다. 다만 젠야타의 궁극기는 EMP로도 해제할 수 없으므로 이 경우 솜브라가 선수를 쳐야 한다.\n젠야타, 디바 등을 위시할 경우.",
     },
     {
       "target": "symmetra",
@@ -1642,10 +1682,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "widowmaker",
       "rating": "veryBad",
+      "note":
+        "딜러들이 궁연계를 못할 경우 위도우가 이렇게라도 힐러를 포함한 체력 250대 영웅 셋 이상을 잘라주면 그것도 나름 이득이다.",
     },
     {
       "target": "junkrat",
       "rating": "bad",
+      "note":
+        "루시우의 소리 방벽은 초당 100씩 감소하는 500의 보호막을 씌우는 스킬이고, 정크랫의 죽이는 타이어는 600의 피해량을 내므로 이론적으로는 정크랫이 타이어를 터뜨리기 1초 직전에 쓸 경우 체력이 250인 영웅을 기준으로 100의 체력이 남은 채 버틴다. 하지만 루시우 입장에서도 죽이는 타이어 하나 막아보겠다고 소리 방벽을 아끼다가는 자신을 포함한 아군들이 타이어가 오기도 전에 사방에서 날아오는 다른 적군들의 집중포화에 녹아내릴 것이고, 용케 타이밍 맞춰서 썼다고 해도 정크랫 입장에선 빙빙 돌리다가 터뜨려버리면 끝이니 사실상 배제해도 되는 상황이다.\n패시브 스킬 완전난장판",
     },
     {
       "target": "cassidy",
@@ -1658,6 +1702,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "tracer",
       "rating": "bad",
+      "note":
+        "원래 펄스폭탄은 아군과 합을 맞추기보다는 중간중간 기회를 봐가며 트레이서 독단으로 킬을 노리는데 쓰는 기술인데, 아군에 자리야가 있다면 펄스 폭탄의 활용도 자체가 달라질 정도로 중력자탄 연계의 효율은 탁월하다.\n트레이서에게 2초란 240딜을 풀로 넣고 장전까지 할 수 있는 귀중한 시간이다.",
     },
     {
       "target": "pharah",
@@ -1670,6 +1716,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "hanzo",
       "rating": "veryGood",
+      "note":
+        "한조의 용의 일격의 DPS는 약 287으로 젠야타 초월의 HPS 300보다 낮다. 단, 공격력 버프를 받으면 초월을 훌쩍 넘어버린다. 다만 자탄에 대고 쏘는 건 한조만이 아니다. 자리야는 물론 힐러들도 공격하니 실전에선 초월도 얼마든지 뚫린다.\n예전에는 불사 장치+방벽으로 살아남는 게 유일한 방법이였으나 현재는 용이 불사 장치도 파괴하는지라 자탄+용의 일격은 완벽한 가불기가 되었다.",
     },
     {
       "target": "lifeweaver",
@@ -1686,6 +1734,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "moira",
       "rating": "good",
+      "note":
+        "정확히는 자탄 명중시킨 뒤 입자포로 지지고 있을 자리야와 자탄에 묶인적들을 한꺼번에 융화로 맞춰야된다.",
     },
     {
       "target": "mizuki",
@@ -1702,6 +1752,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ana",
       "rating": "veryBad",
+      "note":
+        "이는 리퍼의 DPS인 280을 간신히 넘는 수준이기는 하지만 산탄식 무기가 아니어서 고정적인 피해가 박히고, 무엇보다 자리야가 공격군이 아닌 피격에 있어서 부담감이 적은 돌격군임을 감안하고 생각해야 한다.",
     },
     {
       "target": "wuyang",
@@ -1736,6 +1788,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "doomfist",
       "rating": "neutral",
+      "note":
+        "좁은 맵에선 소닉 리펄서로 적을 벽에 박으면 기절에 걸릴 수 있지만 맵을 탄다는 단점이 있다.",
     },
     {
       "target": "ramattra",
@@ -1752,6 +1806,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "roadhog",
       "rating": "good",
+      "note":
+        "특히 도미나에게는 천적이나 마찬가지인 둠피스트, 라마트라, 라인하르트 모두 로드호그가 모조리 마킹이 가능하기에 더욱 빛난다.",
     },
     {
       "target": "mauga",
@@ -1760,6 +1816,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "sigma",
       "rating": "bad",
+      "note": "그나마 시그마는 주요 특전으로 수직 기동성은 챙길 수 있다.",
     },
     {
       "target": "orisa",
@@ -2126,6 +2183,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "kiriko",
       "rating": "good",
+      "note":
+        "스킨 포세이돈 라마트라가 저 스타 플라티나를 닮아서 일부에선 여우길+응징을 오라오라로 부른다.",
     },
   ],
   "reinhardt": [
@@ -2148,6 +2207,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "wrecking-ball",
       "rating": "veryBad",
+      "note":
+        "전장이 유동적으로 이동하고 근본적으로 목표에 달라붙어 경기 진행을 저지해야 하는 화물맵과 밀기맵이 개싸움 벌어지기 좋다.",
     },
     {
       "target": "roadhog",
@@ -2164,6 +2225,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "orisa",
       "rating": "good",
+      "note":
+        "오리사의 궁은 상대를 끌어모아서 상대가 나가기 전 범위 내의 적을 공격하는 궁이고 이 끌어모으는 것 자체는 지속형이 아니라서 금세 상대가 흩어질 가능성이 있는데, 라인하르트 궁은 상대를 2초 넘게 눕힌다. 즉 한 번 더 눕혀서 못 나가게 만든 사이 오리사 딜량이 더 모이면 몇몇 탱도 확정적으로 잡아낼 수 있게 된다.",
     },
     {
       "target": "winston",
@@ -2184,6 +2247,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "genji",
       "rating": "veryBad",
+      "note":
+        "단 쟁탈맵은 의외로 겐지와 라인의 시너지가 괜찮다. 둘 다 즉발성 공격들이 방벽을 무시하고 피해가 들어가기 때문에 상대가 방벽을 열심히 세워도 물몸들은 망치와 질풍참으로 정리할 수 있다.",
     },
     {
       "target": "reaper",
@@ -2232,6 +2297,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ashe",
       "rating": "good",
+      "note":
+        "상대 라인하르트가 밥에 얻어맞아서 잠깐이라도 붕 뜨기라도 했을 때 내리찍으면 좋다.",
     },
     {
       "target": "echo",
@@ -2284,6 +2351,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "moira",
       "rating": "bad",
+      "note": "생체 손아귀 HPS 70+생체 구슬 HPS 60",
     },
     {
       "target": "mizuki",
@@ -2316,6 +2384,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "zenyatta",
       "rating": "good",
+      "note":
+        "그마저도 우수한 기동성이나 둠피스트, 윈스턴같이 방벽을 관통할 수 있는 공격으로 젠야타뿐만 아니라, 라인하르트 본인 또한 위험해질 수 있다.",
     },
     {
       "target": "juno",
@@ -2450,6 +2520,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "cassidy",
       "rating": "good",
+      "note":
+        "황야의 무법자를 시전하자마자 바로 발사할 경우 80의 피해를 입히는데, 이는 중력 붕괴의 체력 비례 피해를 입은 비돌격군은 즉사하고도 남는 체력이다.",
     },
     {
       "target": "torbjorn",
@@ -2746,6 +2818,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "reinhardt",
       "rating": "good",
+      "note":
+        "단, 적의 체력이 300 이하라면 그냥 메이코패스 플레이 정도밖에 안 된다.\n겐지까지 더해 중력자탄이나 눈보라 튕겨내기에 성공했다면 13.5초 혹은 15.5초까지 늘어난다.",
     },
     {
       "target": "wrecking-ball",
@@ -2770,6 +2844,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "winston",
       "rating": "good",
+      "note":
+        "예를 들면 윈스턴이 적 로드호그의 갈고리에 끌려가서 위험해졌을 때 메이가 윈스턴 앞에 빙벽을 쳐서 포커싱당하지 못하게 하든가, 윈스턴을 집요하게 쫓아오는 적군 디바를 냉각총으로 감속시켜서 윈스턴이 살아남을 수 있게 해주던가.",
     },
     {
       "target": "zarya",
@@ -2786,6 +2862,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "genji",
       "rating": "bad",
+      "note":
+        "그나마 겐지는 특유의 기동성과 튕겨내기 때문에 파라 입장에서도 상대하기 까다로운 적이다.",
     },
     {
       "target": "reaper",
@@ -2874,6 +2952,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mercy",
       "rating": "veryBad",
+      "note": "대신 공버프를 받으면 트레이서를 헤드샷 한 방에 잡을 수는 있다.",
     },
     {
       "target": "moira",
@@ -2936,6 +3015,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "wrecking-ball",
       "rating": "good",
+      "note":
+        "시즌10에서 리메이크되어 방어막 나눠주기가 생겨서 조금은 케어를 해주게 되었다.",
     },
     {
       "target": "roadhog",
@@ -2944,6 +3025,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mauga",
       "rating": "bad",
+      "note": "기관포 전탄 헤드(303DPS)+ 강습모드(360DPS)",
     },
     {
       "target": "sigma",
@@ -3096,6 +3178,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "jetpack-cat",
       "rating": "good",
+      "note":
+        "특히 아예 주요 특전을 찍고 들어가는 화물전 3~4라운드나 주요 특전이 빠르게 찍히는 쟁탈전 2~3라운드에 깜짝 날빌로 사용하기에 좋다.\n다만 린드홀름 폭발물은 맞냥바스전에선 안 찍는 게 좋다. 일반 강습이 DPS가 훨씬 높아서 힘싸움이 필패가 되어버린다. 거기에 대공 능력 자체도 일반 강습이 더 좋다. 비슷한 논리로 적 공격군이 파라, 에코, 프레야 등 공중 기동 영웅인 경우 쏘는 족족 직격타를 맞출 자신이 없다면 일반 강습이 더 낫다.",
     },
     {
       "target": "zenyatta",
@@ -3138,6 +3222,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "roadhog",
       "rating": "veryGood",
+      "note":
+        "이유는 간단하다. 호그의 궁은 상대를 멀직이 밀어버리므로 거리가 멀어지면 솔저가 궁을 쓴다 한들 제대로 딜을 넣기가 힘들다. 차라리 솔저의 궁으로 상대를 몇 명 따낸 다음에 남은 상대들을 호그가 궁으로 날려서 격퇴하는 게 효과적이다.",
     },
     {
       "target": "mauga",
@@ -3158,6 +3244,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "zarya",
       "rating": "veryGood",
+      "note":
+        "어찌 보면 자탄과 연계는 비효율적이다. 전술 조준경은 맞히기 어려운 상대를 맞히기 위한 궁인데, 자탄에 묶인 적들은 수초동안 움직이지 못한다.\n뚜벅이라서 전선 복귀도 오래 걸리고, 방벽을 통해서 채웠던 에너지가 모두 0이 돼 버린다. 그 대신 팀의 대열이 유지만 되고 있다면 좀비를 방불케 하는 생존력으로 자리야가 죽어있는 상황이라는 게 별로 나오지를 않는 경우가 많다.",
     },
     {
       "target": "junker-queen",
@@ -3174,10 +3262,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "reaper",
       "rating": "good",
+      "note":
+        "설정상 사이가 안 좋은 영웅들끼리 시너지가 좋은 경우가 많다. 토르비욘과 시메트라, 메이와 정크랫, 자리야와 바스티온 등.",
     },
     {
       "target": "mei",
       "rating": "bad",
+      "note":
+        "사실 적합하지는 않다. 메이가 딜러진 중 제일 느린지라(빙벽을 이용한 수직 기동성만 조금 있고 수평 기동성은 전무.) 그나마 달리기가 있는 솔저가 대신 사이드 플레이해 줘야되는 것.",
     },
     {
       "target": "bastion",
@@ -3194,10 +3286,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "sojourn",
       "rating": "bad",
+      "note":
+        "소전의 파워 슬라이드는 쿨타임이 7초여서 주로 생존&도망기로 쓰는지라 사이드 플레이해 주기 힘들다.",
     },
     {
       "target": "sombra",
       "rating": "good",
+      "note":
+        "스토리상으로도 둘 다 탈론 뒤에 숨은 조직을 쫓는 사이어서 협력관계라서 좋은 궁합이다.",
     },
     {
       "target": "symmetra",
@@ -3226,6 +3322,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "junkrat",
       "rating": "bad",
+      "note":
+        "특히 폭탄마가 있을 경우 라인하르트 방벽 싸움은 파라와 대등한 뎀지의 화력에 밀려 대부분 지고 들어가게 된다. 그렇다고 방벽을 내리고 있거나 라인하르트를 뺄 경우 폭탄마 유탄을 피하느라 에임이나 집중력이 흐트러져서 솔저나 기타 적을 상대하기 버거워진다.",
     },
     {
       "target": "cassidy",
@@ -3258,6 +3356,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "lucio",
       "rating": "veryGood",
+      "note":
+        "반대로 합이 안 맞으면 소리 파동 밀치기나 이속음악이 솔저의 에임을 방해한다.",
     },
     {
       "target": "mercy",
@@ -3412,6 +3512,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "junkrat",
       "rating": "neutral",
+      "note":
+        "단 파라가 나올 시에는 원거리 견제가 불가능해서 난감하니, 픽을 바꾸도록 하자.",
     },
     {
       "target": "cassidy",
@@ -3634,6 +3736,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mercy",
       "rating": "good",
+      "note": "발당 회복량이 20에서 26으로 증가.",
     },
     {
       "target": "moira",
@@ -3700,6 +3803,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "reinhardt",
       "rating": "good",
+      "note":
+        "가장 대표적인 보완점으로는 개활지에서 무력해지는 정크랫을 방벽을 이용해서 개활지에서도 힘을 쓸 수 있게 해주는 것이 있다.",
     },
     {
       "target": "wrecking-ball",
@@ -3724,10 +3829,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "winston",
       "rating": "good",
+      "note":
+        "윈스턴의 또 다른 하드카운터인 리퍼, 로드호그도 정크랫 입장에선 각각 선빵을 안 당하고 갈고리를 피하면 유리해진다.",
     },
     {
       "target": "zarya",
       "rating": "veryGood",
+      "note":
+        "물론 이쪽은 메카는 풀피에 시메트라 보호 방벽이나 토르비욘 방어구를 먹은 게 아닌 이상 메카는 무조건 터지고 가기 때문에 대부분 홀로 살아남아 리스폰 꼬아버리기의 희생양이 되기 일쑤다. 하지만 반대로 타이밍 좋게 매트릭스가 자탄을 삼켜서 상대 궁각을 제대로 망쳐버리는 것도 가능하니 일종의 하이리스크 하이 리턴인 셈. 옛날에는 부스터로 탈출도 가능했지만 패치로 불가능해졌다.\n방어 강화가 피해 감소 외에 중력자탄 효과에서 벗어나는 능력도 갖지만 뚜벅이라서 정크랫 면상궁에 대처하는 건 무리다. 자리야와 정크랫의 소통이 잘 안돼서 타이어 발동이 늦었다면 발빠지게 달려보자.",
     },
     {
       "target": "junker-queen",
@@ -3740,6 +3849,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "genji",
       "rating": "bad",
+      "note":
+        "겐지는 킬 결정력이 높은 대신 화력이 낮고, 정크랫은 반대로 화력이 강한 대신 킬 결정력이 낮다.",
     },
     {
       "target": "reaper",
@@ -3748,6 +3859,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mei",
       "rating": "veryGood",
+      "note":
+        "비돌격군 영웅들 중 이를 버틸 수 있는 영웅은 설정: 전차를 발동한 풀피 바스티온 외에는 없다. (얘는 헤드샷이 없어서 메이 우클 피해가 감소, 총 피해가 315다. 철갑으로 변경되어 피해가 아머 경감이 있더라도 첫 두발만 감소라 302. 설정: 경계는 근소하게 버틸 수 없다.)",
     },
     {
       "target": "bastion",
@@ -3768,10 +3881,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "soldier-76",
       "rating": "bad",
+      "note":
+        "특히 정크랫이 있을 경우 라인하르트 방벽 싸움은 파라와 대등한 피해의 화력에 밀려서 대부분 지고 들어가게 된다. 그렇다고 방벽을 내리고 있거나 라인을 뺄 경우 정크랫의 유탄을 피하느라 에임이나 집중력이 흐트러져서 솔저나 기타 적을 상대하기 버거워진다.",
     },
     {
       "target": "sombra",
       "rating": "veryGood",
+      "note":
+        "순간화력은 리퍼-솜브라보다는 약간 낮지만 기동성은 정크랫-솜브라가 리퍼-솜브라보다 우위이다.",
     },
     {
       "target": "symmetra",
@@ -3934,6 +4051,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "bastion",
       "rating": "veryGood",
+      "note":
+        "바스티온에게 심각한 위협이 되는 겐지나 트레이서는 포탑에 맥을 못 추고 포탑의 낮은 DPS를 씹고 철거할 수 있는 떡체력의 돌격군을 컷하는 것에는 바스티온만 한 게 없다.",
     },
     {
       "target": "vendetta",
@@ -3966,6 +4085,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ashe",
       "rating": "bad",
+      "note":
+        "물론 포탑+밥의 포커싱만으로는 끊임없이 힐이 들어오는 상대 딜힐러들을 자르기는 부족한 편이나 그 동안 아군이 놀고 있는 것도 아니고 이 둘의 포커싱에 힘입어 지워사격까지 하는 것을 감안한다면...",
     },
     {
       "target": "echo",
@@ -3978,6 +4099,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "widowmaker",
       "rating": "neutral",
+      "note": "위도우와 한조는 같은 위도우와 한조가 카운터를 칠 수도 있다.",
     },
     {
       "target": "junkrat",
@@ -4176,6 +4298,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "junkrat",
       "rating": "good",
+      "note": "예시",
     },
     {
       "target": "cassidy",
@@ -4552,6 +4675,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "sombra",
       "rating": "good",
+      "note":
+        "물론 에코가 비행 능력으로 벽이나 오브젝트 등의 지대로 엄폐를 하여 생존을 도모할 수는 있지만, 그렇게 되면 에코 특유의 제공권을 통한 파괴력이 줄어들기에 시간 낭비나 다름없다. 공중에서 활보하여 공격하는 동안은 적들에게 필연적으로 본인을 드러내는 경우가 잦고, 게다가 파라와는 달리 에코는 비행 시간에 어느 정도 한계가 있어서 비행 모드가 종료되면 잠시뿐이지만 생존기 없이 뚜벅이 신세가 된다는 점을 잘 인지하는 게 중요하다.",
     },
     {
       "target": "symmetra",
@@ -4616,6 +4741,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mercy",
       "rating": "bad",
+      "note":
+        "이 때문에라도 구 오버워치 당시의 파르시 조합처럼, 메르시를 대동한 에코가 비행으로 시야를 피하며 아예 전장을 횡단해서 적진 뒷라인을 암습하는 케이스가 적지 않다. 에코는 근접전에서 광선+폭탄의 폭딜에 복제를 통한 자가 생존까지 가능하여, 포킹으로 찍어누르는 프레야처럼 허공에서 총만 쏘는 것은 에코 자신의 고점을 스스로 깎는 꼴이기도 하다.",
     },
     {
       "target": "moira",
@@ -4666,6 +4793,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "d-va",
       "rating": "veryGood",
+      "note":
+        "다만 이쪽은 재수 없이 튕겨내기에 맞거나 고지대에서 용검을 킨 채로 들어가면 되려당할 수 있으니 주의.\n참고로 파라는 모든 디바 카운터 영웅 상대로 상성상 우위 또는 절대 우위에 있다.\n현재 메타상으로는 실력만 된다면 자리야보다 지형 궁합이 더 좋은 디바를 추천하는 경우가 많다.",
     },
     {
       "target": "domina",
@@ -4722,6 +4851,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "genji",
       "rating": "bad",
+      "note": "단 겐지와 파라 모두에게 유리한 에코가 있다면 크게 불리해진다.",
     },
     {
       "target": "reaper",
@@ -4774,6 +4904,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "echo",
       "rating": "bad",
+      "note":
+        "리퍼, 겐지, 시메트라 등. 트레이서는 에코 상대로 유리한 데다 파라도 고도가 낮다면 위험하다.",
     },
     {
       "target": "emre",
@@ -4814,10 +4946,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "lucio",
       "rating": "good",
+      "note":
+        "루시우 + 파라의 운영과 관련해서는 크레이지 라쿤의 볼파트루아 조합을 참고하면 좋다. 이 경우 사실 루시우는 트레이서와 사이드를 밀고 아나를 운반 및 보호하는 역할 일 뿐, 파라와 시너지를 기대하고 도입한 것은 아니다.",
     },
     {
       "target": "mercy",
       "rating": "good",
+      "note":
+        "외국에선 언어 유희를 이용한 PharMercy라는 이름으로 불린다.\n상대 딜러 조합이 겐지 + 벤처 등 투섭딜이라서 대공 능력이 떨어지고, 아군 지원 영웅 중 최소 한 명은 섭딜에게 쉽게 당하지 않도록 생존력 강화가 필요한 경우가 대표적이다.",
     },
     {
       "target": "moira",
@@ -4830,6 +4966,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "baptiste",
       "rating": "bad",
+      "note":
+        "대부분의 치유 기술이나 순간 보호 정도로는 포화의 자해딜을 못 이기고 죽는다. 그러나 불사 장치는 파괴만 안 된다면 자해피해를 얼마나 받든 그대로 전방에 투사할 수 있으며, 포화의 집탄률로 인해 지상에 가깝게 궁을 쓰는 경우도 많으니 케어받기가 아주 불가능하지만은 않다. 이 밖에 세이브가 가능한 영웅은 거의 루시우의 비트나 우양의 해일 폭발 등 궁극기 정도는 되어야 한다.",
     },
     {
       "target": "brigitte",
@@ -4892,6 +5030,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "roadhog",
       "rating": "bad",
+      "note":
+        "갈고리로 끌어서 프레야가 맞추기 쉽게 해 줄 수 있지만 어차피 갈고리에 끌리는 순간 무조건 죽는 목숨이라서 탱커를 끄는 게 아닌 이상 크게 의미가 없다. 킬로 먹고 사는 프레야의 입장에선 상당히 치명적이다.",
     },
     {
       "target": "mauga",
@@ -5074,6 +5214,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "doomfist",
       "rating": "veryGood",
+      "note":
+        "캐서디로 상대할 수는 있지만 둠피스트는 파워블락으로 섬난 한 번은 버틸 수 있고 겐지도 섬광탄을 튕겨낼 수 있다. 둠피스트, 겐지 둘 중 하나가 섬광탄을 맞고 살아나간다면 스킬이 빠진 캐서디는 둘 중 한 명에게 크게 취약해진다.",
     },
     {
       "target": "domina",
@@ -5086,10 +5228,13 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "reinhardt",
       "rating": "veryBad",
+      "note":
+        "망치와 화염 강타, 질풍참, 용검이 전부 방벽을 무시하고 피해가 들어가서 난전에서 둘의 조합이 생각보다 강력하다.",
     },
     {
       "target": "wrecking-ball",
       "rating": "veryBad",
+      "note": "레킹볼은 보호막을 채우거나 그냥 힐팩으로 굴러서 살아갈 수 있다.",
     },
     {
       "target": "roadhog",
@@ -5114,6 +5259,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "zarya",
       "rating": "veryGood",
+      "note":
+        "나노 강화제를 받은 상태라면 용검 + 질풍참(180 + 75) 콤보로 피 250이하의 영웅은 초월을 받아도 처치할 수 있다.",
     },
     {
       "target": "junker-queen",
@@ -5126,6 +5273,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "reaper",
       "rating": "veryBad",
+      "note":
+        "겐지가 수직 기동력을 활용하여 파라를 견제할 수는 있지만, 용검이 있거나 겐지가 유리한 지형조건이 아니라면 파라에게 유의미한 공격을 하기 힘들다. 용검마저도 파라를 잡으려면 따라줘야 하는 조건이 많으며 컨트롤이건 상황이건 조금만 삐끗해도 뻘궁이다.",
     },
     {
       "target": "mei",
@@ -5142,6 +5291,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "venture",
       "rating": "veryGood",
+      "note":
+        "단 캐서디는 벤처를 잘잡고 겐지에게도 쉽지 않기 때문에 유의해야 한다.",
     },
     {
       "target": "sojourn",
@@ -5178,6 +5329,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "junkrat",
       "rating": "bad",
+      "note":
+        "특히 정크랫과 겐지에게 모두 취약한 라인하르트나 D.Va, 오리사, 메르시, 아나, 바스티온같은 영웅들이 가장 크게 고통받는다. 다만 바스티온은 탱커 찢으라고 만든 영웅이지 겐지나 정크랫같은 얇은 몸을 상대하기 위한 영웅이 아니다.",
     },
     {
       "target": "cassidy",
@@ -5214,6 +5367,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mercy",
       "rating": "good",
+      "note": "110 * (100+30)% = 143",
     },
     {
       "target": "moira",
@@ -5230,6 +5384,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ana",
       "rating": "good",
+      "note":
+        "특히 용검 피해 110 너프 및 비돌격군의 체력 일괄 상향이 무엇보다 크다. 체력 250 영웅은 맨몸으로도 용검 2방을 여유롭게 버티고, 나노 강화제를 받고 용검 질풍참을 사용해도 일격에 처치할 수 없다.",
     },
     {
       "target": "wuyang",
@@ -5238,6 +5394,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "illari",
       "rating": "good",
+      "note":
+        "참고로 열상을 입은 적에게 겐지가 90 이상의 피해를 넣어서 열상 폭발로 일리아리가 결정타를 낸 경우 킬로그에 겐지의 도움이 올라간다. 튕겨내기를 제외하고 겐지로 도움을 올릴 수 있는 유일한 방법이다.",
     },
     {
       "target": "jetpack-cat",
@@ -5246,6 +5404,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "zenyatta",
       "rating": "good",
+      "note":
+        "대회에서도 자주 나온 조합이며, 게임 내적으로도 시스템 상에서 자주 묶여서 설명된다.",
     },
     {
       "target": "juno",
@@ -5254,6 +5414,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "kiriko",
       "rating": "bad",
+      "note":
+        "포커싱이 겐지에게 우선 잡히기 때문에 함께 진입해도 위험부담이 적은 편이다.",
     },
   ],
   "reaper": [
@@ -5264,6 +5426,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "doomfist",
       "rating": "good",
+      "note": "주로 돌격군, 특히 로드호그나 자리야 등",
     },
     {
       "target": "ramattra",
@@ -5280,6 +5443,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "roadhog",
       "rating": "good",
+      "note":
+        "이론상으로 1초 동안 555라는 피해를 박아넣을 수 있으며, 헤드샷이라도 터진다면 살아남을 수 있는 영웅은 하나도 없다.",
     },
     {
       "target": "mauga",
@@ -5336,6 +5501,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "soldier-76",
       "rating": "veryBad",
+      "note":
+        "솔저는 물딜이긴 하나 에임핵, 캐서디는 고위력 헤드샷, 리퍼는 고속 광역딜(+피흡).",
     },
     {
       "target": "sombra",
@@ -5400,6 +5567,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "baptiste",
       "rating": "bad",
+      "note":
+        "죽음의 꽃 도는 중심부에 증폭 매트릭스를 깔면 가끔 대박이 나기도하지만 타이밍을 맞추기는 어려우니 거의 무용지물.",
     },
     {
       "target": "brigitte",
@@ -5408,6 +5577,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ana",
       "rating": "good",
+      "note": "파트너 힐러가 루시우나 주노이면 어느 정도 재현은 가능하다.",
     },
     {
       "target": "wuyang",
@@ -5424,6 +5594,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "zenyatta",
       "rating": "bad",
+      "note":
+        "초월 중에 범위 내에 적에 부조화를 거는 초월개화 특전과 죽음의 꽃의 시너지가 좋았으나 현재 삭제되어 옛말이 되었다. 물론 부조화 없어도 초월은 좋은 궁극기이다.\n젠야타가 초월 6초 동안 무적인 걸 이용해 리퍼 대신 CC기를 맞아주는 걸로 해결할 순 있다. 보통 궁을 끊는 가장 확실한 CC기는 수면총이니 아나의 사선을 젠야타가 방해하면 된다.",
     },
     {
       "target": "juno",
@@ -5482,6 +5654,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "zarya",
       "rating": "veryGood",
+      "note":
+        "벤데타는 과거 딜둠보다는 안정성과 기동성이 떨어지나 로켓 펀치 공격력에 목맨 딜둠과 달리 전체적인 딜 자체가 쎄니 자리야의 방벽으로 안정성이 확 올라간다. 당하는 입장에선 방벽을 깨면 자리야가 강화되고 그렇다고 안깨면 방벽 지속시간 2.5초 안에 최소 한 명은 썰리는 극악의 이지선다에 걸린다. 거기에 벤데타에게는 맹공 스택도 있으니 날뛰기 시작하면 점점더 빨라진다.\n벤데타의 궁을 막을 수 있는 탱도 자리야이고 최고의 경호원도 자리야인지라 이대로 너프없이 벤데타가 발매했다가는 탱은 자리야, 딜은 벤데타&궁합 좋은 딜러, 힐은 키리코&아나(여우길과 주요 특전으로 자리야의 방벽 회전율 늘리기&적 벤데타 대항용.)로 양팀이 고정될판. 결국 키리코의 주요특전이 너프 먹어서 방벽 회전율은 올릴 수 없게 되었다.",
     },
     {
       "target": "junker-queen",
@@ -5606,6 +5780,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ana",
       "rating": "veryGood",
+      "note":
+        "방벽 추가 피해(대상 내구도의 절반)+나노 강화제(+50%)+메르시 공버프 or 주노 궤도 광선(+30%)+갈라내는 칼날 풀 충전(400)이 합쳐지면, 시메트라의 광자 방벽(4000)조차 일격에 깨버린다.\n나노 강화제+갈라내는 칼날 풀충전 만으로도 체력 600미만 탱커(정커퀸, 둠피스트, 윈스턴, 방벽 안 쓴 자리야, 네메시스 모드 빠진 라마트라)가 한방이다. 추가 생명력 무시 때문에 지휘의 외침이나 최선의 방어는...+파워 블락도 소용없다.",
     },
     {
       "target": "wuyang",
@@ -5630,6 +5806,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "kiriko",
       "rating": "veryGood",
+      "note":
+        "맹공 레벨 8에 여우길까지 받으면 데빌 메이 크라이의 단테 급으로 날뛸수있다.",
     },
   ],
   "venture": [
@@ -5740,6 +5918,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "cassidy",
       "rating": "good",
+      "note":
+        "캐서디의 공격력도 25m이후부터는 감소되지만, 피해 자체는 들어가므로 벤처보다 훨씬 사거리가 길다.\n지각 충격 한방으로도 평균 체력 250의 반 이상인 130이 날아가고 공중으로 떠서, 석양에 약 0.5초만 노출돼도 탱커 외에는 확정킬이 뜬다.",
     },
     {
       "target": "torbjorn",
@@ -5986,6 +6166,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "wuyang",
       "rating": "good",
+      "note":
+        "주작 승천은 피격당한 적을 한곳으로 모으고 해일 폭발은 모인 적을 그대로 눕혀버리기 때문에 만약 궁극기 연계로 킬을 내지 못하더라도 안란이 마무리를 짓기 상당히 쉬워진다.",
     },
     {
       "target": "illari",
@@ -6044,6 +6226,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "zarya",
       "rating": "veryGood",
+      "note":
+        "시간 역행이 있기는 하나 시간 역행을 회피기로 쓴 시점에서 적의 뜻대로 되어버린 것이다.\n물론 초월발동자 본인인 젠야타는 무적이므로 죽지 않지만 중력자탄과 펄스 폭탄이 끝나있는 후에는 이미 팀원이 대부분 죽어있기 때문에 젠야타 혼자서 5명에게 농락당하는 상황이 펼쳐지므로 어찌됐건 죽을 수밖에 없다.",
     },
     {
       "target": "junker-queen",
@@ -6088,6 +6272,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "sombra",
       "rating": "good",
+      "note": "솜브라도 트레이서 못지않은 생존력을 가졌다.",
     },
     {
       "target": "symmetra",
@@ -6286,6 +6471,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "cassidy",
       "rating": "good",
+      "note":
+        "투멘딜이 금기시되는 이유가 일단 메인딜러 포지션으로 분류되는 영웅들이 소전과 프레야를 제외하면 기동력이 나쁘거나 애매하고, 에임이 아주 뛰어나지 않으면 빠른 템포로 밀고들어오는 다이브 탱커+서브딜러 콤비에 속수무책으로 무너지기 때문이다. 딜러 두 명이 전부 멘딜유저라 어쩔 수 없이 투멘딜을 간다면 딜각이라도 잘 벌려서 상대를 압박하고 섭딜이 들어올 틈을 주지 말아야 하는데 이게 안 되는 경우가 많다. 그래도 소전이나 프레야같이 기동력 좋고 상대의 빈틈을 잘 파고드는 영웅은 서브딜러 역할도 어느 정도 수행 가능해서 애쉬/솔저/캐서디/위도우 등 고전적인 메인딜러들과 조합이 괜찮은 편이다.",
     },
     {
       "target": "torbjorn",
@@ -6504,6 +6691,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "lifeweaver",
       "rating": "neutral",
+      "note":
+        '라이프위버가 첫출시 되었을 때 밥을 적극 이용하라는 대전 "라이프위밥"이 아케이드에 있었다.',
     },
     {
       "target": "lucio",
@@ -6512,6 +6701,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mercy",
       "rating": "bad",
+      "note":
+        "정조준 공격력이 80이던 시절에는 메르시 버프를 받으면 208의 피해를 줘서 체력 200짜리 영웅들을 단 한 방에 처치할 수 있었다. 이를 통한 애쉬-메르시 조합이 너무 강하다 판단해서 헤드샷을 맞춰도 한방에 죽지는 않는 75 피해로 하향한 것.",
     },
     {
       "target": "moira",
@@ -6678,6 +6869,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "pharah",
       "rating": "good",
+      "note":
+        "단 겐지는 튕겨내기를 조심해야 하며, 윈스턴과 레킹볼 등 고기동 돌격군들은 파라에게도 까다로운데다 디바는 아예 위도우와 파라 모두의 카운터이므로 주의.",
     },
     {
       "target": "freja",
@@ -6706,6 +6899,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "baptiste",
       "rating": "bad",
+      "note":
+        "하지만 상대 팀도 위도우가 있다면 불사 장치 있는 위도우쪽이 저격전에서 높은 확률로 이기니 아예 무쓸모는 아니다.",
     },
     {
       "target": "brigitte",
@@ -6848,6 +7043,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ashe",
       "rating": "good",
+      "note": "특히 겐지, 벤처",
     },
     {
       "target": "echo",
@@ -6966,6 +7162,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "wrecking-ball",
       "rating": "good",
+      "note":
+        "한조는 중장거리전이 주가되는 지정사수이기 때문에 굳이 다이브를 할 필요가 없이 적당한 거리에서 저들이 뛰어든 곳을 시야에 잡아주면 되고, 벽타기와 이단뛰기로 자유롭게 지형지물을 타고 입체 기동을 할 수 있기 때문에 충분히 따라가 줄 수 있다.",
     },
     {
       "target": "roadhog",
@@ -6986,6 +7184,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "zarya",
       "rating": "veryGood",
+      "note":
+        "현재는 용의 일격이 나노 강화제 제외 공버프를 받지 못한다. 부조화의 구슬은 상대 방어력 약화이니 공버프가 아님.",
     },
     {
       "target": "junker-queen",
@@ -6998,6 +7198,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "genji",
       "rating": "bad",
+      "note": "마치 포수가 맞춘 물오리를 사냥개가 물어오는 모습처럼",
     },
     {
       "target": "reaper",
@@ -7054,10 +7255,13 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "widowmaker",
       "rating": "good",
+      "note": "경계 모드 바스티온 및 토르비욘의 포탑 등.",
     },
     {
       "target": "junkrat",
       "rating": "veryBad",
+      "note":
+        "다만, 위도우메이커는 나름 한조가 견제하기 좋은 편이지만 파라를 견제하는 데에는 히트스캔에 비해 안정성이 떨어지니 화살이 잘 안 맞는다 싶으면 캐서디, 위도우메이커 등의 히트스캔 딜러로 바꿔주는 것이 좋다.",
     },
     {
       "target": "cassidy",
@@ -7232,6 +7436,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "symmetra",
       "rating": "good",
+      "note":
+        "시합개시하자 마자 순간이동기 생성-전원탑승-루시우가 이속불륨업하는 것이 가장 빨리 전장에 도착하는 방법이다. 탱커가 둠피스트, 레킹볼이면 이동기로 좋은자리를 먼저 선점할 수 있고, 정커퀀이면 지휘의 외침까지 써서 전원 더빨리 도착할 수 있다.",
     },
     {
       "target": "sierra",
@@ -7358,6 +7564,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "reinhardt",
       "rating": "good",
+      "note":
+        "방벽을 들면 느려지기에 힐러들이 빠르게 움직일 필요 없이 안전하게 힐을 넣어 줄 수 있다.",
     },
     {
       "target": "wrecking-ball",
@@ -7410,6 +7618,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "bastion",
       "rating": "bad",
+      "note":
+        "이미 이것만으로도 모든 영웅을 1초 컷 할 수 있는데, 나노 강화제 중첩 시 초당 900이라는 높은 수치가 나온다. 게임 내 최강 체력인 원시의 분노 윈스턴도 2초를 못 버틴다.",
     },
     {
       "target": "vendetta",
@@ -7514,6 +7724,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ana",
       "rating": "good",
+      "note":
+        "힐러중 증폭 매트릭스를 가장 잘 써먹는 캐릭터가 아나이다. 최근 특전 인간사냥꾼이 버프받고 치명타율이 두 배가 되었는지라 증폭 매트릭스+헤드샷으로 무려 300이 날아간다. 거기에 아나는 방어구 무시 옵션도 있어서 과부하 쓰지 않은 토르비욘은 헤드한방이 나온다.",
     },
     {
       "target": "wuyang",
@@ -7538,16 +7750,22 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "kiriko",
       "rating": "neutral",
+      "note":
+        "특히 쿠나이 헤드샷 뻥튀기 피해는 무려 240이라서, 225체력 딜힐러를 한방에 잡을 수 있다.",
     },
   ],
   "ana": [
     {
       "target": "d-va",
       "rating": "good",
+      "note":
+        "디바가 자폭을 사용하기 직전 나노강화제를 받을 경우 자폭의 피해가 증가하기는 하지만 애초에 맨몸 자폭 맞고도 살아가는 영웅은 적응형 보호막 최대치로 채운 레킹볼과 원시의 분노를 킨 윈스턴 말고는 없으니 큰 의미는 없다.",
     },
     {
       "target": "doomfist",
       "rating": "good",
+      "note":
+        "다만 둠피스트가 무리해서 적진에 들어가는 스타일이라면 아나가 그리 좋은 선택은 아닐 수도 있다. 물론 아나가 전선을 앞당겨서 같이 도와줘야 하는 타이밍도 있는 것은 분명한 사실이지만, 좋은 자리를 점하여서 안정적으로 팀원들을 지원하도록 노력하는 것이 가장 기본적인 소양이다. 만약 둠피스트를 도우려다가 계속 아나를 비롯한 팀원들의 포지션이 일그러지고 물리게 된다면 아나를 빼도록 하자. 그럴 때에는 차라리 둠피스트를 따라가면서 힐을 해줄 수 있는 키리코나 하다못해 모이라가 나을 수도 있다.",
     },
     {
       "target": "ramattra",
@@ -7668,6 +7886,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mercy",
       "rating": "bad",
+      "note":
+        "물론 증폭 매트릭스+나노 강화의 폭발력이 압권이긴 하지만, 이쪽은 설치 각도 탓에 전선에 비효율적이다. 반면 메르시의 발키리는 전반적인 커버가 쉬운 편.",
     },
     {
       "target": "moira",
@@ -7714,6 +7934,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "d-va",
       "rating": "bad",
+      "note":
+        "정확히는 디바가 메카에 탄 채로 생명줄을 걸어 자폭을 누르고 제트팩 캣이 그걸 매달고 이동하는 식이다.",
     },
     {
       "target": "domina",
@@ -7818,6 +8040,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ashe",
       "rating": "bad",
+      "note":
+        "제트팩 캣 입장에서도 공격용 운송으로 이만한 게 없는데, 아군을 들어 올려서 공중 딜각을 열어주었을 때 탱커의 경우 리치가 짧다 보니 유효한 공격을 만들어내기가 어려운 편이고, 반대로 딜러들의 원거리 공격은 유효하지만 체력이 낮아 적들의 포커싱에 빠르게 죽기 십상이다. 물론 제트팩 캣이 빠르게 비행한다면 체력이 낮은 딜러여도 쉽게 죽지는 않겠지만 문제는 그만큼 끌고 다니는 아군 딜러의 공격 명중률도 낮아진다.",
     },
     {
       "target": "echo",
@@ -7830,6 +8054,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "widowmaker",
       "rating": "veryBad",
+      "note":
+        "맹독 지뢰는 적 탄막에 맞으면 즉시 터져버리고, 설령 적 팀 제트팩 캣이 아군 위도우를 낙사 지역에 담그더라도 갈고리로 알아서 생환이 가능하다. 궁극기인 적외선 투시도 즉각적인 화력 증강에는 일절 도움이 안 된다.",
     },
     {
       "target": "junkrat",
@@ -7916,6 +8142,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "d-va",
       "rating": "veryGood",
+      "note":
+        "방벽과는 다르게 시야로 보고 있는 방향이 아닌 곳에서 들어오는 공격은 막을 수가 없고 패치로 방어 매트릭스의 소모량이 두 배로 늘어서 더욱 그렇다.",
     },
     {
       "target": "domina",
@@ -7940,6 +8168,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "roadhog",
       "rating": "veryGood",
+      "note":
+        "로드호그는 숨돌리기라는 최고급 회복기가 있기는 하지만 육중한 덩치 때문에 자잘한 피해를 많이입는다. 방어구가 없다보니 눈먼 탄환들이 전부 고스란히 피해로 들어오는데 자잘한 피해를 무시하자니 갈고리 타이밍 등에 들어오는 포커싱에 약해지고, 그렇다고 숨돌리기를 쓰거나 이동기도 없는 로드호그로 힐팩을 찾아먹으러 가는 건 로드호그의 적극적인 전선 참여가 어려워진다는 얘기다. 이런 골머리를 앓는 로드호그에게 조화의 구슬은 안반가울 수가 없다.",
     },
     {
       "target": "mauga",
@@ -7948,6 +8178,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "sigma",
       "rating": "bad",
+      "note":
+        "다만 이 덕분에 기동성을 포기하고 딜각 능력을 극대화한 포킹 조합에서 해당 장점이 드러난다.",
     },
     {
       "target": "orisa",
@@ -7956,6 +8188,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "winston",
       "rating": "bad",
+      "note":
+        "트레이서나 윈스턴 항목을 보면 윈스턴이 트레이서에게 완전한 우위를 잡을 수 없다는 평이 많지만, 이건 윈스턴이 트레이서를 공격하는 상황을 얘기하는 것이고 당연히 젠야타에게 들어올 거라 예상되는 트레이서를 견제하는 것은 윈스턴 입장에서 어렵지 않다.",
     },
     {
       "target": "zarya",
@@ -7984,6 +8218,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "bastion",
       "rating": "veryGood",
+      "note":
+        "바스티온은 거점 수비에서 많이 나오는 편이지만 66번 국도같은 화물 초반 루트에서 적들의 견제가 약한 맵은 공격에서도 사용할 수 있다. 아니면 쓰레기촌같이 운송맵이라면 처음부터 끝가지 오리사와 같이 3옴닉 조합으로 나아갈 수도 있다.",
     },
     {
       "target": "vendetta",
@@ -8052,6 +8288,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "pharah",
       "rating": "bad",
+      "note":
+        "루시우는 범위가 줄어들면서 파라에게 실질적으로 힐 넣어주는 게 불가능한 수준이고, 아나의 경우도 견제를 위에 높게 떠 있는 파라에게 노줌 평타나 생체 수류탄으로 힐을 주는 게 불가능에 가깝다보니 파라에게 힐을 주려면 전선 유지에 소홀하게 된다.",
     },
     {
       "target": "freja",
@@ -8064,6 +8302,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "lucio",
       "rating": "bad",
+      "note":
+        "이런 경우가 의외로 많은데 본인이 조화의 구슬이 달려 있더라도 힐이 안 들어온다고 불평하는 탱커라면 단지 빠질 때를 잘 알지 못하는 미숙한 탱커임을 자각해야 한다.",
     },
     {
       "target": "mercy",
@@ -8080,6 +8320,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "baptiste",
       "rating": "veryBad",
+      "note":
+        "특히 불사장치가 터지지 않게 엄폐물쪽으로 잘 깔면서 초월이 들어가면 저 악명 높은 자탄+용의 일격+힐밴 콤보(수비궁이 있어도 무조건 죽는연계이다.)에서 살아남을 수도 있다. 용의 일격 범위에 불사장치가 안들어가야 되지만. ..",
     },
     {
       "target": "brigitte",
@@ -8088,6 +8330,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ana",
       "rating": "bad",
+      "note":
+        "본인이 공격받으면 4명의 치유 영웅 중 팀원 치유가 가장 크게 불안정해진다.\n메르시의 경우 힐량이 높고 단일 대상 힐이라서 아나-젠야타 조합이 약한 불안정한 치유를 해결해 주기 쉽지 않고, 힐러진에 대한 포커싱을 해소할 방법이 없다.\n이 경우 젠야타는 물론 아나도 공격에 적극적으로 가담하여 부족한 딜링을 채워야 한다.\n나노 강화제 투여 즉시 250의 치유 제공\n부조화만 붙으면 피 250짜리들은 생체 수류탄-생체 소총-평타 콤보에 죽어나간다...",
     },
     {
       "target": "wuyang",
@@ -8108,6 +8352,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "kiriko",
       "rating": "bad",
+      "note":
+        "여우길이 깔린 곳에 분열 사격, 초고열 용광로, 용의 일격, 눈보라, 죽음의 꽃 등 오래 지속되는 광역 딜이 깔리는 경우.\n단 초월이 소위 장판기를 버틸 만큼의 힐량은 나와도 한방폭딜기(자폭, 죽이는 타이어, 펄스폭탄, 포화, 충전 황야의 무법자, 충전 대지의 창, 충전 갈라내는 칼날.)는 못 버틴다.",
     },
   ],
   "lifeweaver": [
@@ -8282,6 +8528,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "brigitte",
       "rating": "good",
+      "note":
+        "실제로 유럽서버 랭커권 라이프위버 유저는 방송 중 브리기테와의 조합이 괜찮다고 언급했다.",
     },
     {
       "target": "ana",
@@ -8332,6 +8580,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "reinhardt",
       "rating": "neutral",
+      "note":
+        "플랭커들이 뒷라인을 교란하지 못하게 만들어주는 브리기테의 도리깨 투척과 방패 밀쳐내기, 호전적인 전진을 용이하게 해주는 루시우의 이속 버프, 방벽 싸움에 절대적인 우위를 가져다주는 젠야타의 부조화, 순간적으로 상대 앞라인을 무력화시켜주는 아나의 힐밴이 대표적이다.",
     },
     {
       "target": "wrecking-ball",
@@ -8360,10 +8610,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "zarya",
       "rating": "veryBad",
+      "note":
+        "물론 살린 영웅이 심각한 뚜벅이라면 메르시는 수호천사를 자리야에게 써서 돌아왔는데 살린 팀원은 또 죽어있는 현상이 벌어지기도 한다.",
     },
     {
       "target": "junker-queen",
       "rating": "veryGood",
+      "note":
+        "지휘의 외침에 팀원 전체 추가 생명력 50(본인에게는 200)과 이속 증폭 30%가 있기는 하다.",
     },
     {
       "target": "hazard",
@@ -8384,6 +8638,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "bastion",
       "rating": "good",
+      "note":
+        "메르시의 공격력 증가 버프를 받을 시, 강습모드 바스티온의 초당 딜량은 450으로 증가한다. 메르시가 딱총으로 적을 전탄 명중시켰을 때와는 비교도 안 되는 피해를 공버프로 누적시킬 수 있다.",
     },
     {
       "target": "vendetta",
@@ -8420,6 +8676,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "echo",
       "rating": "bad",
+      "note":
+        "에코는 겐지나 트레이서 같이 적진의 뒤에서 힐러를 노리는 잠입형 암살자 혹은 잔존 적군 제압용 정리반으로 사용되는 추세라, 메르시 역시 파라에게처럼 전폭적인 공중 지원보다는 후방에서 교란하는 에코를 간접적으로 지원하는 역할을 한다. 붙어 있으면 서로에게 도움은 확실히 되지만 메르시가 꼭 같이 붙어다닐 필요는 없는 조합. 사실 에코의 비행은 지속시간이 너무 짧아서 파라처럼 공중에 내내 머무르는 것 자체가 어렵다. 메르시가 땅에 있는 에코에게 먼저 1순위로 지원을 해 줄 필요가 없기도 하고. 붕 날아오른 에코를 뒤따라 도와주다 같이 내려오는 정도면 충분하다.",
     },
     {
       "target": "emre",
@@ -8428,10 +8686,13 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "widowmaker",
       "rating": "good",
+      "note":
+        "단, 위도우 미러전에서 진 경우에는 부활시키면 안 된다. 메르시도 같이 죽거나 부활한 위도우까지 또 죽을 수 있다.",
     },
     {
       "target": "junkrat",
       "rating": "good",
+      "note": "더욱이나 정크랫 본인 마저도 암살자로 운용이 가능하다.",
     },
     {
       "target": "cassidy",
@@ -8476,6 +8737,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "baptiste",
       "rating": "good",
+      "note":
+        "메르시가 증폭 매트릭스 효과를 보는 기술은 딱총뿐이다. 증폭 매트릭스를 이용 중인 딜러에게 공버프 주는 게 그나마 최선. 증폭 매트릭스-공버프 위도우 저격 헤드샷이면 무려 750이 나와서 웬만한 탱커도 한방이다.",
     },
     {
       "target": "brigitte",
@@ -8728,18 +8991,26 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ramattra",
       "rating": "veryGood",
+      "note":
+        "다만 아나의 나노 강화제와 달리 맷집을 올려주지는 않기 때문에 절멸+여우길의 분위기에 과하게 진입하다가 궁 2개를 날리는 경우가 있어서 케어를 충분히 해줘야 한다.",
     },
     {
       "target": "reinhardt",
       "rating": "veryGood",
+      "note":
+        "솜브라 추가 이전까지 나노 강화제 받은 라인하르트. 과거 나노 강화제는 이동 속도 증가 효과가 있었다.",
     },
     {
       "target": "wrecking-ball",
       "rating": "neutral",
+      "note":
+        "심지어 레킹볼이 갈고리를 걸고 불공이 되면 레킹볼의 이동 속도가 키리코의 치유의 부적 투사체 속도와 같아진다(...).",
     },
     {
       "target": "roadhog",
       "rating": "veryGood",
+      "note":
+        "드물게 바티스트+키리코 조합이 등장해서 증폭 매트릭스+여우길이 깔린 채 돼재앙이 시전되면 상대 영웅이 무엇이든 1초 안에 사라진다.",
     },
     {
       "target": "mauga",
@@ -8756,6 +9027,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "winston",
       "rating": "veryGood",
+      "note":
+        "다만 키리코가 순보로 함께 와서 지원해 주는 것을 윈스턴이 인지하지 못하고 먼저 점프팩으로 빠질 경우, 윈스턴이 완전히 후방에 날아간 후에 순보를 사용하는 것이 최적의 도주이므로 그것을 기다리는 순간 위험해질 수 있다. 그래서 함께 진입할 때는 신중해야 하며 방울의 유무를 확인해야 한다.",
     },
     {
       "target": "zarya",
@@ -8772,10 +9045,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "genji",
       "rating": "bad",
+      "note":
+        "포커싱이 겐지에게 우선 잡히기 때문에 함께 진입해도 위험부담이 적은 편이다.",
     },
     {
       "target": "reaper",
       "rating": "good",
+      "note":
+        "상대 팀에 디바가 있을 경우 매트릭스를 켜고 있을 가능성이 높아서 정화의 방울을 바닥에 찍어도 먹힐 가능성이 높으므로 참고.",
     },
     {
       "target": "mei",
@@ -8872,6 +9149,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mercy",
       "rating": "good",
+      "note":
+        "좌클릭으로 치유 지원/우클릭으로 공격 지원/Shift로 이동/E로 세이브 지원/궁극기로 한타 지원/스페이스바로 발동하는 자가이동 지원 패시브까지 완벽히 대응된다.",
     },
     {
       "target": "moira",
@@ -8888,10 +9167,14 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "brigitte",
       "rating": "bad",
+      "note":
+        "상대 팀에 라인하르트 ,바스티온, 정크랫등 브리기테의 상성 영웅이 다수 있을 경우 둘 다 힐량이 부진하게 된다만 애초에 그런 조합에 브리기테를 쓸 이유가 전혀 없기 때문에 큰 문제점이라고 하기에는 무리하다.",
     },
     {
       "target": "ana",
       "rating": "bad",
+      "note":
+        "이기는 상황에서는 당연히 더 쉽게 밀어붙이겠지만 상대 팀이 오히려 밀어붙이는 타이밍에 대처할 능력이 전혀 없다. 특히 일반적인 랭크 게임에서는 소통의 한계로 인하여 아나와 키리코가 궁극기를 동시에 쓰는 경우가 많은데, 상대도 궁극기를 많이 사용해서 정말 압도적인 화력이 필요한 경우가 아니라면, 오버워치2라는 게임에서 힐러 궁극기는 아주 큰 비중을 차지하므로 이런 상황이 발생하는 것은 매우 매우 좋지 않다.\n아나와 키리코 모두 단일 대상 힐량이 높다는 점과 순간 적이 세이브 능력도 갖추고 있다는 점, 궁극기도 강력한 공격 성향의 궁극기라는 점 때문에 둘의 기본적인 팀에서의 역할 자체는 매우 유사하다.\n두터운 코어 유저층으로 인해서 이 두 영웅을 플레이하는 유저들 수가 압도적으로 많으며, 이 둘과 관련한 스킨을 비롯한 치장품들이 매우 인기있고 실제로 좋은 성과를 낸다. 그로 인해서 블리자드의 편애를 두 영웅 모두 받는 상황이다. 잠깐 너프를 받아도 그리 길지 않은 시일 내로 반드시 보상 버프를 해서 일정 수준 이상의 성능으로 만들어 놓는다.",
     },
     {
       "target": "wuyang",
@@ -8908,6 +9191,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "zenyatta",
       "rating": "good",
+      "note":
+        "애초에 그럴 수밖에 없는 것이 단일 대상 치유량이 높다는 점과, 아나는 생체 수류탄으로 순간적인 폭힐 세이브가 가능한 것과 비슷하게 키리코도 정화의 방울로 순간적인 세이브가 가능하다는 점, 또 궁극기가 모두 아군 대상으로 한 공격적인 성향의 궁극기라는 점 때문에 이 둘의 역할은 비슷할 수밖에 없다. 다만 키리코는 아주 뛰어난 기동성을 갖추었으나 아나는 아주 우월한 사거리와 수면, 생체수류탄의 치유 차단 효과 등으로 적에게도 강력한 상태 이상 효과를 가할 수 있다는 서로의 장단점이 있는 것이다.",
     },
     {
       "target": "juno",
@@ -9102,6 +9387,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "zenyatta",
       "rating": "veryGood",
+      "note":
+        "단 결계+초월 콤보도 정확히 던진 자폭과 죽이는 타이어, 갈라내는 칼날은 못 막는다. 그리고 정커퀸의 살육에도 속수무책이다.",
     },
     {
       "target": "juno",
@@ -9248,6 +9535,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "pharah",
       "rating": "good",
+      "note":
+        "루시우와 모이라는 거리가 멀어서 힐이 안닿고, 아나는 파라를 직접 맞춰야 하며 바티스트는 아나보다 더 어렵게 파라를 맞춰야 한다.",
     },
     {
       "target": "freja",
@@ -9346,6 +9635,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "sigma",
       "rating": "veryBad",
+      "note":
+        "하지만 상대가 레킹볼이나 윈스턴 같은 기동성 탱커 위주의 다이브 조합일 경우 시그마에게 해일 폭발을 주어야 할 수도 있다. 일단 걸어주면 다이브한 탱커와 암살자들로부터 빠져나가고 잠깐 넘어뜨려서 운영을 방해할 수 있다.\n대신 물의 구슬을 맞추기 쉬워 체력을 절반 이상 깎아 중력 붕괴로 킬을 내는데 어느 정도 도움이 된다.",
     },
     {
       "target": "orisa",
@@ -9490,6 +9781,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ana",
       "rating": "bad",
+      "note":
+        "치유 증폭은 중첩이 안된다. 늦게 사용한 쪽 기준으로 지속 시간만 갱신되는 판정. 수호의 파도나 생체 수류탄이나 둘 다 쿨타임이 긴 편이니 안 겹치게 조심. 보통 이런 경우 아나의 생체 수류탄은 철저히 공격용으로 쓰고 수호의 파도를 회복용으로 집중해서 쓰는 방법도 있다.",
     },
     {
       "target": "illari",
@@ -9644,6 +9937,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "mercy",
       "rating": "good",
+      "note":
+        "정확히 말하면 폭힐이 불가한 것이다. 메르시는 카두세우스 지팡이를 아군에게 연결하면 초당 55의 힐을 충전이나 재장전도 없이 무한히 제공할 수 있어서 치유량 스탯 자체는 높게 나온다. 하지만 폭힐이 불가하여 빈사 상태인 아군을 구원하는 데는 어려움을 겪는데 이를 일리아리가 메워 줄 수 있다.\n분출에 적군 넉백이 있고 기동성도 좋으니 수호천사로 따라가기도 좋다. 다만 잘못 쓰면 적을 메르시 쪽으로 밀어버려서 팀킬이 날 수가 있다.",
     },
     {
       "target": "moira",
@@ -9694,6 +9989,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "ramattra",
       "rating": "veryGood",
+      "note":
+        "실제로 주노가 처음 등장한 12시즌에선 라마트라는 아무런 패치도 없었는데 단순히 주노와 궁합이 좋다는 이유로 1티어를 넘어 OP탱커 자리까지 먹었다.",
     },
     {
       "target": "reinhardt",
@@ -9706,6 +10003,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "roadhog",
       "rating": "bad",
+      "note": "트레이서, 벤처, 겐지",
     },
     {
       "target": "mauga",
@@ -9762,6 +10060,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "sojourn",
       "rating": "good",
+      "note":
+        "다만 소전은 궁극기에 정확한 에임이 필요해, 괘도광선이 시야를 가리면 불편하다. 솔저는 궁극기가 오토에임이라 시야문제는 없다.",
     },
     {
       "target": "sombra",
@@ -9830,6 +10130,8 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = {
     {
       "target": "lucio",
       "rating": "bad",
+      "note":
+        "프로들은 루시우, 주노 조합 시에 시합시작 5초전에 하이퍼링 깔기-전원 돌격-하이퍼링 효과가 끊기면 루시우가 이속 불륨업-몇 초 뒤에 하이퍼링 이런 식으로 첫거점까지 끊임없이 이속 올리고 간다.",
     },
     {
       "target": "mercy",

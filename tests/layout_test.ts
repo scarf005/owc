@@ -89,6 +89,16 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
       ?.rating === "veryGood",
     "Orisa vs Junker Queen matchup must be veryGood from Namu crawl",
   )
+  assert(
+    matchups["d-va"]?.find((matchup) => matchup.target === "doomfist")?.note
+      ?.includes("파워 블락"),
+    "D.Va vs Doomfist matchup note must be crawled from Namu",
+  )
+  assert(
+    heroSynergies["d-va"]?.find((entry) => entry.target === "pharah")?.note
+      ?.includes("파라는 모든 디바"),
+    "D.Va and Pharah synergy note must be crawled from Namu",
+  )
   assert(mapModes.length > 0, "map modes must be crawled")
   assert(
     mapModes.every((mode) => mode.maps.length > 0),
@@ -271,8 +281,40 @@ Deno.test({
         `unexpected nav labels: ${JSON.stringify(navLabels)}`,
       )
 
+      const matchupResult = page.locator(".result")
+      const doomfistCard = matchupResult.locator(".hero-button").filter({
+        hasText: "둠피스트",
+      }).first()
+      const doomfistNote = doomfistCard.getByLabel(/추천 주석: .*파워 블락/)
+      assert(
+        await doomfistNote.isVisible(),
+        "matchup note icon was not visible",
+      )
+      await doomfistCard.hover()
+      assert(
+        await doomfistNote.locator(".tooltip").evaluate((tooltip) =>
+          getComputedStyle(tooltip).opacity === "1"
+        ),
+        "matchup note tooltip was not shown on card hover",
+      )
+
       await page.getByLabel("주요 메뉴").getByRole("button", { name: "궁합" })
         .click()
+      const pharahCard = matchupResult.locator(".hero-button").filter({
+        hasText: "파라",
+      }).first()
+      const pharahNote = pharahCard.getByLabel(/추천 주석: .*파라는 모든 디바/)
+      assert(
+        await pharahNote.isVisible(),
+        "synergy note icon was not visible",
+      )
+      await pharahCard.hover()
+      assert(
+        await pharahNote.locator(".tooltip").evaluate((tooltip) =>
+          getComputedStyle(tooltip).opacity === "1"
+        ),
+        "synergy note tooltip was not shown on card hover",
+      )
       await page.getByLabel("영웅 선택").getByRole("button", { name: "오리사" })
         .click()
       assert(
