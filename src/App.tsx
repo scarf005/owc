@@ -1,5 +1,6 @@
 import "./App.css"
 import {
+  createEffect,
   createMemo,
   createRenderEffect,
   createSignal,
@@ -47,6 +48,48 @@ const hasMapRecommendations = (map: { attack: string[]; defense: string[] }) =>
   map.attack.length > 0 || map.defense.length > 0
 const hasAnyMapRecommendations = allMaps.some(hasMapRecommendations)
 const firstRecommendedMap = allMaps.find(hasMapRecommendations) ?? allMaps[0]
+const defaultHeroId = heroes[0]?.id ?? ""
+const defaultMapId = firstRecommendedMap?.id ?? ""
+const viewKeys = new Set<View>(views.map((view) => view.key))
+
+const validView = (value: string | null): View | undefined =>
+  value && viewKeys.has(value as View) ? value as View : undefined
+
+const readQueryState = () => {
+  const params = new URLSearchParams(globalThis.location?.search ?? "")
+  const view = validView(params.get("view")) ?? "matchups"
+  const heroId = heroById.has(params.get("hero") ?? "")
+    ? params.get("hero")!
+    : defaultHeroId
+  const mapId =
+    allMaps.find((map) =>
+      map.id === params.get("map") && hasMapRecommendations(map)
+    )?.id ?? defaultMapId
+
+  return {
+    view: view === "maps" && !hasAnyMapRecommendations ? "matchups" : view,
+    heroId,
+    mapId,
+  }
+}
+
+const writeQueryState = (
+  state: { view: View; heroId: string; mapId: string },
+) => {
+  const params = new URLSearchParams(globalThis.location.search)
+  params.set("view", state.view)
+  params.set("hero", state.heroId)
+  params.set("map", state.mapId)
+  const search = `?${params.toString()}`
+  const nextUrl =
+    `${globalThis.location.pathname}${search}${globalThis.location.hash}`
+  if (
+    nextUrl !==
+      `${globalThis.location.pathname}${globalThis.location.search}${globalThis.location.hash}`
+  ) {
+    globalThis.history.replaceState(null, "", nextUrl)
+  }
+}
 
 const heroesFromIds = (ids: string[]) =>
   ids.map((id) => heroById.get(id)).filter((hero): hero is Hero =>
@@ -294,11 +337,10 @@ function MapPanel(props: { mapId: string }) {
 }
 
 function App() {
-  const [activeView, setActiveView] = createSignal<View>("matchups")
-  const [selectedId, setSelectedId] = createSignal(heroes[0]?.id ?? "")
-  const [selectedMapId, setSelectedMapId] = createSignal(
-    firstRecommendedMap?.id ?? "",
-  )
+  const initialState = readQueryState()
+  const [activeView, setActiveView] = createSignal<View>(initialState.view)
+  const [selectedId, setSelectedId] = createSignal(initialState.heroId)
+  const [selectedMapId, setSelectedMapId] = createSignal(initialState.mapId)
   const selectedHero = createMemo(() => heroById.get(selectedId()))
   let resultRef: HTMLElement | undefined
   let fitFrame = 0
@@ -349,14 +391,31 @@ function App() {
     fitCounterSize()
   })
 
+  createEffect(() => {
+    writeQueryState({
+      view: activeView(),
+      heroId: selectedId(),
+      mapId: selectedMapId(),
+    })
+  })
+
+  const applyQueryState = () => {
+    const state = readQueryState()
+    setActiveView(state.view)
+    setSelectedId(state.heroId)
+    setSelectedMapId(state.mapId)
+  }
+
   onMount(() => {
     globalThis.addEventListener("resize", queueFitCounterSize)
+    globalThis.addEventListener("popstate", applyQueryState)
     queueFitCounterSize()
   })
 
   onCleanup(() => {
     cancelAnimationFrame(fitFrame)
     globalThis.removeEventListener("resize", queueFitCounterSize)
+    globalThis.removeEventListener("popstate", applyQueryState)
   })
   const grouped = createMemo(() =>
     ratingOrder.map((rating) => ({

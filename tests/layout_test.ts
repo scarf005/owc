@@ -116,6 +116,73 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
   )
 })
 
+Deno.test({
+  name: "query params restore and update visible state",
+  timeout: 60_000,
+  async fn() {
+    const { child, url } = await startServer()
+    const browser = await chromium.launch()
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 1000 },
+    })
+
+    try {
+      await page.goto(
+        `${url}?view=synergies&hero=orisa&map=${encodeURIComponent("네팔")}`,
+      )
+      await page.waitForSelector(".navbar")
+      assert(
+        await page.getByRole("button", { name: "궁합" }).evaluate((button) =>
+          button.classList.contains("is-selected")
+        ),
+        "synergy view was not restored from query params",
+      )
+      assert(
+        await page.locator(".selected-hero strong").getByText("오리사", {
+          exact: true,
+        }).isVisible(),
+        "hero was not restored from query params",
+      )
+
+      await page.getByRole("button", { name: "맵별 추천 영웅" }).click()
+      assert(
+        await page.locator(".selected-map strong").getByText("네팔", {
+          exact: true,
+        }).isVisible(),
+        "map was not restored from query params",
+      )
+      await page.locator(".map-button").filter({ hasText: "왕의 길" }).click()
+      assert(
+        new URL(page.url()).searchParams.get("map") === "왕의-길",
+        "map query param was not updated",
+      )
+
+      await page.getByRole("button", { name: "상성" }).click()
+      await page.getByLabel("영웅 선택").getByRole("button", {
+        name: "라마트라",
+      })
+        .click()
+      const params = new URL(page.url()).searchParams
+      assert(params.get("view") === "matchups", "view query was not updated")
+      assert(params.get("hero") === "ramattra", "hero query was not updated")
+
+      await page.goto(`${url}?view=maps&map=${encodeURIComponent("남극-반도")}`)
+      await page.waitForSelector(".navbar")
+      assert(
+        await page.locator(".selected-map strong").getByText("네팔", {
+          exact: true,
+        }).isVisible(),
+        "map without recommendations was not replaced by the first enabled map",
+      )
+    } finally {
+      await page.close().catch(() => undefined)
+      await browser.close().catch(() => undefined)
+      child.kill("SIGTERM")
+      await child.status.catch(() => undefined)
+    }
+  },
+})
+
 const clickHeroAndMeasure = async (page: Page, name: string) => {
   return await page.evaluate((heroName): Metrics => {
     const heroButton = [...document.querySelectorAll<HTMLButtonElement>(
