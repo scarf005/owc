@@ -439,6 +439,17 @@ Deno.test({
         ),
         "synergy note tooltip was not shown on card hover",
       )
+      await pharahCard.click()
+      assert(
+        await page.locator(".selected-hero strong").getByText("파라", {
+          exact: true,
+        }).isVisible(),
+        "synergy card click did not select that hero",
+      )
+      assert(
+        new URL(page.url()).searchParams.get("hero") === "pharah",
+        "synergy card click did not update hero query param",
+      )
       await page.getByLabel("영웅 선택").getByRole("button", { name: "오리사" })
         .click()
       assert(

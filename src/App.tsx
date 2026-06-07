@@ -221,7 +221,10 @@ function MapPicker(
 }
 
 function HeroRows(
-  props: { groups: { key?: string; label: string; heroes: HeroRowItem[] }[] },
+  props: {
+    groups: { key?: string; label: string; heroes: HeroRowItem[] }[]
+    onSelect?: (id: string) => void
+  },
 ) {
   return (
     <For each={props.groups}>
@@ -235,7 +238,7 @@ function HeroRows(
                   <HeroButton
                     hero={entry.hero}
                     note={entry.note}
-                    onClick={() => undefined}
+                    onClick={() => props.onSelect?.(entry.hero.id)}
                   />
                 )}
               </For>
@@ -247,9 +250,9 @@ function HeroRows(
   )
 }
 
-function MatchupPanel(props: {
+function GuidePanel(props: {
   hero: Hero | undefined
-  groups: { key: Rating; label: string; heroes: HeroRowItem[] }[]
+  groups: { key?: string; label: string; heroes: HeroRowItem[] }[]
   onSelect: (id: string) => void
 }) {
   return (
@@ -264,62 +267,7 @@ function MatchupPanel(props: {
             />
             <strong>{hero().name}</strong>
           </div>
-
-          <For each={props.groups}>
-            {(group) => (
-              <Show when={group.heroes.length > 0}>
-                <div class={`row ${group.key}`}>
-                  <div class="label">{group.label}</div>
-                  <div class="grid small">
-                    <For each={group.heroes}>
-                      {(entry) => (
-                        <HeroButton
-                          hero={entry.hero}
-                          note={entry.note}
-                          onClick={() => props.onSelect(entry.hero.id)}
-                        />
-                      )}
-                    </For>
-                  </div>
-                </div>
-              </Show>
-            )}
-          </For>
-        </>
-      )}
-    </Show>
-  )
-}
-
-function SynergyPanel(props: { hero: Hero | undefined }) {
-  const groups = createMemo(() => {
-    const hero = props.hero
-    return hero
-      ? synergyRatings.map((rating) => ({
-        key: rating.key,
-        label: rating.label,
-        heroes: heroItemsFromEntries(
-          (heroSynergies[hero.id] ?? [])
-            .filter((entry) => entry.rating === rating.key)
-            .map((entry) => ({ id: entry.target, note: entry.note })),
-        ),
-      }))
-      : []
-  })
-
-  return (
-    <Show when={props.hero}>
-      {(hero) => (
-        <>
-          <div class="selected-hero">
-            <img
-              alt={hero().name}
-              referrerpolicy="no-referrer"
-              src={hero().avatar}
-            />
-            <strong>{hero().name}</strong>
-          </div>
-          <HeroRows groups={groups()} />
+          <HeroRows groups={props.groups} onSelect={props.onSelect} />
         </>
       )}
     </Show>
@@ -463,13 +411,24 @@ function App() {
     globalThis.removeEventListener("resize", queueFitCounterSize)
     globalThis.removeEventListener("popstate", applyQueryState)
   })
-  const grouped = createMemo(() =>
+  const matchupGroups = createMemo(() =>
     ratingOrder.map((rating) => ({
       ...rating,
       heroes: heroItemsFromEntries(
         (matchups[selectedId()] ?? [])
           .filter((matchup) => matchup.rating === rating.key)
           .map((matchup) => ({ id: matchup.target, note: matchup.note })),
+      ),
+    }))
+  )
+  const synergyGroups = createMemo(() =>
+    synergyRatings.map((rating) => ({
+      key: rating.key,
+      label: rating.label,
+      heroes: heroItemsFromEntries(
+        (heroSynergies[selectedId()] ?? [])
+          .filter((entry) => entry.rating === rating.key)
+          .map((entry) => ({ id: entry.target, note: entry.note })),
       ),
     }))
   )
@@ -509,14 +468,18 @@ function App() {
 
         <section class="result" aria-label={activeView()} ref={resultRef}>
           <Show when={activeView() === "matchups"}>
-            <MatchupPanel
+            <GuidePanel
               hero={selectedHero()}
-              groups={grouped()}
+              groups={matchupGroups()}
               onSelect={setSelectedId}
             />
           </Show>
           <Show when={activeView() === "synergies"}>
-            <SynergyPanel hero={selectedHero()} />
+            <GuidePanel
+              hero={selectedHero()}
+              groups={synergyGroups()}
+              onSelect={setSelectedId}
+            />
           </Show>
           <Show when={activeView() === "maps"}>
             <MapPanel mapId={selectedMapId()} />
