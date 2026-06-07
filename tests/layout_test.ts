@@ -260,99 +260,183 @@ Deno.test({
 })
 
 Deno.test({
-  name: "responsive Playwright screenshots stay stable",
-  timeout: 60_000,
+  name: "mobile and pc tab interaction screenshots stay stable",
+  timeout: 120_000,
   async fn(t) {
     const { child, url } = await startServer()
     const browser = await chromium.launch()
     const page = await browser.newPage()
 
+    type ScreenshotTab = "matchups" | "synergies" | "maps"
+    type ScreenshotInteraction = "pick" | "note-hover" | "notice-modal"
+
+    const viewports = [
+      { key: "pc", size: { width: 1280, height: 1000 } },
+      { key: "mobile", size: { width: 390, height: 844 } },
+    ]
+    const tabs: { key: ScreenshotTab; path: string }[] = [
+      { key: "matchups", path: "?view=matchups&hero=d-va&map=부산" },
+      { key: "synergies", path: "?view=synergies&hero=d-va&map=부산" },
+      {
+        key: "maps",
+        path: `?view=maps&hero=d-va&map=${encodeURIComponent("부산")}`,
+      },
+    ]
+    const interactions: ScreenshotInteraction[] = [
+      "pick",
+      "note-hover",
+      "notice-modal",
+    ]
+
+    const hoverCard = async (name: string, notePattern: RegExp) => {
+      const card = page.locator(".result .hero-button").filter({
+        hasText: name,
+      })
+        .first()
+      const note = card.getByLabel(notePattern)
+      assert(await note.isVisible(), `note icon was not visible: ${name}`)
+      await card.hover()
+      assert(
+        await note.locator(".tooltip").evaluate((tooltip) =>
+          getComputedStyle(tooltip).opacity === "1"
+        ),
+        `note tooltip was not shown: ${name}`,
+      )
+    }
+
+    const applyInteraction = async (
+      tab: ScreenshotTab,
+      interaction: ScreenshotInteraction,
+    ) => {
+      if (interaction === "notice-modal") {
+        const before = page.url()
+        await page.getByRole("button", { name: "NOTICE" }).click()
+        assert(page.url() === before, "NOTICE should not navigate")
+        assert(
+          await page.getByRole("dialog", { name: "NOTICE" }).isVisible(),
+          "NOTICE modal was not visible",
+        )
+        return
+      }
+
+      if (tab === "matchups") {
+        if (interaction === "pick") {
+          await page.getByLabel("영웅 선택").getByRole("button", {
+            name: "라마트라",
+          }).click()
+          assert(
+            await page.locator(".selected-hero strong").getByText("라마트라", {
+              exact: true,
+            }).isVisible(),
+            "matchup hero pick was not reflected",
+          )
+          return
+        }
+        await hoverCard("둠피스트", /추천 주석: .*파워 블락/)
+        return
+      }
+
+      if (tab === "synergies") {
+        if (interaction === "pick") {
+          await page.getByLabel("영웅 선택").getByRole("button", {
+            name: "오리사",
+          }).click()
+          assert(
+            await page.locator(".selected-hero strong").getByText("오리사", {
+              exact: true,
+            }).isVisible(),
+            "synergy hero pick was not reflected",
+          )
+          return
+        }
+        await hoverCard("파라", /추천 주석: .*파라는 모든 디바/)
+        return
+      }
+
+      if (interaction === "pick") {
+        await page.locator(".map-button").filter({ hasText: "네팔" }).click()
+        assert(
+          await page.locator(".selected-map strong").getByText("네팔", {
+            exact: true,
+          }).isVisible(),
+          "map pick was not reflected",
+        )
+        return
+      }
+      await hoverCard("시메트라", /추천 주석: 사찰맵 한정/)
+    }
+
     try {
-      const cases = [
-        {
-          name: "desktop-map",
-          viewport: { width: 1280, height: 1000 },
-          path: `?view=maps&map=${encodeURIComponent("부산")}`,
-        },
-        {
-          name: "mobile-map",
-          viewport: { width: 390, height: 844 },
-          path: `?view=maps&map=${encodeURIComponent("부산")}`,
-        },
-        {
-          name: "mobile-notice-modal",
-          viewport: { width: 390, height: 844 },
-          path: "?view=matchups&hero=d-va",
-          openNotice: true,
-        },
-      ]
       const snapshots = []
 
-      for (const item of cases) {
-        await page.setViewportSize(item.viewport)
-        await page.goto(`${url}${item.path}`)
-        await page.waitForSelector(".navbar")
-        if (item.openNotice) {
-          const before = page.url()
-          await page.getByRole("button", { name: "NOTICE" }).click()
-          assert(
-            page.url() === before,
-            "NOTICE should open a modal without navigation",
-          )
-          assert(
-            await page.getByRole("dialog", { name: "NOTICE" }).isVisible(),
-            "NOTICE modal was not visible",
-          )
-        }
+      for (const viewport of viewports) {
+        for (const tab of tabs) {
+          for (const interaction of interactions) {
+            await page.setViewportSize(viewport.size)
+            await page.goto(`${url}${tab.path}`)
+            await page.waitForSelector(".navbar")
+            await applyInteraction(tab.key, interaction)
 
-        const screenshot = await page.screenshot({
-          animations: "disabled",
-          fullPage: true,
-          mask: [page.locator("img"), page.locator(".selected-title")],
-        })
-        const metrics = await page.evaluate(() => {
-          const pick = document.querySelector<HTMLElement>(".pick")
-          const result = document.querySelector<HTMLElement>(".result")
-          const workspace = document.querySelector<HTMLElement>(".workspace")
-          const dialog = document.querySelector<HTMLElement>("[role='dialog']")
-          return {
-            activeNav: [...document.querySelectorAll(".nav-button")].find((
-              button,
-            ) => button.classList.contains("is-selected"))?.textContent?.trim(),
-            selectedHero:
-              document.querySelector(".selected-hero strong")?.textContent
-                ?.trim() ?? null,
-            selectedMap:
-              document.querySelector(".selected-map strong")?.textContent
-                ?.trim() ?? null,
-            workspaceColumns: workspace
-              ? getComputedStyle(workspace).gridTemplateColumns
-              : null,
-            dialogVisible: dialog
-              ? getComputedStyle(dialog).display !== "none"
-              : false,
-            pageOverflow: document.documentElement.scrollWidth > innerWidth ||
-              document.body.scrollWidth > innerWidth,
-            pickOverflow: pick ? pick.scrollWidth > pick.clientWidth : true,
-            resultOverflow: result
-              ? result.scrollWidth > result.clientWidth
-              : true,
+            const screenshot = await page.screenshot({
+              animations: "disabled",
+              fullPage: true,
+              mask: [page.locator("img"), page.locator(".selected-title")],
+            })
+            const metrics = await page.evaluate(() => {
+              const pick = document.querySelector<HTMLElement>(".pick")
+              const result = document.querySelector<HTMLElement>(".result")
+              const workspace = document.querySelector<HTMLElement>(
+                ".workspace",
+              )
+              const dialog = document.querySelector<HTMLElement>(
+                "[role='dialog']",
+              )
+              const tooltip = [...document.querySelectorAll<HTMLElement>(
+                ".tooltip",
+              )].find((node) => getComputedStyle(node).opacity === "1")
+              return {
+                activeNav: [...document.querySelectorAll(".nav-button")].find((
+                  button,
+                ) => button.classList.contains("is-selected"))?.textContent
+                  ?.trim(),
+                selectedHero:
+                  document.querySelector(".selected-hero strong")?.textContent
+                    ?.trim() ?? null,
+                selectedMap:
+                  document.querySelector(".selected-map strong")?.textContent
+                    ?.trim() ?? null,
+                workspaceColumns: workspace
+                  ? getComputedStyle(workspace).gridTemplateColumns
+                  : null,
+                dialogVisible: dialog
+                  ? getComputedStyle(dialog).display !== "none"
+                  : false,
+                tooltipVisible: Boolean(tooltip),
+                pageOverflow:
+                  document.documentElement.scrollWidth > innerWidth ||
+                  document.body.scrollWidth > innerWidth,
+                pickOverflow: pick ? pick.scrollWidth > pick.clientWidth : true,
+                resultOverflow: result
+                  ? result.scrollWidth > result.clientWidth
+                  : true,
+              }
+            })
+            snapshots.push({
+              name: `${viewport.key}-${tab.key}-${interaction}`,
+              viewport: viewport.size,
+              screenshot: {
+                ...pngSize(screenshot),
+                bytes: screenshot.byteLength,
+                sha256: await sha256(screenshot),
+              },
+              metrics,
+            })
           }
-        })
-        snapshots.push({
-          name: item.name,
-          viewport: item.viewport,
-          screenshot: {
-            ...pngSize(screenshot),
-            bytes: screenshot.byteLength,
-            sha256: await sha256(screenshot),
-          },
-          metrics,
-        })
+        }
       }
 
       await assertSnapshot(t, snapshots, {
-        name: "responsive-playwright-screenshots",
+        name: "tab-interaction-screenshots",
         serializer: (value) => JSON.stringify(value, null, 2),
       })
     } finally {
