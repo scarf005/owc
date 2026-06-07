@@ -1,5 +1,8 @@
 /// <reference lib="deno.ns" />
 
+import { retry } from "@std/async/retry"
+import { assert } from "@std/assert"
+import { encodeHex } from "@std/encoding/hex"
 import { assertSnapshot } from "@std/testing/snapshot"
 import { chromium, type Page } from "playwright"
 import { heroSynergies, mapModes } from "../src/data/guide.ts"
@@ -29,18 +32,8 @@ const viewports = [
   { width: 2268, height: 1000 },
 ]
 
-const assert = (condition: unknown, message: string) => {
-  if (!condition) throw new Error(message)
-}
-
-const sha256 = async (data: Uint8Array) => {
-  const bytes = new Uint8Array(data)
-  const hash = await crypto.subtle.digest("SHA-256", bytes.buffer)
-  return [...new Uint8Array(hash)].map((byte) =>
-    byte.toString(16).padStart(2, "0")
-  )
-    .join("")
-}
+const sha256 = async (data: Uint8Array) =>
+  encodeHex(await crypto.subtle.digest("SHA-256", new Uint8Array(data).buffer))
 
 const pngSize = (data: Uint8Array) => ({
   width: new DataView(data.buffer, data.byteOffset, data.byteLength).getUint32(
@@ -51,20 +44,12 @@ const pngSize = (data: Uint8Array) => ({
   ),
 })
 
-const waitForServer = async (url: string) => {
-  const started = Date.now()
-  while (Date.now() - started < 20_000) {
-    try {
-      const response = await fetch(url)
-      await response.body?.cancel()
-      if (response.ok) return
-    } catch {
-      // Retry until the dev server is ready.
-    }
-    await new Promise((resolve) => setTimeout(resolve, 100))
-  }
-  throw new Error(`Vite dev server did not start: ${url}`)
-}
+const waitForServer = (url: string) =>
+  retry(async () => {
+    const response = await fetch(url)
+    await response.body?.cancel()
+    assert(response.ok, `Vite dev server did not start: ${url}`)
+  }, { jitter: 0, maxAttempts: 200, maxTimeout: 100, minTimeout: 100 })
 
 const startServer = async () => {
   const port = 43_000 + Math.floor(Math.random() * 1_000)

@@ -9,6 +9,7 @@ import {
   onMount,
   Show,
 } from "solid-js"
+import { createStore } from "solid-js/store"
 import {
   heroSynergies,
   mapModes,
@@ -100,18 +101,24 @@ const writeQueryState = (
 
 const heroItemsFromEntries = (
   entries: { id: string; note?: string }[],
-): HeroRowItem[] => {
-  const items: HeroRowItem[] = []
-  for (const entry of entries) {
+): HeroRowItem[] =>
+  entries.flatMap((entry) => {
     const hero = heroById.get(entry.id)
-    if (hero) items.push({ hero, ...(entry.note ? { note: entry.note } : {}) })
-  }
-  return items
-}
+    return hero ? [{ hero, ...(entry.note ? { note: entry.note } : {}) }] : []
+  })
 
-const heroItemsFromMapRecommendations = (
-  entries: MapRecommendation[],
-): HeroRowItem[] => heroItemsFromEntries(entries)
+const heroGroupsByRating = (
+  ratings: { key: string; label: string }[],
+  entries: { target: string; rating: string; note?: string }[] = [],
+) =>
+  ratings.map((rating) => ({
+    ...rating,
+    heroes: heroItemsFromEntries(
+      entries
+        .filter((entry) => entry.rating === rating.key)
+        .map((entry) => ({ id: entry.target, note: entry.note })),
+    ),
+  }))
 
 function HeroButton(
   props: { hero: Hero; note?: string; selected?: boolean; onClick: () => void },
@@ -292,12 +299,12 @@ function MapPanel(props: { mapId: string }) {
         {
           key: "attack",
           label: "공격",
-          heroes: heroItemsFromMapRecommendations(map.attack),
+          heroes: heroItemsFromEntries(map.attack),
         },
         {
           key: "defense",
           label: "방어",
-          heroes: heroItemsFromMapRecommendations(map.defense),
+          heroes: heroItemsFromEntries(map.defense),
         },
       ]
       : []
@@ -344,12 +351,12 @@ function MapPanel(props: { mapId: string }) {
 }
 
 function App() {
-  const initialState = readQueryState()
-  const [activeView, setActiveView] = createSignal<View>(initialState.view)
-  const [selectedId, setSelectedId] = createSignal(initialState.heroId)
-  const [selectedMapId, setSelectedMapId] = createSignal(initialState.mapId)
+  const [state, setState] = createStore(readQueryState())
   const [noticeOpen, setNoticeOpen] = createSignal(false)
-  const selectedHero = createMemo(() => heroById.get(selectedId()))
+  const setActiveView = (view: View) => setState("view", view)
+  const setSelectedId = (heroId: string) => setState("heroId", heroId)
+  const setSelectedMapId = (mapId: string) => setState("mapId", mapId)
+  const selectedHero = createMemo(() => heroById.get(state.heroId))
   let resultRef: HTMLElement | undefined
   let fitFrame = 0
   const setCounterSize = (size: number) => {
@@ -393,25 +400,23 @@ function App() {
   }
 
   createRenderEffect(() => {
-    selectedId()
-    selectedMapId()
-    activeView()
+    state.heroId
+    state.mapId
+    state.view
     fitCounterSize()
   })
 
   createEffect(() => {
     writeQueryState({
-      view: activeView(),
-      heroId: selectedId(),
-      mapId: selectedMapId(),
+      view: state.view,
+      heroId: state.heroId,
+      mapId: state.mapId,
     })
   })
 
   const applyQueryState = () => {
     const state = readQueryState()
-    setActiveView(state.view)
-    setSelectedId(state.heroId)
-    setSelectedMapId(state.mapId)
+    setState(state)
   }
 
   onMount(() => {
@@ -426,25 +431,13 @@ function App() {
     globalThis.removeEventListener("popstate", applyQueryState)
   })
   const matchupGroups = createMemo(() =>
-    ratingOrder.map((rating) => ({
-      ...rating,
-      heroes: heroItemsFromEntries(
-        (matchups[selectedId()] ?? [])
-          .filter((matchup) => matchup.rating === rating.key)
-          .map((matchup) => ({ id: matchup.target, note: matchup.note })),
-      ),
-    }))
+    heroGroupsByRating(ratingOrder, matchups[state.heroId])
   )
   const synergyGroups = createMemo(() =>
-    synergyRatings.map((rating) => ({
-      key: rating.key,
-      label: rating.label,
-      heroes: heroItemsFromEntries(
-        (heroSynergies[selectedId()] ?? [])
-          .filter((entry) => entry.rating === rating.key)
-          .map((entry) => ({ id: entry.target, note: entry.note })),
-      ),
-    }))
+    heroGroupsByRating(synergyRatings, heroSynergies[state.heroId])
+  )
+  const guideGroups = createMemo(() =>
+    state.view === "matchups" ? matchupGroups() : synergyGroups()
   )
 
   return (
@@ -457,7 +450,7 @@ function App() {
             return (
               <button
                 class="nav-button"
-                classList={{ "is-selected": activeView() === view.key }}
+                classList={{ "is-selected": state.view === view.key }}
                 disabled={disabled}
                 onClick={() => !disabled && setActiveView(view.key)}
                 title={disabled ? "추천 영웅 데이터 없음" : view.label}
@@ -472,31 +465,26 @@ function App() {
 
       <div class="workspace">
         <Show
-          when={activeView() === "maps"}
+          when={state.view === "maps"}
           fallback={
-            <HeroPicker selectedId={selectedId()} onSelect={setSelectedId} />
+            <HeroPicker selectedId={state.heroId} onSelect={setSelectedId} />
           }
         >
-          <MapPicker selectedId={selectedMapId()} onSelect={setSelectedMapId} />
+          <MapPicker selectedId={state.mapId} onSelect={setSelectedMapId} />
         </Show>
 
-        <section class="result" aria-label={activeView()} ref={resultRef}>
-          <Show when={activeView() === "matchups"}>
-            <GuidePanel
-              hero={selectedHero()}
-              groups={matchupGroups()}
-              onSelect={setSelectedId}
-            />
-          </Show>
-          <Show when={activeView() === "synergies"}>
-            <GuidePanel
-              hero={selectedHero()}
-              groups={synergyGroups()}
-              onSelect={setSelectedId}
-            />
-          </Show>
-          <Show when={activeView() === "maps"}>
-            <MapPanel mapId={selectedMapId()} />
+        <section class="result" aria-label={state.view} ref={resultRef}>
+          <Show
+            when={state.view === "maps"}
+            fallback={
+              <GuidePanel
+                hero={selectedHero()}
+                groups={guideGroups()}
+                onSelect={setSelectedId}
+              />
+            }
+          >
+            <MapPanel mapId={state.mapId} />
           </Show>
         </section>
       </div>
