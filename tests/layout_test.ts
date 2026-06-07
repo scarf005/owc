@@ -1,5 +1,6 @@
 /// <reference lib="deno.ns" />
 
+import { assertSnapshot } from "jsr:@std/testing/snapshot"
 import { chromium, type Page } from "npm:playwright@1.60.0"
 import { heroSynergies, mapModes } from "../src/data/guide.ts"
 import { matchups } from "../src/data/overwatch.ts"
@@ -31,6 +32,24 @@ const viewports = [
 const assert = (condition: unknown, message: string) => {
   if (!condition) throw new Error(message)
 }
+
+const sha256 = async (data: Uint8Array) => {
+  const bytes = new Uint8Array(data)
+  const hash = await crypto.subtle.digest("SHA-256", bytes.buffer)
+  return [...new Uint8Array(hash)].map((byte) =>
+    byte.toString(16).padStart(2, "0")
+  )
+    .join("")
+}
+
+const pngSize = (data: Uint8Array) => ({
+  width: new DataView(data.buffer, data.byteOffset, data.byteLength).getUint32(
+    16,
+  ),
+  height: new DataView(data.buffer, data.byteOffset, data.byteLength).getUint32(
+    20,
+  ),
+})
 
 const waitForServer = async (url: string) => {
   const started = Date.now()
@@ -197,6 +216,111 @@ Deno.test({
         }).isVisible(),
         "map without recommendations was not replaced by the first enabled map",
       )
+    } finally {
+      await page.close().catch(() => undefined)
+      await browser.close().catch(() => undefined)
+      child.kill("SIGTERM")
+      await child.status.catch(() => undefined)
+    }
+  },
+})
+
+Deno.test({
+  name: "responsive Playwright screenshots stay stable",
+  timeout: 60_000,
+  async fn(t) {
+    const { child, url } = await startServer()
+    const browser = await chromium.launch()
+    const page = await browser.newPage()
+
+    try {
+      const cases = [
+        {
+          name: "desktop-map",
+          viewport: { width: 1280, height: 1000 },
+          path: `?view=maps&map=${encodeURIComponent("부산")}`,
+        },
+        {
+          name: "mobile-map",
+          viewport: { width: 390, height: 844 },
+          path: `?view=maps&map=${encodeURIComponent("부산")}`,
+        },
+        {
+          name: "mobile-notice-modal",
+          viewport: { width: 390, height: 844 },
+          path: "?view=matchups&hero=d-va",
+          openNotice: true,
+        },
+      ]
+      const snapshots = []
+
+      for (const item of cases) {
+        await page.setViewportSize(item.viewport)
+        await page.goto(`${url}${item.path}`)
+        await page.waitForSelector(".navbar")
+        if (item.openNotice) {
+          const before = page.url()
+          await page.getByRole("button", { name: "NOTICE" }).click()
+          assert(
+            page.url() === before,
+            "NOTICE should open a modal without navigation",
+          )
+          assert(
+            await page.getByRole("dialog", { name: "NOTICE" }).isVisible(),
+            "NOTICE modal was not visible",
+          )
+        }
+
+        const screenshot = await page.screenshot({
+          animations: "disabled",
+          fullPage: true,
+          mask: [page.locator("img")],
+        })
+        const metrics = await page.evaluate(() => {
+          const pick = document.querySelector<HTMLElement>(".pick")
+          const result = document.querySelector<HTMLElement>(".result")
+          const workspace = document.querySelector<HTMLElement>(".workspace")
+          const dialog = document.querySelector<HTMLElement>("[role='dialog']")
+          return {
+            activeNav: [...document.querySelectorAll(".nav-button")].find((
+              button,
+            ) => button.classList.contains("is-selected"))?.textContent?.trim(),
+            selectedHero:
+              document.querySelector(".selected-hero strong")?.textContent
+                ?.trim() ?? null,
+            selectedMap:
+              document.querySelector(".selected-map strong")?.textContent
+                ?.trim() ?? null,
+            workspaceColumns: workspace
+              ? getComputedStyle(workspace).gridTemplateColumns
+              : null,
+            dialogVisible: dialog
+              ? getComputedStyle(dialog).display !== "none"
+              : false,
+            pageOverflow: document.documentElement.scrollWidth > innerWidth ||
+              document.body.scrollWidth > innerWidth,
+            pickOverflow: pick ? pick.scrollWidth > pick.clientWidth : true,
+            resultOverflow: result
+              ? result.scrollWidth > result.clientWidth
+              : true,
+          }
+        })
+        snapshots.push({
+          name: item.name,
+          viewport: item.viewport,
+          screenshot: {
+            ...pngSize(screenshot),
+            bytes: screenshot.byteLength,
+            sha256: await sha256(screenshot),
+          },
+          metrics,
+        })
+      }
+
+      await assertSnapshot(t, snapshots, {
+        name: "responsive-playwright-screenshots",
+        serializer: (value) => JSON.stringify(value, null, 2),
+      })
     } finally {
       await page.close().catch(() => undefined)
       await browser.close().catch(() => undefined)

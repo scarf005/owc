@@ -386,6 +386,7 @@ function App() {
   const [activeView, setActiveView] = createSignal<View>(initialState.view)
   const [selectedId, setSelectedId] = createSignal(initialState.heroId)
   const [selectedMapId, setSelectedMapId] = createSignal(initialState.mapId)
+  const [noticeOpen, setNoticeOpen] = createSignal(false)
   const selectedHero = createMemo(() => heroById.get(selectedId()))
   let resultRef: HTMLElement | undefined
   let fitFrame = 0
@@ -525,8 +526,44 @@ function App() {
 
       <footer>
         비공식 팬 도구 · Overwatch assets © Blizzard ·{" "}
-        <a href="./NOTICE.txt">NOTICE</a> · <a href="./LICENSE">LICENSE</a>
+        <button
+          class="footer-link"
+          onClick={() => setNoticeOpen(true)}
+          type="button"
+        >
+          NOTICE
+        </button>{" "}
+        · <a href="./LICENSE">LICENSE</a>
       </footer>
+
+      <Show when={noticeOpen()}>
+        <div
+          aria-labelledby="notice-title"
+          aria-modal="true"
+          class="modal-backdrop"
+          onClick={() => setNoticeOpen(false)}
+          role="dialog"
+        >
+          <div class="modal" onClick={(event) => event.stopPropagation()}>
+            <div class="modal-header">
+              <strong id="notice-title">NOTICE</strong>
+              <button
+                aria-label="NOTICE 닫기"
+                class="modal-close"
+                onClick={() => setNoticeOpen(false)}
+                type="button"
+              >
+                ×
+              </button>
+            </div>
+            <p>
+              Unofficial fan tool. Overwatch assets © Blizzard Entertainment.
+              Data sourced from Namu Wiki (https://namu.wiki). Code:
+              AGPL-3.0-or-later, no warranty.
+            </p>
+          </div>
+        </div>
+      </Show>
     </main>
   )
 }

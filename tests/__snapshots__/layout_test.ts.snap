@@ -1,0 +1,75 @@
+export const snapshot = {};
+
+snapshot[`responsive-playwright-screenshots 1`] = `
+[
+  {
+    "name": "desktop-map",
+    "viewport": {
+      "width": 1280,
+      "height": 1000
+    },
+    "screenshot": {
+      "width": 1280,
+      "height": 1000,
+      "bytes": 55024,
+      "sha256": "948851eb7ffa6d6bd80d24b9df0ae1648fb78d8370b0e2d68834eebc2cbf2c80"
+    },
+    "metrics": {
+      "activeNav": "맵별 추천 영웅",
+      "selectedHero": null,
+      "selectedMap": "부산",
+      "workspaceColumns": "592px 640px",
+      "dialogVisible": false,
+      "pageOverflow": false,
+      "pickOverflow": false,
+      "resultOverflow": false
+    }
+  },
+  {
+    "name": "mobile-map",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "screenshot": {
+      "width": 390,
+      "height": 1448,
+      "bytes": 53023,
+      "sha256": "9ce049f6a6c56330d744eabb18e32e07d231ee2b2c991c02bdbdc6630b3da9f3"
+    },
+    "metrics": {
+      "activeNav": "맵별 추천 영웅",
+      "selectedHero": null,
+      "selectedMap": "부산",
+      "workspaceColumns": "374px",
+      "dialogVisible": false,
+      "pageOverflow": false,
+      "pickOverflow": false,
+      "resultOverflow": false
+    }
+  },
+  {
+    "name": "mobile-notice-modal",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "screenshot": {
+      "width": 390,
+      "height": 1967,
+      "bytes": 82919,
+      "sha256": "218a3201b76dd78ba8580bbd7a2873f789c6c0a4c09f0f5c25bd354331092385"
+    },
+    "metrics": {
+      "activeNav": "상성",
+      "selectedHero": "D.Va",
+      "selectedMap": null,
+      "workspaceColumns": "374px",
+      "dialogVisible": true,
+      "pageOverflow": false,
+      "pickOverflow": false,
+      "resultOverflow": false
+    }
+  }
+]
+`;

@@ -341,9 +341,68 @@ footer {
   font-size: 11px;
 }
 
-footer a {
+footer a,
+.footer-link {
   color: inherit;
   font-weight: 800;
+}
+
+.footer-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(18, 24, 30, 0.35);
+  z-index: 20;
+}
+
+.modal {
+  width: min(420px, 100%);
+  border: 1px solid var(--line);
+  padding: 14px;
+  background: var(--panel);
+  box-shadow: 0 12px 32px rgba(18, 24, 30, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+
+.modal-header strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.modal-close {
+  border: 1px solid var(--line);
+  padding: 1px 7px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.modal p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 @media (max-width: 1500px) {
@@ -453,6 +512,83 @@ footer a {
     position: static;
     max-height: none;
     order: -1;
+  }
+}
+
+@media (max-width: 720px) {
+  .app {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .navbar {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 7px;
+  }
+
+  .navbar strong {
+    flex-basis: 100%;
+  }
+
+  .workspace {
+    gap: 8px;
+  }
+
+  .pick,
+  .result {
+    padding: 8px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+  }
+
+  .grid.small {
+    grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+  }
+
+  .hero-button {
+    font-size: 10px;
+  }
+
+  .hero-button img {
+    height: 56px;
+  }
+
+  .grid.small .hero-button img {
+    height: 42px;
+  }
+
+  .map-list {
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  }
+
+  .map-button {
+    min-height: 68px;
+  }
+
+  .map-button img {
+    height: 42px;
+  }
+
+  .selected-hero,
+  .selected-map {
+    grid-template-columns: 48px 1fr;
+  }
+
+  .selected-map img {
+    width: 48px;
+    height: 34px;
+  }
+
+  .selected-hero strong,
+  .selected-map strong {
+    font-size: 22px;
+  }
+
+  footer {
+    line-height: 1.5;
   }
 }
 
