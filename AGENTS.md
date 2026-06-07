@@ -1,0 +1,3 @@
+- must use conventional and atomic commits
+- prefer FP
+- use https://jsr.io `@std/*` libs or any 3rd party libs; do not reinvent wheel
