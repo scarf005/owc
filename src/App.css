@@ -25,6 +25,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(640px, 50vw);
   gap: 16px;
+  align-items: start;
   min-height: 0;
 }
 
@@ -40,6 +41,7 @@ footer {
 .result {
   align-self: start;
   max-height: 100%;
+  overflow: hidden;
   padding: 16px;
 }
 
@@ -280,6 +282,13 @@ footer {
   align-items: center;
   border-left: 4px solid var(--mode-color);
   padding-left: 8px;
+}
+
+.selected-map > div {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  min-width: 0;
 }
 
 .selected-title {

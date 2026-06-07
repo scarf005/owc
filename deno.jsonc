@@ -1,7 +1,7 @@
 {
   "tasks": {
     "dev": "deno run -A --node-modules-dir npm:vite",
-    "check": "deno check src/main.tsx",
+    "check": "deno check src/main.tsx scripts/crawl-guide-data.ts tests/layout_test.ts",
     "crawl:namu": "deno run -A scripts/crawl-guide-data.ts",
     "crawl:guide": "deno task crawl:namu",
     "build": "deno run -A --node-modules-dir npm:vite build",

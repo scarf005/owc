@@ -11,8 +11,8 @@ snapshot[`responsive-playwright-screenshots 1`] = `
     "screenshot": {
       "width": 1280,
       "height": 1000,
-      "bytes": 54855,
-      "sha256": "5904e05a087351bc7b13f80cf6b8fa3d37b2de6e5f86b16a3de5d6b325bea78e"
+      "bytes": 54859,
+      "sha256": "3d99bfdef6987efdd3b0e83ec21613454aaeb3cccf4688713a1d7779ea0ccd86"
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -34,8 +34,8 @@ snapshot[`responsive-playwright-screenshots 1`] = `
     "screenshot": {
       "width": 390,
       "height": 1436,
-      "bytes": 52400,
-      "sha256": "071ebd91f11851dda73755be1710c3ff8b85d6617386b5c6226d692d4a3e4c48"
+      "bytes": 52405,
+      "sha256": "be55385ce135fa4d5378b715ccd1c387948f5e254a90dfafc5cf2ef5519b4057"
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",

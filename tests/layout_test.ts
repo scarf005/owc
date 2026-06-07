@@ -589,6 +589,36 @@ Deno.test({
       assert(!overflow.page, "page overflowed on map recommendations")
       assert(!overflow.pick, "map picker overflowed")
       assert(!overflow.result, "map recommendations overflowed")
+
+      await page.setViewportSize({ width: 1440, height: 900 })
+      const mapHeaderLayout = await page.evaluate(() => {
+        const mode = document.querySelector<HTMLElement>(".selected-map span")
+        const title = document.querySelector<HTMLElement>(
+          ".selected-map .selected-title",
+        )
+        const pick = document.querySelector<HTMLElement>(".pick")
+        const footer = document.querySelector<HTMLElement>("footer")
+        if (!mode || !title || !pick || !footer) return null
+        const modeRect = mode.getBoundingClientRect()
+        const titleRect = title.getBoundingClientRect()
+        const pickRect = pick.getBoundingClientRect()
+        const footerRect = footer.getBoundingClientRect()
+        return {
+          titleGap: Math.round(titleRect.left - modeRect.right),
+          footerGap: Math.floor(footerRect.top - pickRect.bottom),
+        }
+      })
+      if (!mapHeaderLayout) {
+        throw new Error("map header layout elements were not found")
+      }
+      assert(
+        mapHeaderLayout.titleGap >= 4,
+        `map mode and title were too close: ${mapHeaderLayout.titleGap}`,
+      )
+      assert(
+        mapHeaderLayout.footerGap >= 0,
+        `footer overlapped the map picker: ${mapHeaderLayout.footerGap}`,
+      )
     } finally {
       await page.close().catch(() => undefined)
       await browser.close().catch(() => undefined)
