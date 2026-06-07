@@ -121,9 +121,17 @@ footer {
   grid-template-columns: repeat(auto-fill, minmax(var(--counter-cell), 1fr));
 }
 
+.hero-role,
+.map-mode {
+  padding-left: 8px;
+}
+
+.hero-role {
+  border-left: 4px solid var(--role-color);
+}
+
 .map-mode {
   border-left: 4px solid var(--mode-color);
-  padding-left: 8px;
 }
 
 .map-list {

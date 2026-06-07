@@ -19,10 +19,10 @@ import {
 
 type View = "matchups" | "synergies" | "maps"
 
-const roles: { key: Role; label: string }[] = [
-  { key: "tank", label: "돌격" },
-  { key: "damage", label: "공격" },
-  { key: "support", label: "지원" },
+const roles: { key: Role; label: string; color: string }[] = [
+  { key: "tank", label: "돌격", color: "#2f80ed" },
+  { key: "damage", label: "공격", color: "#eb5757" },
+  { key: "support", label: "지원", color: "#27ae60" },
 ]
 
 const views: { key: View; label: string }[] = [
@@ -82,10 +82,14 @@ function HeroPicker(
     <section class="pick" aria-label="영웅 선택">
       <For each={roles}>
         {(role) => (
-          <div class="role">
+          <div class="role hero-role" style={{ "--role-color": role.color }}>
             <div class="label">{role.label}</div>
             <div class="grid">
-              <For each={heroes.filter((hero) => hero.role === role.key)}>
+              <For
+                each={heroes.filter((hero) =>
+                  hero.role === role.key
+                )}
+              >
                 {(hero) => (
                   <HeroButton
                     hero={hero}
