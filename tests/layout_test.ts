@@ -348,17 +348,20 @@ Deno.test({
       )
 
       await page.locator(".map-button").filter({ hasText: "부산" }).click()
-      const symmetraNote = result.getByLabel(/추천 주석: 사찰맵 한정/)
+      const symmetraCard = result.locator(".hero-button").filter({
+        hasText: "시메트라",
+      }).first()
+      const symmetraNote = symmetraCard.getByLabel(/추천 주석: 사찰맵 한정/)
       assert(
         await symmetraNote.isVisible(),
         "recommendation note icon was not visible",
       )
-      await symmetraNote.hover()
+      await symmetraCard.hover()
       assert(
         await symmetraNote.locator(".tooltip").evaluate((tooltip) =>
           getComputedStyle(tooltip).opacity === "1"
         ),
-        "recommendation note tooltip was not shown on hover",
+        "recommendation note tooltip was not shown on card hover",
       )
       await page.mouse.move(0, 0)
 

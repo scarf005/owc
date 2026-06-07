@@ -138,7 +138,6 @@ function HeroButton(
             aria-label={`추천 주석: ${note()}`}
             class="info-note"
             data-note={note()}
-            tabIndex={0}
             title={note()}
           >
             i

@@ -248,8 +248,8 @@ footer {
   z-index: 10;
 }
 
-.info-note:hover .tooltip,
-.info-note:focus .tooltip {
+.hero-button:hover .info-note .tooltip,
+.hero-button:focus-visible .info-note .tooltip {
   display: block;
   opacity: 1;
 }
