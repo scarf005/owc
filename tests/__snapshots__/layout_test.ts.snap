@@ -35,8 +35,8 @@ snapshot[`tab-interaction-screenshots 1`] = `
     "screenshot": {
       "width": 1280,
       "height": 1000,
-      "bytes": 76846,
-      "sha256": "2dcd4fa9ad93b3e32e2828704cc08de824b6429cf8dfd722b44675f9bb79a061"
+      "bytes": 83250,
+      "sha256": "cabfd9bf1868336ba52e4f53b502a1845b55d6b026e801a864339f1afa89c6a3"
     },
     "metrics": {
       "activeNav": "상성",
@@ -107,8 +107,8 @@ snapshot[`tab-interaction-screenshots 1`] = `
     "screenshot": {
       "width": 1280,
       "height": 1000,
-      "bytes": 82650,
-      "sha256": "59dd6a8d66a64707e97e1d327915171afcdc7c8df00876c09479ac3c187d2a73"
+      "bytes": 82535,
+      "sha256": "78675af011b289296f1bc76651ba185c560b82c755bc503c18d2375e054871fd"
     },
     "metrics": {
       "activeNav": "궁합",
@@ -179,8 +179,8 @@ snapshot[`tab-interaction-screenshots 1`] = `
     "screenshot": {
       "width": 1280,
       "height": 1000,
-      "bytes": 56998,
-      "sha256": "86b4e864105ab00bfa0cb8ebcfc90582792ae0b7e12a5db83ef2b099ea166dab"
+      "bytes": 63128,
+      "sha256": "776b477815bc4a7dcc343b32d3ab18ddc7223095faff395e89956b753bfae3ce"
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -251,8 +251,8 @@ snapshot[`tab-interaction-screenshots 1`] = `
     "screenshot": {
       "width": 390,
       "height": 1967,
-      "bytes": 75724,
-      "sha256": "71c8cef439eb61801c206804f1c042b5ccad81ca8df0effc64cb4539bc34746f"
+      "bytes": 80357,
+      "sha256": "039e56386e1294058b60b4be1355f8e3782bf1b1055da2810cc8d1c302f0ad17"
     },
     "metrics": {
       "activeNav": "상성",
@@ -323,8 +323,8 @@ snapshot[`tab-interaction-screenshots 1`] = `
     "screenshot": {
       "width": 390,
       "height": 1967,
-      "bytes": 84109,
-      "sha256": "f4edba63fc2ee3d4e21bb19c55ff7a1bf79b2873efe789b61fb4c778c8e964fb"
+      "bytes": 84090,
+      "sha256": "e12ef0cfce14e11e008f65eeda220d73194c2f2b99875d4f470ee213467b0044"
     },
     "metrics": {
       "activeNav": "궁합",
@@ -395,8 +395,8 @@ snapshot[`tab-interaction-screenshots 1`] = `
     "screenshot": {
       "width": 390,
       "height": 1436,
-      "bytes": 55074,
-      "sha256": "a7d28a5b7ec81a3a90d45a8eb478418a99fffbd0015e0448b058e09ef11472aa"
+      "bytes": 58356,
+      "sha256": "0e73dd8b6c107e869ae7b8bb5e807f6997072c918d55758f714770f6203b6ecd"
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",

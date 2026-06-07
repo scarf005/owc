@@ -484,6 +484,46 @@ const clickHeroAndMeasure = async (page: Page, name: string) => {
 }
 
 Deno.test({
+  name: "note tooltips stay inside the viewport when panels are clipped",
+  timeout: 60_000,
+  async fn() {
+    const { child, url } = await startServer()
+    const browser = await chromium.launch()
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 360 },
+    })
+
+    try {
+      await page.goto(`${url}?view=synergies&hero=d-va&map=부산`)
+      await page.waitForSelector(".result .hero-button:has(.info-note)")
+
+      const card = page.locator(".result .hero-button").filter({
+        hasText: "파라",
+      }).first()
+      const tooltip = card.getByLabel(/추천 주석: .*파라는 모든 디바/)
+        .locator(".tooltip")
+      await card.hover()
+      assert(
+        await tooltip.evaluate((node) => {
+          const rect = node.getBoundingClientRect()
+          const style = getComputedStyle(node)
+          return style.position === "fixed" && style.opacity === "1" &&
+            rect.top >= 0 && rect.left >= 0 &&
+            rect.right <= globalThis.innerWidth &&
+            rect.bottom <= globalThis.innerHeight
+        }),
+        "note tooltip must not be clipped by the result panel or viewport",
+      )
+    } finally {
+      await page.close().catch(() => undefined)
+      await browser.close().catch(() => undefined)
+      child.kill("SIGTERM")
+      await child.status.catch(() => undefined)
+    }
+  },
+})
+
+Deno.test({
   name: "desktop zoom keeps lower hero picker cards reachable by scrolling",
   timeout: 60_000,
   async fn() {

@@ -26,6 +26,7 @@ import {
 
 type View = "matchups" | "synergies" | "maps"
 type HeroRowItem = { hero: Hero; note?: string }
+type TooltipState = { left: number; note: string; top: number; width: number }
 
 const roles: { key: Role; label: string; color: string }[] = [
   { key: "tank", label: "돌격", color: "#2f80ed" },
@@ -123,11 +124,56 @@ const heroGroupsByRating = (
 function HeroButton(
   props: { hero: Hero; note?: string; selected?: boolean; onClick: () => void },
 ) {
+  const [tooltip, setTooltip] = createSignal<TooltipState>()
+  let noteRef: HTMLSpanElement | undefined
+  let tooltipRef: HTMLSpanElement | undefined
+  let tooltipFrame = 0
+  const placeTooltip = (note: string, height = 0) => {
+    if (!noteRef) return
+    const margin = 8
+    const gap = 4
+    const rect = noteRef.getBoundingClientRect()
+    const width = Math.min(
+      240,
+      Math.max(0, globalThis.innerWidth - margin * 2),
+    )
+    const left = Math.min(
+      Math.max(rect.right - width, margin),
+      globalThis.innerWidth - width - margin,
+    )
+    const lowerTop = rect.bottom + gap
+    const upperTop = rect.top - height - gap
+    const top =
+      height > 0 && lowerTop + height > globalThis.innerHeight - margin
+        ? Math.max(margin, upperTop)
+        : lowerTop
+    setTooltip({ left, note, top, width })
+  }
+  const showTooltip = () => {
+    const note = props.note
+    if (!note) return
+    cancelAnimationFrame(tooltipFrame)
+    placeTooltip(note)
+    tooltipFrame = requestAnimationFrame(() => {
+      const height = tooltipRef?.getBoundingClientRect().height ?? 0
+      placeTooltip(note, height)
+    })
+  }
+  const hideTooltip = () => {
+    cancelAnimationFrame(tooltipFrame)
+    setTooltip()
+  }
+  onCleanup(() => cancelAnimationFrame(tooltipFrame))
+
   return (
     <button
       class="hero-button"
       classList={{ "is-selected": props.selected }}
+      onBlur={hideTooltip}
       onClick={props.onClick}
+      onFocus={showTooltip}
+      onMouseEnter={showTooltip}
+      onMouseLeave={hideTooltip}
       title={props.hero.name}
       type="button"
     >
@@ -144,10 +190,25 @@ function HeroButton(
             aria-label={`추천 주석: ${note()}`}
             class="info-note"
             data-note={note()}
-            title={note()}
+            ref={noteRef}
           >
             i
-            <span class="tooltip" role="tooltip">{note()}</span>
+            <Show when={tooltip()}>
+              {(tip) => (
+                <span
+                  class="tooltip"
+                  ref={tooltipRef}
+                  role="tooltip"
+                  style={{
+                    left: `${tip().left}px`,
+                    top: `${tip().top}px`,
+                    width: `${tip().width}px`,
+                  }}
+                >
+                  {tip().note}
+                </span>
+              )}
+            </Show>
           </span>
         )}
       </Show>
