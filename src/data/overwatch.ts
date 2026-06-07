@@ -1,4 +1,4 @@
-import { loadJsonc } from "./load-jsonc.ts"
+import data from "./overwatch.json" with { type: "json" }
 import type { Hero, Matchup } from "./schema.ts"
 
 export type { Hero, Matchup, Rating, Role } from "./schema.ts"
@@ -8,10 +8,7 @@ type OverwatchData = {
   matchups: Record<string, Matchup[]>
 }
 
-const data = await loadJsonc<OverwatchData>(
-  "./overwatch.jsonc",
-  new URL("./overwatch.jsonc", import.meta.url),
-)
+const overwatchData = data as OverwatchData
 
-export const heroes = data.heroes
-export const matchups = data.matchups
+export const heroes = overwatchData.heroes
+export const matchups = overwatchData.matchups

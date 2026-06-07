@@ -1,4 +1,4 @@
-import { loadJsonc } from "./load-jsonc.ts"
+import data from "./guide.json" with { type: "json" }
 import type {
   HeroId,
   MapMode,
@@ -22,11 +22,8 @@ type GuideData = {
   mapModes: MapMode[]
 }
 
-const data = await loadJsonc<GuideData>(
-  "./guide.jsonc",
-  new URL("./guide.jsonc", import.meta.url),
-)
+const guideData = data as GuideData
 
-export const synergyRatings = data.synergyRatings
-export const heroSynergies = data.heroSynergies
-export const mapModes = data.mapModes
+export const synergyRatings = guideData.synergyRatings
+export const heroSynergies = guideData.heroSynergies
+export const mapModes = guideData.mapModes

@@ -15,3 +15,4 @@ deno task validate
 
 - 비공식 팬 도구이며 Blizzard Entertainment와 무관합니다. Overwatch, 영웅 이름, 영웅 이미지와 관련 자산은 Blizzard Entertainment의 소유입니다.
 - [나무위키](https://namu.wiki) 데이터를 사용합니다.
+- `src/data/*.json`의 나무위키 기반 데이터는 나무위키의 라이선스 조건을 따릅니다.
