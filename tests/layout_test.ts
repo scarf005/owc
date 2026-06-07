@@ -98,13 +98,21 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
     mapModes.every((mode) => mode.maps.every((map) => map.image.length > 0)),
     "each crawled map must include an image",
   )
+  const nepal = mapModes.flatMap((mode) => mode.maps).find((map) =>
+    map.name === "네팔"
+  )
+  if (!nepal) throw new Error("Nepal map must be crawled")
   assert(
-    mapModes.every((mode) =>
-      mode.maps.every((map) =>
-        map.attack.length === 0 && map.defense.length === 0
-      )
-    ),
-    "map attack/defense recommendations must stay empty until sourced",
+    nepal.attack.includes("roadhog") && nepal.defense.includes("cassidy"),
+    "Nepal attack/defense recommendations must be crawled from Namu",
+  )
+  const antarctic = mapModes.flatMap((mode) => mode.maps).find((map) =>
+    map.name === "남극 반도"
+  )
+  if (!antarctic) throw new Error("Antarctic Peninsula map must be crawled")
+  assert(
+    antarctic.attack.length === 0 && antarctic.defense.length === 0,
+    "maps without Namu recommendations must stay empty",
   )
 })
 
@@ -195,14 +203,6 @@ Deno.test({
         "synergy good group was not visible",
       )
 
-      const hasFabricatedRecommendations = mapModes.some((mode) =>
-        mode.maps.some((map) => map.attack.length > 0 || map.defense.length > 0)
-      )
-      assert(
-        !hasFabricatedRecommendations,
-        "map recommendations must stay empty until sourced",
-      )
-
       const mapNav = page.getByRole("button", { name: "맵별 추천 영웅" })
       assert(!(await mapNav.isDisabled()), "map nav should stay enabled")
       await mapNav.click()
@@ -226,10 +226,42 @@ Deno.test({
         await page.locator(".map-button img").first().isVisible(),
         "map image was not visible",
       )
+      const emptyMapButton = page.locator(".map-button").filter({
+        hasText: "남극 반도",
+      }).first()
       assert(
-        await page.getByText("추천 영웅 데이터 없음", { exact: true })
-          .isVisible(),
-        "empty recommendation state was not visible",
+        await emptyMapButton.isDisabled(),
+        "maps without recommendations must be disabled",
+      )
+      const sourcedMapButton = page.locator(".map-button").filter({
+        hasText: "네팔",
+      }).first()
+      assert(
+        !(await sourcedMapButton.isDisabled()),
+        "maps with recommendations must stay enabled",
+      )
+      await sourcedMapButton.click()
+      const result = page.locator(".result")
+      assert(
+        await result.getByText("공격", { exact: true }).isVisible(),
+        "attack recommendation row was not visible",
+      )
+      assert(
+        await result.getByText("방어", { exact: true }).isVisible(),
+        "defense recommendation row was not visible",
+      )
+      assert(
+        await result.getByText("로드호그", { exact: true }).isVisible(),
+        "crawled attack hero was not visible",
+      )
+      assert(
+        await result.getByText("캐서디", { exact: true }).isVisible(),
+        "crawled defense hero was not visible",
+      )
+      assert(
+        !(await page.getByText("추천 영웅 데이터 없음", { exact: true })
+          .isVisible()),
+        "empty recommendation state should not show for sourced maps",
       )
 
       const overflow = await page.evaluate(() => {

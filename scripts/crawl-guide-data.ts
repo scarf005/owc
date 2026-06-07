@@ -77,7 +77,7 @@ const cleanText = (html: string) =>
   decode(html)
     .replace(/<br\b[^>]*>/g, "\n")
     .replace(/<[^>]+>/g, "")
-    .replace(/[ \t\f\v]+/g, " ")
+    .replace(/[\u00a0 \t\f\v]+/g, " ")
     .replace(/\n\s+/g, "\n")
     .trim()
 
@@ -216,10 +216,42 @@ const slugify = (text: string) =>
     .replace(/[^a-z0-9가-힣]+/g, "-")
     .replace(/^-|-$/g, "")
 
-const mapImageCache = new Map<string, string>()
+const parseHeroIds = (text: string) => {
+  const ids: string[] = []
+  for (const chunk of text.split(/[,，]/)) {
+    const name = chunk
+      .replace(/\[[^\]]+\]/g, "")
+      .replace(/\([^)]*\)/g, "")
+      .replace(/[\u00a0 \t\n]+/g, " ")
+      .trim()
+    if (!name) continue
+    const hero = heroByName.get(name) ?? heroByName.get(name.replace(": ", ":"))
+    if (hero && !ids.includes(hero.id)) ids.push(hero.id)
+  }
+  return ids
+}
 
-const fetchMapImage = async (page: string, fallback: string) => {
-  if (mapImageCache.has(page)) return mapImageCache.get(page) ?? fallback
+const parseMapRecommendations = (html: string) => {
+  const text = cleanText(html)
+    .replace(/\[[^\]]+\]/g, " ")
+    .replace(/\s+/g, " ")
+  const match = text.match(
+    /공격 추천\s*(.*?)\s*(?:방어|수비) 추천\s*(.*?)(?:\s*1\.\s*개요|$)/,
+  )
+  return {
+    attack: match ? parseHeroIds(match[1]) : [],
+    defense: match ? parseHeroIds(match[2]) : [],
+  }
+}
+
+const mapDetailsCache = new Map<
+  string,
+  { image: string; attack: string[]; defense: string[] }
+>()
+
+const fetchMapDetails = async (page: string, fallback: string) => {
+  const cached = mapDetailsCache.get(page)
+  if (cached) return cached
   try {
     const html = await fetchNamu(page)
     const og = html.match(
@@ -228,13 +260,17 @@ const fetchMapImage = async (page: string, fallback: string) => {
       html.match(
         /<meta\b[^>]*content=['"]([^'"]+)['"][^>]*property=['"]og:image['"][^>]*>/,
       )?.[1]
-    const image = og ? absoluteUrl(og) : fallback
-    mapImageCache.set(page, image)
+    const details = {
+      image: og ? absoluteUrl(og) : fallback,
+      ...parseMapRecommendations(html),
+    }
+    mapDetailsCache.set(page, details)
     await new Promise((resolve) => setTimeout(resolve, 80))
-    return image
+    return details
   } catch {
-    mapImageCache.set(page, fallback)
-    return fallback
+    const details = { image: fallback, attack: [], defense: [] }
+    mapDetailsCache.set(page, details)
+    return details
   }
 }
 
@@ -271,16 +307,17 @@ const parseMapModes = async (html: string) => {
         table[0].match(/<img\b[^>]*data-src=['"]([^'"]+)['"][^>]*>/)?.[1] ??
           table[0].match(/<img\b[^>]*src=['"]([^'"]+)['"][^>]*>/)?.[1]
       const page = absoluteUrl(href)
+      const details = await fetchMapDetails(
+        page,
+        fallbackImage ? absoluteUrl(fallbackImage) : "",
+      )
       maps.push({
         id: slugify(name),
         name,
         page,
-        image: await fetchMapImage(
-          page,
-          fallbackImage ? absoluteUrl(fallbackImage) : "",
-        ),
-        attack: [],
-        defense: [],
+        image: details.image,
+        attack: details.attack,
+        defense: details.defense,
       })
     }
 
@@ -384,7 +421,7 @@ export const heroSynergies: Record<HeroId, SynergyEntry[]> = ${
   JSON.stringify(heroSynergies, null, 2)
 }
 
-// 나무위키 전장 목록은 모드/전장/이미지를 제공하지만 공격/방어 추천 영웅 출처는 없습니다.
+// 나무위키 전장 문서에 추천 영웅 표기가 없는 전장은 빈 배열로 둡니다.
 export const mapModes: MapMode[] = ${JSON.stringify(mapModes, null, 2)}
 `
 

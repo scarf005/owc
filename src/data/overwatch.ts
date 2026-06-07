@@ -778,7 +778,7 @@ export const matchups: Record<string, Matchup[]> = {
     },
     {
       "target": "cassidy",
-      "rating": "neutral",
+      "rating": "bad",
     },
     {
       "target": "torbjorn",

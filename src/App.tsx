@@ -43,6 +43,10 @@ const heroById = new Map(heroes.map((hero) => [hero.id, hero]))
 const allMaps = mapModes.flatMap((mode) =>
   mode.maps.map((map) => ({ ...map, mode }))
 )
+const hasMapRecommendations = (map: { attack: string[]; defense: string[] }) =>
+  map.attack.length > 0 || map.defense.length > 0
+const hasAnyMapRecommendations = allMaps.some(hasMapRecommendations)
+const firstRecommendedMap = allMaps.find(hasMapRecommendations) ?? allMaps[0]
 
 const heroesFromIds = (ids: string[]) =>
   ids.map((id) => heroById.get(id)).filter((hero): hero is Hero =>
@@ -113,8 +117,12 @@ function MapPicker(
                   <button
                     class="map-button"
                     classList={{ "is-selected": props.selectedId === map.id }}
+                    disabled={!hasMapRecommendations(map)}
                     onClick={() => props.onSelect(map.id)}
                     style={{ "--mode-color": mode.color }}
+                    title={hasMapRecommendations(map)
+                      ? map.name
+                      : "추천 영웅 데이터 없음"}
                     type="button"
                   >
                     <img
@@ -284,7 +292,9 @@ function MapPanel(props: { mapId: string }) {
 function App() {
   const [activeView, setActiveView] = createSignal<View>("matchups")
   const [selectedId, setSelectedId] = createSignal(heroes[0]?.id ?? "")
-  const [selectedMapId, setSelectedMapId] = createSignal(allMaps[0]?.id ?? "")
+  const [selectedMapId, setSelectedMapId] = createSignal(
+    firstRecommendedMap?.id ?? "",
+  )
   const selectedHero = createMemo(() => heroById.get(selectedId()))
   let resultRef: HTMLElement | undefined
   let fitFrame = 0
@@ -359,16 +369,21 @@ function App() {
       <nav class="navbar" aria-label="주요 메뉴">
         <strong>OWC</strong>
         <For each={views}>
-          {(view) => (
-            <button
-              class="nav-button"
-              classList={{ "is-selected": activeView() === view.key }}
-              onClick={() => setActiveView(view.key)}
-              type="button"
-            >
-              {view.label}
-            </button>
-          )}
+          {(view) => {
+            const disabled = view.key === "maps" && !hasAnyMapRecommendations
+            return (
+              <button
+                class="nav-button"
+                classList={{ "is-selected": activeView() === view.key }}
+                disabled={disabled}
+                onClick={() => !disabled && setActiveView(view.key)}
+                title={disabled ? "추천 영웅 데이터 없음" : view.label}
+                type="button"
+              >
+                {view.label}
+              </button>
+            )
+          }}
         </For>
       </nav>
 
