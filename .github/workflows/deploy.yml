@@ -23,6 +23,7 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
+          cache: true
       - uses: actions/configure-pages@v5
         if: github.event_name != 'pull_request'
       - run: deno run -A npm:playwright@1.60.0 install --with-deps chromium
