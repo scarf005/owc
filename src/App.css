@@ -41,8 +41,16 @@ footer {
 .result {
   align-self: start;
   max-height: 100%;
-  overflow: hidden;
   padding: 16px;
+}
+
+.pick {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.result {
+  overflow: hidden;
 }
 
 .navbar {
