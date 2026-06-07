@@ -191,10 +191,13 @@ Deno.test({
         await heroTitle.evaluate((link) => {
           const strong = link.querySelector("strong")
           const linkStyle = getComputedStyle(link)
+          const iconStyle = getComputedStyle(link, "::after")
           return strong && linkStyle.textDecorationLine.includes("underline") &&
-            linkStyle.color === getComputedStyle(strong).color
+            linkStyle.color === getComputedStyle(strong).color &&
+            iconStyle.backgroundImage !== "none" &&
+            iconStyle.width === "18px"
         }),
-        "hero title link style should only differ by underline",
+        "hero title link should show only underline plus Namu Wiki logo",
       )
 
       await page.getByLabel("주요 메뉴").getByRole("button", {
@@ -215,10 +218,13 @@ Deno.test({
         await mapTitle.evaluate((link) => {
           const strong = link.querySelector("strong")
           const linkStyle = getComputedStyle(link)
+          const iconStyle = getComputedStyle(link, "::after")
           return strong && linkStyle.textDecorationLine.includes("underline") &&
-            linkStyle.color === getComputedStyle(strong).color
+            linkStyle.color === getComputedStyle(strong).color &&
+            iconStyle.backgroundImage !== "none" &&
+            iconStyle.width === "18px"
         }),
-        "map title link style should only differ by underline",
+        "map title link should show only underline plus Namu Wiki logo",
       )
       await page.locator(".map-button").filter({ hasText: "왕의 길" }).click()
       assert(
@@ -302,7 +308,7 @@ Deno.test({
         const screenshot = await page.screenshot({
           animations: "disabled",
           fullPage: true,
-          mask: [page.locator("img")],
+          mask: [page.locator("img"), page.locator(".selected-title")],
         })
         const metrics = await page.evaluate(() => {
           const pick = document.querySelector<HTMLElement>(".pick")

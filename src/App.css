@@ -289,6 +289,20 @@ footer {
   text-underline-offset: 3px;
 }
 
+.selected-title[href*="namu.wiki"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.selected-title[href*="namu.wiki"]::after {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  background: url("./assets/namu-favicon.svg") center / contain no-repeat;
+  content: "";
+}
+
 .selected-hero strong,
 .selected-map strong {
   display: block;

@@ -1,6 +1,7 @@
-name: Deploy static site
+name: Pages CI
 
 on:
+  pull_request:
   push:
     branches: [main]
   workflow_dispatch:
@@ -23,12 +24,16 @@ jobs:
         with:
           deno-version: v2.x
       - uses: actions/configure-pages@v5
+        if: github.event_name != 'pull_request'
+      - run: deno run -A npm:playwright@1.60.0 install --with-deps chromium
       - run: deno task validate
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
         with:
           path: dist
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:
