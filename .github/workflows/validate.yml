@@ -1,0 +1,41 @@
+name: Validation CI
+
+on: pull_request
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+          cache: true
+      - name: Match local font fallback
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+          mkdir -p ~/.config/fontconfig
+          printf '%s\n' \
+            '<?xml version="1.0"?>' \
+            '<!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">' \
+            '<fontconfig>' \
+            '<alias><family>Inter</family><prefer><family>Noto Sans CJK KR</family></prefer></alias>' \
+            '<alias><family>Pretendard</family><prefer><family>Noto Sans CJK KR</family></prefer></alias>' \
+            '<alias><family>Apple SD Gothic Neo</family><prefer><family>Noto Sans CJK KR</family></prefer></alias>' \
+            '<alias><family>Malgun Gothic</family><prefer><family>Noto Sans CJK KR</family></prefer></alias>' \
+            '<alias><family>system-ui</family><prefer><family>Noto Sans CJK KR</family></prefer></alias>' \
+            '<alias><family>sans-serif</family><prefer><family>Noto Sans CJK KR</family></prefer></alias>' \
+            '</fontconfig>' \
+            > ~/.config/fontconfig/fonts.conf
+          fc-cache -f
+          fc-match Inter
+      - run: deno run -A npm:playwright@1.60.0 install --with-deps chromium
+      - run: deno task validate

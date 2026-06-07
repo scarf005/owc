@@ -1,7 +1,6 @@
-name: Pages CI
+name: Pages Deploy
 
 on:
-  pull_request:
   push:
     branches: [main]
   workflow_dispatch:
@@ -16,20 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  validate:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-          cache: true
-      - run: deno run -A npm:playwright@1.60.0 install --with-deps chromium
-      - run: deno task validate
-
   deploy:
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
