@@ -414,9 +414,6 @@ function MapPanel(props: { mapId: string }) {
 function App() {
   const [state, setState] = createStore(readQueryState())
   const [noticeOpen, setNoticeOpen] = createSignal(false)
-  const setActiveView = (view: View) => setState("view", view)
-  const setSelectedId = (heroId: string) => setState("heroId", heroId)
-  const setSelectedMapId = (mapId: string) => setState("mapId", mapId)
   const selectedHero = createMemo(() => heroById.get(state.heroId))
   let resultRef: HTMLElement | undefined
   let fitFrame = 0
@@ -459,6 +456,17 @@ function App() {
       fitFrame = requestAnimationFrame(fitCounterSize)
     })
   }
+  const refitAfterStateChange = (update: () => void) => {
+    update()
+    fitCounterSize()
+    queueFitCounterSize()
+  }
+  const setActiveView = (view: View) =>
+    refitAfterStateChange(() => setState("view", view))
+  const setSelectedId = (heroId: string) =>
+    refitAfterStateChange(() => setState("heroId", heroId))
+  const setSelectedMapId = (mapId: string) =>
+    refitAfterStateChange(() => setState("mapId", mapId))
 
   createRenderEffect(() => {
     state.heroId
@@ -475,10 +483,8 @@ function App() {
     })
   })
 
-  const applyQueryState = () => {
-    const state = readQueryState()
-    setState(state)
-  }
+  const applyQueryState = () =>
+    refitAfterStateChange(() => setState(readQueryState()))
 
   onMount(() => {
     globalThis.addEventListener("resize", queueFitCounterSize)
