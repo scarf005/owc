@@ -1,1 +1,1 @@
-Unofficial fan tool. Overwatch assets © Blizzard Entertainment. Code: AGPL-3.0-or-later, no warranty.
+Unofficial fan tool. Overwatch assets © Blizzard Entertainment. Data sourced from Namu Wiki (https://namu.wiki). Code: AGPL-3.0-or-later, no warranty.
