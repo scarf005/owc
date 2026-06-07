@@ -282,6 +282,13 @@ footer {
   padding-left: 8px;
 }
 
+.selected-title {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
 .selected-hero strong,
 .selected-map strong {
   display: block;

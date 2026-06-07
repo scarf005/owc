@@ -11,8 +11,8 @@ snapshot[`responsive-playwright-screenshots 1`] = `
     "screenshot": {
       "width": 1280,
       "height": 1000,
-      "bytes": 55024,
-      "sha256": "948851eb7ffa6d6bd80d24b9df0ae1648fb78d8370b0e2d68834eebc2cbf2c80"
+      "bytes": 55039,
+      "sha256": "e91cf427009568dbe680af7e8850e938e0cb33b74f50a274be0307469626781a"
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -34,8 +34,8 @@ snapshot[`responsive-playwright-screenshots 1`] = `
     "screenshot": {
       "width": 390,
       "height": 1448,
-      "bytes": 53023,
-      "sha256": "9ce049f6a6c56330d744eabb18e32e07d231ee2b2c991c02bdbdc6630b3da9f3"
+      "bytes": 53041,
+      "sha256": "5bfc3f016e3b361c3ae488b10351f4df6b833fd51cdda5e46634f3b02bf6a42e"
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -57,8 +57,8 @@ snapshot[`responsive-playwright-screenshots 1`] = `
     "screenshot": {
       "width": 390,
       "height": 1967,
-      "bytes": 82919,
-      "sha256": "218a3201b76dd78ba8580bbd7a2873f789c6c0a4c09f0f5c25bd354331092385"
+      "bytes": 82936,
+      "sha256": "0d56c8bc7bd276635c456cb6d0c96615748029321be4829402ee144953ba0567"
     },
     "metrics": {
       "activeNav": "상성",

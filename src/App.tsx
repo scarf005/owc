@@ -265,7 +265,14 @@ function GuidePanel(props: {
               referrerpolicy="no-referrer"
               src={hero().avatar}
             />
-            <strong>{hero().name}</strong>
+            <a
+              class="selected-title"
+              href={hero().page}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <strong>{hero().name}</strong>
+            </a>
           </div>
           <HeroRows groups={props.groups} onSelect={props.onSelect} />
         </>
@@ -314,7 +321,14 @@ function MapPanel(props: { mapId: string }) {
             />
             <div>
               <span>{map().mode.label}</span>
-              <strong>{map().name}</strong>
+              <a
+                class="selected-title"
+                href={map().page}
+                rel="noreferrer"
+                target="_blank"
+              >
+                <strong>{map().name}</strong>
+              </a>
             </div>
           </div>
           <Show

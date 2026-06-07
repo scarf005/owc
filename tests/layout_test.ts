@@ -182,6 +182,20 @@ Deno.test({
         }).isVisible(),
         "hero was not restored from query params",
       )
+      const heroTitle = page.locator(".selected-hero .selected-title")
+      assert(
+        (await heroTitle.getAttribute("href"))?.includes("namu.wiki/w/"),
+        "hero title did not link to Namu Wiki",
+      )
+      assert(
+        await heroTitle.evaluate((link) => {
+          const strong = link.querySelector("strong")
+          const linkStyle = getComputedStyle(link)
+          return strong && linkStyle.textDecorationLine.includes("underline") &&
+            linkStyle.color === getComputedStyle(strong).color
+        }),
+        "hero title link style should only differ by underline",
+      )
 
       await page.getByLabel("주요 메뉴").getByRole("button", {
         name: "맵별 추천 영웅",
@@ -191,6 +205,20 @@ Deno.test({
           exact: true,
         }).isVisible(),
         "map was not restored from query params",
+      )
+      const mapTitle = page.locator(".selected-map .selected-title")
+      assert(
+        (await mapTitle.getAttribute("href"))?.includes("namu.wiki/w/"),
+        "map title did not link to Namu Wiki",
+      )
+      assert(
+        await mapTitle.evaluate((link) => {
+          const strong = link.querySelector("strong")
+          const linkStyle = getComputedStyle(link)
+          return strong && linkStyle.textDecorationLine.includes("underline") &&
+            linkStyle.color === getComputedStyle(strong).color
+        }),
+        "map title link style should only differ by underline",
       )
       await page.locator(".map-button").filter({ hasText: "왕의 길" }).click()
       assert(
