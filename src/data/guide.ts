@@ -1,11 +1,5 @@
 import data from "./guide.json" with { type: "json" }
-import type {
-  HeroId,
-  MapMode,
-  MapRecommendation,
-  SynergyEntry,
-  SynergyRating,
-} from "./schema.ts"
+import type { HeroId, MapMode, SynergyEntry, SynergyRating } from "./schema.ts"
 
 export type {
   HeroId,

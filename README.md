@@ -8,8 +8,17 @@
 deno task dev
 deno task crawl:namu
 deno task test
+deno task pre-commit
 deno task validate
 ```
+
+## Git hooks
+
+```sh
+git config core.hooksPath .githooks
+```
+
+pre-commit hook은 `deno task pre-commit`으로 fmt, lint, test를 실행합니다.
 
 ## 고지
 

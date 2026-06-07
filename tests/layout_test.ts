@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 
-import { assertSnapshot } from "jsr:@std/testing/snapshot"
-import { chromium, type Page } from "npm:playwright@1.60.0"
+import { assertSnapshot } from "@std/testing/snapshot"
+import { chromium, type Page } from "playwright"
 import { heroSynergies, mapModes } from "../src/data/guide.ts"
 import { matchups } from "../src/data/overwatch.ts"
 
@@ -481,8 +481,8 @@ const clickHeroAndMeasure = async (page: Page, name: string) => {
       counter: getComputedStyle(result).getPropertyValue("--counter-icon")
         .trim(),
       pageOverflow:
-        document.documentElement.scrollHeight > window.innerHeight ||
-        document.body.scrollHeight > window.innerHeight,
+        document.documentElement.scrollHeight > globalThis.innerHeight ||
+        document.body.scrollHeight > globalThis.innerHeight,
       pickOverflow: pick.scrollHeight > pick.clientHeight,
       resultOverflow: result.scrollHeight > result.clientHeight,
       button: {
@@ -664,8 +664,9 @@ Deno.test({
         const pick = document.querySelector<HTMLElement>(".pick")
         const result = document.querySelector<HTMLElement>(".result")
         return {
-          page: document.documentElement.scrollHeight > window.innerHeight ||
-            document.body.scrollHeight > window.innerHeight,
+          page:
+            document.documentElement.scrollHeight > globalThis.innerHeight ||
+            document.body.scrollHeight > globalThis.innerHeight,
           pick: pick ? pick.scrollHeight > pick.clientHeight : true,
           result: result ? result.scrollHeight > result.clientHeight : true,
         }
@@ -761,9 +762,9 @@ Deno.test({
                 "--counter-icon",
               )
                 .trim(),
-              pageOverflow:
-                document.documentElement.scrollHeight > window.innerHeight ||
-                document.body.scrollHeight > window.innerHeight,
+              pageOverflow: document.documentElement.scrollHeight >
+                  globalThis.innerHeight ||
+                document.body.scrollHeight > globalThis.innerHeight,
               pickOverflow: pick.scrollHeight > pick.clientHeight,
               resultOverflow: result.scrollHeight > result.clientHeight,
               button: {

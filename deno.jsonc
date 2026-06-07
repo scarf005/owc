@@ -2,13 +2,15 @@
   "tasks": {
     "dev": "deno run -A --node-modules-dir npm:vite",
     "check": "deno check src/main.tsx scripts/crawl-guide-data.ts tests/layout_test.ts",
+    "lint": "deno lint",
     "crawl:namu": "deno run -A scripts/crawl-guide-data.ts",
     "crawl:guide": "deno task crawl:namu",
     "build": "deno run -A --node-modules-dir npm:vite build",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
     "serve": "deno run --allow-net --allow-read jsr:@std/http@1/file-server dist/",
     "test": "deno test -A tests",
-    "validate": "deno fmt --check && deno task check && deno task test && deno task build"
+    "pre-commit": "deno fmt --check && deno task lint && deno task test",
+    "validate": "deno fmt --check && deno task check && deno task lint && deno task test && deno task build"
   },
   "fmt": { "semiColons": false, "proseWrap": "never" },
   "compilerOptions": {
@@ -18,6 +20,8 @@
   },
   "imports": {
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.5",
+    "@std/testing/snapshot": "jsr:@std/testing@1/snapshot",
+    "playwright": "npm:playwright@1.60.0",
     "solid-js": "npm:solid-js@^1.9.10",
     "vite": "npm:vite@^7.2.7",
     "vite-plugin-solid": "npm:vite-plugin-solid@^2.11.10"
