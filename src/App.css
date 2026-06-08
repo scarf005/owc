@@ -192,6 +192,18 @@ footer {
   font-weight: 800;
 }
 
+.hero-button.role-tank {
+  background: #eaf3ff;
+}
+
+.hero-button.role-damage {
+  background: #fff0f0;
+}
+
+.hero-button.role-support {
+  background: #ecf8ef;
+}
+
 .hero-button:hover,
 .hero-button:focus-visible,
 .hero-button.is-selected {
@@ -264,8 +276,7 @@ footer {
 }
 
 .selected-hero,
-.selected-map,
-.map-recommendations {
+.selected-map {
   display: grid;
   gap: 10px;
   border-bottom: 1px solid var(--line);
@@ -341,25 +352,6 @@ footer {
   font-weight: 800;
 }
 
-.map-recommendations {
-  gap: 6px;
-  border-bottom: 0;
-  border-left: 4px solid var(--line);
-  padding: 0 0 0 8px;
-}
-
-.map-recommendations.attack {
-  border-color: #3f8f58;
-}
-
-.map-recommendations.defense {
-  border-color: #3f62ad;
-}
-
-.section-label {
-  color: var(--text);
-}
-
 .row {
   border-left: 4px solid var(--line);
   padding-left: 8px;
@@ -371,18 +363,14 @@ footer {
 }
 
 .row.neutral,
-.row.tank {
+.row.defense {
   border-color: #3f62ad;
 }
 
 .row.good,
 .row.veryGood,
-.row.support {
+.row.attack {
   border-color: #3f8f58;
-}
-
-.row.damage {
-  border-color: #b84a4a;
 }
 
 footer {
@@ -650,6 +638,18 @@ footer a,
     --muted: #aeb8c2;
     --line: #34404b;
     --selected: #342719;
+  }
+
+  .hero-button.role-tank {
+    background: #1d3043;
+  }
+
+  .hero-button.role-damage {
+    background: #3b2527;
+  }
+
+  .hero-button.role-support {
+    background: #203629;
   }
 
   .hero-button img,

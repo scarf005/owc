@@ -50,6 +50,7 @@ const ratingOrder: { key: Rating; label: string }[] = [
 ]
 
 const heroById = new Map(heroes.map((hero) => [hero.id, hero]))
+const roleRank = new Map(roles.map((role, index) => [role.key, index]))
 const allMaps = mapModes.flatMap((mode) =>
   mode.maps.map((map) => ({ ...map, mode }))
 )
@@ -107,16 +108,9 @@ const heroItemsFromEntries = (
   entries.flatMap((entry) => {
     const hero = heroById.get(entry.id)
     return hero ? [{ hero, ...(entry.note ? { note: entry.note } : {}) }] : []
-  })
-
-const roleGroupsFromRecommendations = (entries: MapRecommendation[]) =>
-  roles.map((role) => ({
-    key: role.key,
-    label: role.label,
-    heroes: heroItemsFromEntries(entries).filter((entry) =>
-      entry.hero.role === role.key
-    ),
-  }))
+  }).sort((a, b) =>
+    (roleRank.get(a.hero.role) ?? 0) - (roleRank.get(b.hero.role) ?? 0)
+  )
 
 const heroGroupsByRating = (
   ratings: { key: string; label: string }[],
@@ -178,7 +172,10 @@ function HeroButton(
   return (
     <button
       class="hero-button"
-      classList={{ "is-selected": props.selected }}
+      classList={{
+        "is-selected": props.selected,
+        [`role-${props.hero.role}`]: true,
+      }}
       onBlur={hideTooltip}
       onClick={props.onClick}
       onFocus={showTooltip}
@@ -363,27 +360,25 @@ function MapPanel(props: { mapId: string }) {
   const selectedMap = createMemo(() =>
     allMaps.find((map) => map.id === props.mapId) ?? allMaps[0]
   )
-  const recommendationSections = createMemo(() => {
+  const recommendationGroups = createMemo(() => {
     const map = selectedMap()
     return map
       ? [
         {
           key: "attack",
           label: "공격 추천",
-          groups: roleGroupsFromRecommendations(map.attack),
+          heroes: heroItemsFromEntries(map.attack),
         },
         {
           key: "defense",
           label: "방어 추천",
-          groups: roleGroupsFromRecommendations(map.defense),
+          heroes: heroItemsFromEntries(map.defense),
         },
       ]
       : []
   })
   const hasRecommendations = createMemo(() =>
-    recommendationSections().some((section) =>
-      section.groups.some((group) => group.heroes.length > 0)
-    )
+    recommendationGroups().some((group) => group.heroes.length > 0)
   )
 
   return (
@@ -415,18 +410,7 @@ function MapPanel(props: { mapId: string }) {
             when={hasRecommendations()}
             fallback={<div class="empty-state">추천 영웅 데이터 없음</div>}
           >
-            <For each={recommendationSections()}>
-              {(section) => (
-                <Show
-                  when={section.groups.some((group) => group.heroes.length > 0)}
-                >
-                  <section class={`map-recommendations ${section.key}`}>
-                    <div class="label section-label">{section.label}</div>
-                    <HeroRows groups={section.groups} />
-                  </section>
-                </Show>
-              )}
-            </For>
+            <HeroRows groups={recommendationGroups()} />
           </Show>
         </>
       )}

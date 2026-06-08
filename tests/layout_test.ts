@@ -657,6 +657,13 @@ Deno.test({
         "matchup note tooltip was not shown on card hover",
       )
 
+      assert(
+        await doomfistCard.evaluate((card) =>
+          card.classList.contains("role-tank")
+        ),
+        "matchup cards should be role-colored",
+      )
+
       await page.getByLabel("주요 메뉴").getByRole("button", { name: "궁합" })
         .click()
       const pharahCard = matchupResult.locator(".hero-button").filter({
@@ -666,6 +673,12 @@ Deno.test({
       assert(
         await pharahNote.isVisible(),
         "synergy note icon was not visible",
+      )
+      assert(
+        await pharahCard.evaluate((card) =>
+          card.classList.contains("role-damage")
+        ),
+        "synergy cards should be role-colored",
       )
       await pharahCard.hover()
       assert(
@@ -746,14 +759,16 @@ Deno.test({
         "defense recommendation section was not visible",
       )
       assert(
-        await result.locator(".map-recommendations.attack .row.tank")
-          .getByText("돌격", { exact: true }).isVisible(),
-        "attack tank recommendation group was not visible",
+        await result.locator(".row.attack .hero-button.role-tank").filter({
+          hasText: "로드호그",
+        }).isVisible(),
+        "attack tank recommendation card was not role-colored",
       )
       assert(
-        await result.locator(".map-recommendations.defense .row.damage")
-          .getByText("공격", { exact: true }).isVisible(),
-        "defense damage recommendation group was not visible",
+        await result.locator(".row.defense .hero-button.role-damage").filter({
+          hasText: "캐서디",
+        }).isVisible(),
+        "defense damage recommendation card was not role-colored",
       )
       assert(
         await result.getByText("로드호그", { exact: true }).isVisible(),
@@ -929,7 +944,7 @@ Deno.test({
           `${label}: counter CSS variable changed after first paint (${immediate.counter} -> ${afterOneFrame.counter})`,
         )
         assert(
-          immediate.button.className === "hero-button is-selected",
+          immediate.button.className === "hero-button role-tank is-selected",
           `${label}: selected button class leaked: ${immediate.button.className}`,
         )
         assert(
