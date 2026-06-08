@@ -14,6 +14,7 @@ import {
   heroSynergies,
   mapModes,
   type MapRecommendation,
+  source as guideSource,
   synergyRatings,
 } from "./data/guide.ts"
 import {
@@ -107,6 +108,15 @@ const heroItemsFromEntries = (
     const hero = heroById.get(entry.id)
     return hero ? [{ hero, ...(entry.note ? { note: entry.note } : {}) }] : []
   })
+
+const roleGroupsFromRecommendations = (entries: MapRecommendation[]) =>
+  roles.map((role) => ({
+    key: role.key,
+    label: role.label,
+    heroes: heroItemsFromEntries(entries).filter((entry) =>
+      entry.hero.role === role.key
+    ),
+  }))
 
 const heroGroupsByRating = (
   ratings: { key: string; label: string }[],
@@ -353,25 +363,27 @@ function MapPanel(props: { mapId: string }) {
   const selectedMap = createMemo(() =>
     allMaps.find((map) => map.id === props.mapId) ?? allMaps[0]
   )
-  const recommendationGroups = createMemo(() => {
+  const recommendationSections = createMemo(() => {
     const map = selectedMap()
     return map
       ? [
         {
           key: "attack",
-          label: "공격",
-          heroes: heroItemsFromEntries(map.attack),
+          label: "공격 추천",
+          groups: roleGroupsFromRecommendations(map.attack),
         },
         {
           key: "defense",
-          label: "방어",
-          heroes: heroItemsFromEntries(map.defense),
+          label: "방어 추천",
+          groups: roleGroupsFromRecommendations(map.defense),
         },
       ]
       : []
   })
   const hasRecommendations = createMemo(() =>
-    recommendationGroups().some((group) => group.heroes.length > 0)
+    recommendationSections().some((section) =>
+      section.groups.some((group) => group.heroes.length > 0)
+    )
   )
 
   return (
@@ -403,7 +415,18 @@ function MapPanel(props: { mapId: string }) {
             when={hasRecommendations()}
             fallback={<div class="empty-state">추천 영웅 데이터 없음</div>}
           >
-            <HeroRows groups={recommendationGroups()} />
+            <For each={recommendationSections()}>
+              {(section) => (
+                <Show
+                  when={section.groups.some((group) => group.heroes.length > 0)}
+                >
+                  <section class={`map-recommendations ${section.key}`}>
+                    <div class="label section-label">{section.label}</div>
+                    <HeroRows groups={section.groups} />
+                  </section>
+                </Show>
+              )}
+            </For>
           </Show>
         </>
       )}
@@ -557,7 +580,11 @@ function App() {
       </div>
 
       <footer>
-        비공식 팬 도구 · Overwatch assets © Blizzard ·{" "}
+        비공식 팬 도구 · Overwatch assets © Blizzard · 데이터:{" "}
+        <a href={guideSource.url} rel="noreferrer" target="_blank">
+          {guideSource.name}
+        </a>{" "}
+        {guideSource.updatedAt} ·{" "}
         <button
           class="footer-link"
           onClick={() => setNoticeOpen(true)}
@@ -590,8 +617,8 @@ function App() {
             </div>
             <p>
               Unofficial fan tool. Overwatch assets © Blizzard Entertainment.
-              Data sourced from Namu Wiki (https://namu.wiki). Code:
-              AGPL-3.0-or-later, no warranty.
+              Data source: {guideSource.name} ({guideSource.url}), updated{" "}
+              {guideSource.updatedAt}. Code: AGPL-3.0-or-later, no warranty.
             </p>
           </div>
         </div>

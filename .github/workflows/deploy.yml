@@ -27,6 +27,7 @@ jobs:
           deno-version: v2.x
           cache: true
       - uses: actions/configure-pages@v5
+      - run: deno task crawl:guide || deno task restore:guide
       - run: deno task build
       - uses: actions/upload-pages-artifact@v3
         with:

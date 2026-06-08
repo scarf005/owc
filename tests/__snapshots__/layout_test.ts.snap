@@ -10,9 +10,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 1280,
-      "height": 1000,
-      "bytes": 75640,
-      "sha256": "ed995becfc950f3dedd96d7960c794179fb35bb55000c74bfff3d2f6b939812d"
+      "height": 1000
     },
     "metrics": {
       "activeNav": "상성",
@@ -34,9 +32,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 1280,
-      "height": 1000,
-      "bytes": 83250,
-      "sha256": "cabfd9bf1868336ba52e4f53b502a1845b55d6b026e801a864339f1afa89c6a3"
+      "height": 1000
     },
     "metrics": {
       "activeNav": "상성",
@@ -58,9 +54,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 1280,
-      "height": 1000,
-      "bytes": 84897,
-      "sha256": "9adae905910d29c7f4a63cf32f9b9669290faa1a6633d124354e9b862647eb95"
+      "height": 1000
     },
     "metrics": {
       "activeNav": "상성",
@@ -82,9 +76,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 1280,
-      "height": 1000,
-      "bytes": 73210,
-      "sha256": "9d2a2a38a7c34afe7050cec1ca906ebcf13d0dd9d74e0fe288a903a7dcb5c0f5"
+      "height": 1000
     },
     "metrics": {
       "activeNav": "궁합",
@@ -106,9 +98,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 1280,
-      "height": 1000,
-      "bytes": 82535,
-      "sha256": "78675af011b289296f1bc76651ba185c560b82c755bc503c18d2375e054871fd"
+      "height": 1000
     },
     "metrics": {
       "activeNav": "궁합",
@@ -130,9 +120,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 1280,
-      "height": 1000,
-      "bytes": 86376,
-      "sha256": "2d34095df86ca5bccf90c76e345a0793962e607191fc1ddc4de4aa584667d421"
+      "height": 1000
     },
     "metrics": {
       "activeNav": "궁합",
@@ -154,9 +142,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 1280,
-      "height": 1000,
-      "bytes": 54040,
-      "sha256": "2c38ecb829d55ab3638a4e8b32daf2376d606586061e8f8ece3037cac44153a3"
+      "height": 1000
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -178,9 +164,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 1280,
-      "height": 1000,
-      "bytes": 63128,
-      "sha256": "776b477815bc4a7dcc343b32d3ab18ddc7223095faff395e89956b753bfae3ce"
+      "height": 1000
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -202,9 +186,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 1280,
-      "height": 1000,
-      "bytes": 67153,
-      "sha256": "4f50fc79392a10ce98fdf73ca5fc3cf65e72f76e6e3d5bb73d88a6676d3b3c09"
+      "height": 1000
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -226,9 +208,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 2033,
-      "bytes": 74870,
-      "sha256": "023e1685233497e87e2e620fcb1f0f370fe7561a19503f9d03bd3501b37ccb58"
+      "height": 2048
     },
     "metrics": {
       "activeNav": "상성",
@@ -250,9 +230,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1967,
-      "bytes": 80357,
-      "sha256": "039e56386e1294058b60b4be1355f8e3782bf1b1055da2810cc8d1c302f0ad17"
+      "height": 1982
     },
     "metrics": {
       "activeNav": "상성",
@@ -274,9 +252,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1967,
-      "bytes": 81884,
-      "sha256": "50f86641b16d26e63ec6dad47a66b8ca55de70cf25ad5fb7cdcf6feb68ce5295"
+      "height": 1982
     },
     "metrics": {
       "activeNav": "상성",
@@ -298,9 +274,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1967,
-      "bytes": 71718,
-      "sha256": "977072fe0664d2b8410fab0e31b5205ddd6f055b4723f8fea9d1386476f77482"
+      "height": 1982
     },
     "metrics": {
       "activeNav": "궁합",
@@ -322,9 +296,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1967,
-      "bytes": 84090,
-      "sha256": "e12ef0cfce14e11e008f65eeda220d73194c2f2b99875d4f470ee213467b0044"
+      "height": 1982
     },
     "metrics": {
       "activeNav": "궁합",
@@ -346,9 +318,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1967,
-      "bytes": 81794,
-      "sha256": "0044bdcc7ca3baa9599b614ef2b0dd14f0b18ecad9f3791039bbeab8298ec7bd"
+      "height": 1982
     },
     "metrics": {
       "activeNav": "궁합",
@@ -370,9 +340,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1436,
-      "bytes": 51580,
-      "sha256": "8b273c18ebc2bc617cb970dab99d5f7162519b33cadc1978eeeb6bf534ad67af"
+      "height": 1767
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -394,9 +362,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1436,
-      "bytes": 58356,
-      "sha256": "0e73dd8b6c107e869ae7b8bb5e807f6997072c918d55758f714770f6203b6ecd"
+      "height": 1857
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -418,9 +384,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1436,
-      "bytes": 60169,
-      "sha256": "8ab5e612333f72a531b5f1c8387403eb63b35a424776ae3679af59039a1117d7"
+      "height": 1857
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",

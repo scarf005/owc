@@ -4,7 +4,6 @@
     "jsr:@std/assert@1": "1.0.19",
     "jsr:@std/assert@^1.0.15": "1.0.19",
     "jsr:@std/async@1": "1.2.0",
-    "jsr:@std/encoding@1": "1.0.10",
     "jsr:@std/fs@^1.0.19": "1.0.23",
     "jsr:@std/internal@^1.0.12": "1.0.12",
     "jsr:@std/path@^1.1.2": "1.1.4",
@@ -27,9 +26,6 @@
     },
     "@std/async@1.2.0": {
       "integrity": "c059c6f6d95ca7cc012ae8e8d7164d1697113d54b0b679e4372b354b11c2dee5"
-    },
-    "@std/encoding@1.0.10": {
-      "integrity": "8783c6384a2d13abd5e9e87a7ae0520a30e9f56aeeaa3bdf910a3eaaf5c811a1"
     },
     "@std/fs@1.0.23": {
       "integrity": "3ecbae4ce4fee03b180fa710caff36bb5adb66631c46a6460aaad49515565a37",
@@ -831,7 +827,6 @@
     "dependencies": [
       "jsr:@std/assert@1",
       "jsr:@std/async@1",
-      "jsr:@std/encoding@1",
       "jsr:@std/testing@1",
       "npm:@deno/vite-plugin@^1.0.5",
       "npm:playwright@1.60.0",

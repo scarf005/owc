@@ -38,4 +38,5 @@ jobs:
           fc-cache -f
           fc-match Inter
       - run: deno run -A npm:playwright@1.60.0 install --with-deps chromium
+      - run: deno task crawl:guide || deno task restore:guide
       - run: deno task validate
