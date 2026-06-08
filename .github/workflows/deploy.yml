@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -27,8 +28,19 @@ jobs:
           deno-version: v2.x
           cache: true
       - uses: actions/configure-pages@v5
-      - run: deno task crawl:guide || deno task restore:guide
+      - uses: ./.github/actions/guide-data
+        with:
+          github-token: ${{ github.token }}
+          cache-branch: ${{ github.event.repository.default_branch }}
       - run: deno task build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: guide-data
+          path: |
+            src/data/guide.json
+            src/data/overwatch.json
+          if-no-files-found: error
+          retention-days: 30
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

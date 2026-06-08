@@ -1,0 +1,65 @@
+name: Prepare guide data
+description: Download cached guide data and refresh it when possible.
+inputs:
+  github-token:
+    description: GitHub token used to read previous workflow artifacts.
+    required: true
+  cache-branch:
+    description: Branch whose latest guide-data artifact should be used as the crawl fallback.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Download cached guide data artifact
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        REPOSITORY: ${{ github.repository }}
+        CACHE_BRANCH: ${{ inputs.cache-branch }}
+      run: |
+        set -euo pipefail
+        mkdir -p src/data guide-data-cache
+        if ! gh api "repos/${REPOSITORY}/actions/artifacts?per_page=100" --paginate > guide-data-artifacts.json; then
+          echo "::warning::Could not list guide-data artifacts."
+          exit 0
+        fi
+        artifact_id="$(
+          jq -sr --arg branch "${CACHE_BRANCH}" '
+            [.[].artifacts[]
+              | select(.name == "guide-data" and .expired == false and .workflow_run.head_branch == $branch)
+              | .id][0] // empty
+          ' guide-data-artifacts.json
+        )"
+        if [ -z "${artifact_id}" ]; then
+          echo "No guide-data artifact found for ${CACHE_BRANCH}."
+          exit 0
+        fi
+        if ! gh api "repos/${REPOSITORY}/actions/artifacts/${artifact_id}/zip" > guide-data.zip; then
+          echo "::warning::Could not download guide-data artifact ${artifact_id}."
+          exit 0
+        fi
+        if ! unzip -q -o guide-data.zip -d guide-data-cache; then
+          echo "::warning::Could not unzip guide-data artifact ${artifact_id}."
+          exit 0
+        fi
+        if [ -f guide-data-cache/guide.json ] && [ -f guide-data-cache/overwatch.json ]; then
+          cp guide-data-cache/*.json src/data/
+          echo "Downloaded guide-data artifact ${artifact_id}."
+        elif [ -f guide-data-cache/src/data/guide.json ] && [ -f guide-data-cache/src/data/overwatch.json ]; then
+          cp guide-data-cache/src/data/*.json src/data/
+          echo "Downloaded guide-data artifact ${artifact_id}."
+        else
+          echo "::warning::guide-data artifact ${artifact_id} did not contain guide.json and overwatch.json."
+        fi
+    - name: Crawl guide data or use cache
+      shell: bash
+      run: |
+        set -euo pipefail
+        if deno task crawl:guide; then
+          echo "Using freshly crawled guide data."
+        elif [ -f src/data/guide.json ] && [ -f src/data/overwatch.json ]; then
+          echo "Crawl failed; using cached guide data artifact."
+        else
+          echo "Crawl failed and no cached guide data artifact was available; restoring seed data."
+          deno task restore:guide
+        fi
