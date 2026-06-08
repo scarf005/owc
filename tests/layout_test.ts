@@ -2,10 +2,9 @@
 
 import { retry } from "@std/async/retry"
 import { assert } from "@std/assert"
-import { encodeHex } from "@std/encoding/hex"
 import { assertSnapshot } from "@std/testing/snapshot"
 import { chromium, type Page } from "playwright"
-import { heroSynergies, mapModes } from "../src/data/guide.ts"
+import { heroSynergies, mapModes, source } from "../src/data/guide.ts"
 import { matchups } from "../src/data/overwatch.ts"
 
 type Metrics = {
@@ -31,9 +30,6 @@ const viewports = [
   { width: 1920, height: 1080 },
   { width: 2268, height: 1000 },
 ]
-
-const sha256 = async (data: Uint8Array) =>
-  encodeHex(await crypto.subtle.digest("SHA-256", new Uint8Array(data).buffer))
 
 const pngSize = (data: Uint8Array) => ({
   width: new DataView(data.buffer, data.byteOffset, data.byteLength).getUint32(
@@ -102,6 +98,11 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
     heroSynergies["d-va"]?.find((entry) => entry.target === "pharah")?.note
       ?.includes("파라는 모든 디바"),
     "D.Va and Pharah synergy note must be crawled from Namu",
+  )
+  assert(source.name === "Namu Wiki", "guide source must be Namu Wiki")
+  assert(
+    /^\d{4}-\d{2}-\d{2}$/.test(source.updatedAt),
+    "guide source update date must be crawled",
   )
   assert(mapModes.length > 0, "map modes must be crawled")
   assert(
@@ -409,11 +410,7 @@ Deno.test({
             snapshots.push({
               name: `${viewport.key}-${tab.key}-${interaction}`,
               viewport: viewport.size,
-              screenshot: {
-                ...pngSize(screenshot),
-                bytes: screenshot.byteLength,
-                sha256: await sha256(screenshot),
-              },
+              screenshot: pngSize(screenshot),
               metrics,
             })
           }
@@ -741,12 +738,22 @@ Deno.test({
       await sourcedMapButton.click()
       const result = page.locator(".result")
       assert(
-        await result.getByText("공격", { exact: true }).isVisible(),
-        "attack recommendation row was not visible",
+        await result.getByText("공격 추천", { exact: true }).isVisible(),
+        "attack recommendation section was not visible",
       )
       assert(
-        await result.getByText("방어", { exact: true }).isVisible(),
-        "defense recommendation row was not visible",
+        await result.getByText("방어 추천", { exact: true }).isVisible(),
+        "defense recommendation section was not visible",
+      )
+      assert(
+        await result.locator(".map-recommendations.attack .row.tank")
+          .getByText("돌격", { exact: true }).isVisible(),
+        "attack tank recommendation group was not visible",
+      )
+      assert(
+        await result.locator(".map-recommendations.defense .row.damage")
+          .getByText("공격", { exact: true }).isVisible(),
+        "defense damage recommendation group was not visible",
       )
       assert(
         await result.getByText("로드호그", { exact: true }).isVisible(),
@@ -794,6 +801,11 @@ Deno.test({
       assert(!overflow.page, "page overflowed on map recommendations")
       assert(!overflow.pick, "map picker overflowed")
       assert(!overflow.result, "map recommendations overflowed")
+
+      assert(
+        await page.locator("footer").getByText(source.updatedAt).isVisible(),
+        "source update date was not visible in the footer",
+      )
 
       await page.setViewportSize({ width: 1440, height: 900 })
       const mapHeaderLayout = await page.evaluate(() => {

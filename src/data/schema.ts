@@ -4,6 +4,12 @@ export type Rating = "veryBad" | "bad" | "neutral" | "good" | "veryGood"
 
 export type HeroId = string
 
+export type DataSource = {
+  name: string
+  url: string
+  updatedAt: string
+}
+
 export type Hero = {
   id: HeroId
   name: string

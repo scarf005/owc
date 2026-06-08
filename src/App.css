@@ -264,7 +264,8 @@ footer {
 }
 
 .selected-hero,
-.selected-map {
+.selected-map,
+.map-recommendations {
   display: grid;
   gap: 10px;
   border-bottom: 1px solid var(--line);
@@ -340,6 +341,25 @@ footer {
   font-weight: 800;
 }
 
+.map-recommendations {
+  gap: 6px;
+  border-bottom: 0;
+  border-left: 4px solid var(--line);
+  padding: 0 0 0 8px;
+}
+
+.map-recommendations.attack {
+  border-color: #3f8f58;
+}
+
+.map-recommendations.defense {
+  border-color: #3f62ad;
+}
+
+.section-label {
+  color: var(--text);
+}
+
 .row {
   border-left: 4px solid var(--line);
   padding-left: 8px;
@@ -350,18 +370,19 @@ footer {
   border-color: #b84a4a;
 }
 
-.row.neutral {
+.row.neutral,
+.row.tank {
   border-color: #3f62ad;
 }
 
 .row.good,
 .row.veryGood,
-.row.attack {
+.row.support {
   border-color: #3f8f58;
 }
 
-.row.defense {
-  border-color: #3f62ad;
+.row.damage {
+  border-color: #b84a4a;
 }
 
 footer {

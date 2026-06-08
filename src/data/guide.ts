@@ -1,7 +1,14 @@
 import data from "./guide.json" with { type: "json" }
-import type { HeroId, MapMode, SynergyEntry, SynergyRating } from "./schema.ts"
+import type {
+  DataSource,
+  HeroId,
+  MapMode,
+  SynergyEntry,
+  SynergyRating,
+} from "./schema.ts"
 
 export type {
+  DataSource,
   HeroId,
   MapInfo,
   MapMode,
@@ -11,6 +18,7 @@ export type {
 } from "./schema.ts"
 
 type GuideData = {
+  source?: DataSource
   synergyRatings: { key: SynergyRating; label: string }[]
   heroSynergies: Record<HeroId, SynergyEntry[]>
   mapModes: MapMode[]
@@ -18,6 +26,11 @@ type GuideData = {
 
 const guideData = data as GuideData
 
+export const source = guideData.source ?? {
+  name: "Namu Wiki",
+  url: "https://namu.wiki",
+  updatedAt: "unknown",
+}
 export const synergyRatings = guideData.synergyRatings
 export const heroSynergies = guideData.heroSynergies
 export const mapModes = guideData.mapModes

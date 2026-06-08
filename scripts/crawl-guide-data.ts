@@ -1,6 +1,7 @@
 /// <reference lib="deno.ns" />
 
-import { heroes, type Role } from "../src/data/overwatch.ts"
+import { heroes } from "../src/data/heroes.ts"
+import type { Role } from "../src/data/schema.ts"
 
 type Hero = typeof heroes[number]
 type Rating = "veryGood" | "good" | "neutral" | "bad" | "veryBad"
@@ -32,6 +33,12 @@ type MapInfo = {
   defense: MapRecommendation[]
 }
 
+type DataSource = {
+  name: string
+  url: string
+  updatedAt: string
+}
+
 const namuOrigin = "https://namu.wiki"
 const mapsUrl = `${namuOrigin}/w/${encodeURIComponent("오버워치/전장")}`
 const roleLabels: Record<string, Role> = {
@@ -47,6 +54,7 @@ const modeColors: Record<string, string> = {
   "플래시포인트": "#eb5757",
   "격돌": "#00a7a7",
 }
+const sourceModifiedTimes: string[] = []
 
 const heroBySlug = new Map<string, Hero>()
 const heroByName = new Map<string, Hero>()
@@ -60,12 +68,57 @@ for (const hero of heroes) {
   heroByName.set(hero.name.replace(": ", ":"), hero)
 }
 
-const fetchNamu = async (url: string) => {
-  const response = await fetch(url, {
-    headers: { "user-agent": "Mozilla/5.0" },
+const namuUserAgent =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+  "(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+const namuHeaders = {
+  "user-agent": namuUserAgent,
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+  "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+}
+
+const readNamuWithCurl = async (url: string) => {
+  const command = new Deno.Command("curl", {
+    args: [
+      "--fail",
+      "--location",
+      "--silent",
+      "--show-error",
+      "--compressed",
+      "--user-agent",
+      namuUserAgent,
+      "--header",
+      `Accept: ${namuHeaders.accept}`,
+      "--header",
+      `Accept-Language: ${namuHeaders["accept-language"]}`,
+      url,
+    ],
+    stdout: "piped",
+    stderr: "piped",
   })
-  if (!response.ok) throw new Error(`${response.status} ${url}`)
-  return await response.text()
+  const output = await command.output()
+  if (!output.success) {
+    throw new Error(new TextDecoder().decode(output.stderr).trim())
+  }
+  return new TextDecoder().decode(output.stdout)
+}
+
+const assertReadableNamu = (html: string, url: string) => {
+  if (!html.includes("최근 수정 시각")) {
+    throw new Error(`blocked or unreadable Namu response: ${url}`)
+  }
+}
+
+const fetchNamu = async (url: string) => {
+  const response = await fetch(url, { headers: namuHeaders })
+  const html = response.ok ? await response.text() : await readNamuWithCurl(url)
+  assertReadableNamu(html, url)
+  const modifiedAt = html.match(
+    /최근 수정 시각:\s*<time datetime=["']([^"']+)["']/,
+  )
+    ?.[1]
+  if (modifiedAt) sourceModifiedTimes.push(modifiedAt)
+  return html
 }
 
 const decode = (value: string) =>
@@ -393,6 +446,20 @@ for (const [index, hero] of heroes.entries()) {
 
 const mapModes = await parseMapModes(await fetchNamu(mapsUrl))
 
+const sourceUpdatedAt = () =>
+  sourceModifiedTimes
+    .map((value) => new Date(value))
+    .filter((date) => !Number.isNaN(date.getTime()))
+    .sort((a, b) => b.getTime() - a.getTime())[0]
+    ?.toISOString()
+    .slice(0, 10) ?? "unknown"
+
+const dataSource = (): DataSource => ({
+  name: "Namu Wiki",
+  url: namuOrigin,
+  updatedAt: sourceUpdatedAt(),
+})
+
 const writeJson = (path: string, value: unknown) =>
   Deno.writeTextFile(path, `${JSON.stringify(value, null, 2)}\n`)
 
@@ -403,6 +470,7 @@ await writeJson(
 await writeJson(
   "src/data/guide.json",
   {
+    source: dataSource(),
     synergyRatings: [
       { key: "veryGood", label: "매우 좋음" },
       { key: "good", label: "좋음" },
