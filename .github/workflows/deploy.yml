@@ -3,6 +3,8 @@ name: Pages Deploy
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: "17 19 * * *"
   workflow_dispatch:
 
 permissions:
@@ -16,6 +18,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  keepalive:
+    if: ${{ github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    permissions: { actions: write, contents: read }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gautamkrishnar/keepalive-workflow@v2
+
   deploy:
     runs-on: ubuntu-latest
     environment:
