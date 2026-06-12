@@ -30,6 +30,20 @@ const viewports = [
   { width: 1920, height: 1080 },
   { width: 2268, height: 1000 },
 ]
+const routedImagePages = [
+  ...heroes.flatMap((hero) => [
+    { label: `matchups:${hero.id}`, path: `?view=matchups&hero=${hero.id}` },
+    { label: `synergies:${hero.id}`, path: `?view=synergies&hero=${hero.id}` },
+  ]),
+  ...mapModes.flatMap((mode) =>
+    mode.maps
+      .filter((map) => map.attack.length > 0 || map.defense.length > 0)
+      .map((map) => ({
+        label: `maps:${map.id}`,
+        path: `?view=maps&map=${encodeURIComponent(map.id)}`,
+      }))
+  ),
+]
 
 const pngSize = (data: Uint8Array) => ({
   width: new DataView(data.buffer, data.byteOffset, data.byteLength).getUint32(
@@ -258,6 +272,88 @@ Deno.test({
           exact: true,
         }).isVisible(),
         "map without recommendations was not replaced by the first enabled map",
+      )
+    } finally {
+      await page.close().catch(() => undefined)
+      await browser.close().catch(() => undefined)
+      child.kill("SIGTERM")
+      await child.status.catch(() => undefined)
+    }
+  },
+})
+
+Deno.test({
+  name: "every routed page uses valid bundled guide images",
+  timeout: 180_000,
+  async fn() {
+    const { child, url } = await startServer()
+    const browser = await chromium.launch()
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 1000 },
+    })
+
+    try {
+      await page.goto(url)
+      await page.waitForSelector(".navbar")
+      const guideImageUrls = new Set<string>()
+      for (const route of routedImagePages) {
+        await page.evaluate((path) => {
+          history.replaceState(null, "", path)
+          dispatchEvent(new PopStateEvent("popstate"))
+        }, route.path)
+        await page.waitForTimeout(0)
+        const images = await page.evaluate(() =>
+          [...document.images].map((image) => {
+            const src = image.getAttribute("src") ?? ""
+            return { src, currentSrc: new URL(src, location.href).href }
+          })
+        )
+        assert(images.length > 0, `${route.label}: page rendered no images`)
+        for (const image of images) {
+          assert(
+            !image.currentSrc.includes("i.namu.wiki"),
+            `${route.label}: remote Namu image leaked ${image.currentSrc}`,
+          )
+          assert(
+            image.currentSrc.includes("/guide-images/"),
+            `${route.label}: non-guide image src ${image.currentSrc}`,
+          )
+          guideImageUrls.add(image.currentSrc)
+        }
+      }
+
+      const imageResults = await page.evaluate(
+        async (urls) =>
+          await Promise.all(urls.map(async (url) => {
+            const image = new Image()
+            image.src = url
+            await image.decode().catch(() => undefined)
+            return {
+              url,
+              broken: !image.complete || image.naturalWidth <= 0 ||
+                image.naturalHeight <= 0,
+              naturalWidth: image.naturalWidth,
+              naturalHeight: image.naturalHeight,
+            }
+          })),
+        [...guideImageUrls],
+      )
+      const brokenImages = imageResults.filter((image) => image.broken)
+      assert(
+        brokenImages.length === 0,
+        `broken bundled images: ${
+          brokenImages.map((image) => image.url).join(", ")
+        }`,
+      )
+      const wrongHeroImages = imageResults.filter((image) =>
+        image.url.includes("/guide-images/heroes/") &&
+        (image.naturalWidth !== 256 || image.naturalHeight !== 256)
+      )
+      assert(
+        wrongHeroImages.length === 0,
+        `non-portrait hero images: ${
+          wrongHeroImages.map((image) => image.url).join(", ")
+        }`,
       )
     } finally {
       await page.close().catch(() => undefined)
