@@ -40,6 +40,16 @@ const pngSize = (data: Uint8Array) => ({
   ),
 })
 
+const sha256Hex = async (data: Uint8Array) => {
+  const buffer = data.buffer.slice(
+    data.byteOffset,
+    data.byteOffset + data.byteLength,
+  ) as ArrayBuffer
+  return [...new Uint8Array(await crypto.subtle.digest("SHA-256", buffer))]
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("")
+}
+
 const waitForServer = (url: string) =>
   retry(async () => {
     const response = await fetch(url)
@@ -249,6 +259,63 @@ Deno.test({
         }).isVisible(),
         "map without recommendations was not replaced by the first enabled map",
       )
+    } finally {
+      await page.close().catch(() => undefined)
+      await browser.close().catch(() => undefined)
+      child.kill("SIGTERM")
+      await child.status.catch(() => undefined)
+    }
+  },
+})
+
+Deno.test({
+  name: "unmasked guide image screenshots stay stable",
+  timeout: 60_000,
+  async fn(t) {
+    const { child, url } = await startServer()
+    const browser = await chromium.launch()
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 1000 },
+    })
+
+    const imageSnapshot = async (selector: string) => {
+      const locator = page.locator(selector)
+      const image = await locator.evaluate(async (node) => {
+        const image = node as HTMLImageElement
+        await image.decode().catch(() => undefined)
+        const currentUrl = new URL(image.currentSrc)
+        return {
+          src: image.getAttribute("src"),
+          currentPath: `${currentUrl.pathname}${currentUrl.search}`,
+          naturalWidth: image.naturalWidth,
+          naturalHeight: image.naturalHeight,
+        }
+      })
+      const screenshot = await locator.screenshot({ animations: "disabled" })
+      return {
+        ...image,
+        screenshot: pngSize(screenshot),
+        sha256: await sha256Hex(screenshot),
+      }
+    }
+
+    try {
+      await page.goto(
+        `${url}?view=synergies&hero=orisa&map=${encodeURIComponent("네팔")}`,
+      )
+      await page.waitForSelector(".selected-hero img")
+
+      const hero = await imageSnapshot(".selected-hero img")
+      await page.getByLabel("주요 메뉴").getByRole("button", {
+        name: "맵별 추천 영웅",
+      }).click()
+      await page.waitForSelector(".selected-map img")
+      const map = await imageSnapshot(".selected-map img")
+
+      await assertSnapshot(t, { hero, map }, {
+        name: "unmasked-guide-images",
+        serializer: (value) => JSON.stringify(value, null, 2),
+      })
     } finally {
       await page.close().catch(() => undefined)
       await browser.close().catch(() => undefined)

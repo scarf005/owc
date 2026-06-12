@@ -1,5 +1,32 @@
 export const snapshot = {};
 
+snapshot[`unmasked-guide-images 1`] = `
+{
+  "hero": {
+    "src": "./guide-images/heroes/orisa.webp?v=portrait-20260612",
+    "currentPath": "/guide-images/heroes/orisa.webp?v=portrait-20260612",
+    "naturalWidth": 256,
+    "naturalHeight": 256,
+    "screenshot": {
+      "width": 52,
+      "height": 52
+    },
+    "sha256": "38365158f13a73304bd90c84bb75c148397454809fa326333278dfd2718c3fd4"
+  },
+  "map": {
+    "src": "./guide-images/maps/네팔.webp?v=portrait-20260612",
+    "currentPath": "/guide-images/maps/%EB%84%A4%ED%8C%94.webp?v=portrait-20260612",
+    "naturalWidth": 200,
+    "naturalHeight": 125,
+    "screenshot": {
+      "width": 72,
+      "height": 46
+    },
+    "sha256": "2b77bc31d5dc7a25fef731a050a06f70fdf3c8830f41405b02984b76d65cb8b6"
+  }
+}
+`;
+
 snapshot[`tab-interaction-screenshots 1`] = `
 [
   {
