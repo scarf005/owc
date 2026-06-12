@@ -5,7 +5,7 @@ import { assert } from "@std/assert"
 import { assertSnapshot } from "@std/testing/snapshot"
 import { chromium, type Page } from "playwright"
 import { heroSynergies, mapModes, source } from "../src/data/guide.ts"
-import { matchups } from "../src/data/overwatch.ts"
+import { heroes, matchups } from "../src/data/overwatch.ts"
 
 type Metrics = {
   hero: string | undefined
@@ -110,8 +110,14 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
     "each map mode must include maps",
   )
   assert(
-    mapModes.every((mode) => mode.maps.every((map) => map.image.length > 0)),
-    "each crawled map must include an image",
+    heroes.every((hero) => hero.avatar.startsWith("./guide-images/heroes/")),
+    "each crawled hero must use a local image artifact",
+  )
+  assert(
+    mapModes.every((mode) =>
+      mode.maps.every((map) => map.image.startsWith("./guide-images/maps/"))
+    ),
+    "each crawled map must use a local image artifact",
   )
   const nepal = mapModes.flatMap((mode) => mode.maps).find((map) =>
     map.name === "네팔"

@@ -18,7 +18,7 @@ runs:
         CACHE_BRANCH: ${{ inputs.cache-branch }}
       run: |
         set -euo pipefail
-        mkdir -p src/data guide-data-cache
+        mkdir -p src/data public guide-data-cache
         if ! gh api "repos/${REPOSITORY}/actions/artifacts?per_page=100" --paginate > guide-data-artifacts.json; then
           echo "::warning::Could not list guide-data artifacts."
           exit 0
@@ -50,6 +50,13 @@ runs:
           echo "Downloaded guide-data artifact ${artifact_id}."
         else
           echo "::warning::guide-data artifact ${artifact_id} did not contain guide.json and overwatch.json."
+        fi
+        if [ -d guide-data-cache/public/guide-images ]; then
+          rm -rf public/guide-images
+          cp -R guide-data-cache/public/guide-images public/guide-images
+        elif [ -d guide-data-cache/guide-images ]; then
+          rm -rf public/guide-images
+          cp -R guide-data-cache/guide-images public/guide-images
         fi
     - name: Crawl guide data or use cache
       shell: bash

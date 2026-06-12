@@ -41,6 +41,9 @@ type DataSource = {
 
 const namuOrigin = "https://namu.wiki"
 const mapsUrl = `${namuOrigin}/w/${encodeURIComponent("오버워치/전장")}`
+const imageRoot = "public/guide-images"
+const imageTempRoot = "public/guide-images.tmp"
+const publicImageBase = "./guide-images"
 const roleLabels: Record<string, Role> = {
   "돌격": "tank",
   "공격": "damage",
@@ -151,6 +154,79 @@ const absoluteUrl = (url: string) => {
   if (decoded.startsWith("/")) return `${namuOrigin}${decoded}`
   return decoded
 }
+
+const removeIfExists = async (path: string) => {
+  try {
+    await Deno.remove(path, { recursive: true })
+  } catch (error) {
+    if (!(error instanceof Deno.errors.NotFound)) throw error
+  }
+}
+
+let imageStoreReady = false
+const prepareImageStore = async () => {
+  if (imageStoreReady) return
+  await removeIfExists(imageTempRoot)
+  await Deno.mkdir(imageTempRoot, { recursive: true })
+  imageStoreReady = true
+}
+
+const imageExtension = (url: string, contentType: string | null) => {
+  const pathExtension = new URL(url).pathname.match(
+    /\.(avif|gif|jpe?g|png|svg|webp)$/i,
+  )?.[1]
+  if (pathExtension) return pathExtension.toLowerCase().replace("jpeg", "jpg")
+
+  const mimeType = contentType?.split(";")[0]?.trim().toLowerCase()
+  if (mimeType === "image/jpeg") return "jpg"
+  if (mimeType === "image/svg+xml") return "svg"
+  const mimeExtension = mimeType?.match(/^image\/(avif|gif|png|webp)$/)?.[1]
+  if (mimeExtension) return mimeExtension
+
+  throw new Error(`unknown image type for ${url}: ${contentType ?? "missing"}`)
+}
+
+const downloadGuideImage = async (
+  options: {
+    id: string
+    kind: "heroes" | "maps"
+    referer: string
+    url: string
+  },
+) => {
+  if (!options.url) return ""
+  await prepareImageStore()
+
+  const url = absoluteUrl(options.url)
+  const response = await fetch(url, {
+    headers: { ...namuHeaders, referer: options.referer },
+  })
+  if (!response.ok) {
+    throw new Error(`image download failed ${response.status}: ${url}`)
+  }
+  const extension = imageExtension(url, response.headers.get("content-type"))
+  const relativePath = `${options.kind}/${options.id}.${extension}`
+  await Deno.mkdir(`${imageTempRoot}/${options.kind}`, { recursive: true })
+  await Deno.writeFile(
+    `${imageTempRoot}/${relativePath}`,
+    new Uint8Array(await response.arrayBuffer()),
+  )
+  return `${publicImageBase}/${relativePath}`
+}
+
+const publishGuideImages = async () => {
+  if (!imageStoreReady) return
+  await removeIfExists(imageRoot)
+  await Deno.rename(imageTempRoot, imageRoot)
+}
+
+const ogImage = (html: string) =>
+  html.match(
+    /<meta\b[^>]*property=['"]og:image['"][^>]*content=['"]([^'"]+)['"][^>]*>/,
+  )?.[1] ??
+    html.match(
+      /<meta\b[^>]*content=['"]([^'"]+)['"][^>]*property=['"]og:image['"][^>]*>/,
+    )?.[1]
 
 const sectionByHeading = (html: string, level: 2 | 3 | 4, spanId: string) => {
   const start = html.indexOf(`<span id='${spanId}'`)
@@ -342,14 +418,9 @@ const fetchMapDetails = async (page: string, fallback: string) => {
   if (cached) return cached
   try {
     const html = await fetchNamu(page)
-    const og = html.match(
-      /<meta\b[^>]*property=['"]og:image['"][^>]*content=['"]([^'"]+)['"][^>]*>/,
-    )?.[1] ??
-      html.match(
-        /<meta\b[^>]*content=['"]([^'"]+)['"][^>]*property=['"]og:image['"][^>]*>/,
-      )?.[1]
+    const image = ogImage(html)
     const details = {
-      image: og ? absoluteUrl(og) : fallback,
+      image: image ? absoluteUrl(image) : fallback,
       ...parseMapRecommendations(html),
     }
     mapDetailsCache.set(page, details)
@@ -399,11 +470,18 @@ const parseMapModes = async (html: string) => {
         page,
         fallbackImage ? absoluteUrl(fallbackImage) : "",
       )
+      const id = slugify(name)
+      const image = await downloadGuideImage({
+        id,
+        kind: "maps",
+        referer: page,
+        url: details.image,
+      })
       maps.push({
-        id: slugify(name),
+        id,
         name,
         page,
-        image: details.image,
+        image,
         attack: details.attack,
         defense: details.defense,
       })
@@ -426,9 +504,17 @@ const uniqueEntries = (entries: RatedHero[]) => {
 
 const matchups: Record<string, RatedHero[]> = {}
 const heroSynergies: Record<string, RatedHero[]> = {}
+const crawledHeroes: Hero[] = []
 for (const [index, hero] of heroes.entries()) {
   console.error(`[${index + 1}/${heroes.length}] ${hero.name}`)
   const html = await fetchNamu(hero.page)
+  const avatar = await downloadGuideImage({
+    id: hero.id,
+    kind: "heroes",
+    referer: hero.page,
+    url: absoluteUrl(ogImage(html) ?? hero.avatar),
+  })
+  crawledHeroes.push({ ...hero, avatar })
   const matchupGroups = parseRatedHeroSections(html, "상성", classifyMatchup)
   const synergyGroups = parseRatedHeroSections(html, "궁합", classifySynergy)
   matchups[hero.id] = uniqueEntries([
@@ -445,6 +531,7 @@ for (const [index, hero] of heroes.entries()) {
 }
 
 const mapModes = await parseMapModes(await fetchNamu(mapsUrl))
+await publishGuideImages()
 
 const sourceUpdatedAt = () =>
   sourceModifiedTimes
@@ -465,7 +552,7 @@ const writeJson = (path: string, value: unknown) =>
 
 await writeJson(
   "src/data/overwatch.json",
-  { heroes, matchups },
+  { heroes: crawledHeroes, matchups },
 )
 await writeJson(
   "src/data/guide.json",
