@@ -13,7 +13,6 @@ dist-ssr
 .vite
 *.local
 src/data/*.json
-public/guide-images
 public/guide-images.tmp
 
 # Editor directories and files

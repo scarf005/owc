@@ -11,5 +11,12 @@ type OverwatchData = {
 
 const overwatchData = data as OverwatchData
 
-export const heroes = overwatchData.heroes ?? seedHeroes
+const localHeroImage = (hero: Hero) => ({
+  ...hero,
+  avatar: hero.avatar.startsWith("./guide-images/")
+    ? hero.avatar
+    : `./guide-images/heroes/${hero.id}.webp`,
+})
+
+export const heroes = (overwatchData.heroes ?? seedHeroes).map(localHeroImage)
 export const matchups = overwatchData.matchups

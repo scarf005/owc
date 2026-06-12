@@ -26,6 +26,18 @@ type GuideData = {
 
 const guideData = data as GuideData
 
+const mapImageExtensions: Record<string, string> = { "네온-정션": "svg" }
+
+const localMapImage = (mode: MapMode): MapMode => ({
+  ...mode,
+  maps: mode.maps.map((map) => ({
+    ...map,
+    image: map.image.startsWith("./guide-images/")
+      ? map.image
+      : `./guide-images/maps/${map.id}.${mapImageExtensions[map.id] ?? "webp"}`,
+  })),
+})
+
 export const source = guideData.source ?? {
   name: "Namu Wiki",
   url: "https://namu.wiki",
@@ -33,4 +45,4 @@ export const source = guideData.source ?? {
 }
 export const synergyRatings = guideData.synergyRatings
 export const heroSynergies = guideData.heroSynergies
-export const mapModes = guideData.mapModes
+export const mapModes = guideData.mapModes.map(localMapImage)
