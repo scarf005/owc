@@ -10,12 +10,18 @@ type OverwatchData = {
 }
 
 const overwatchData = data as OverwatchData
+const guideImageVersion = "portrait-20260612"
+
+const versionedGuideImage = (path: string) =>
+  path.includes("?") ? path : `${path}?v=${guideImageVersion}`
 
 const localHeroImage = (hero: Hero) => ({
   ...hero,
-  avatar: hero.avatar.startsWith("./guide-images/")
-    ? hero.avatar
-    : `./guide-images/heroes/${hero.id}.webp`,
+  avatar: versionedGuideImage(
+    hero.avatar.startsWith("./guide-images/")
+      ? hero.avatar
+      : `./guide-images/heroes/${hero.id}.webp`,
+  ),
 })
 
 export const heroes = (overwatchData.heroes ?? seedHeroes).map(localHeroImage)

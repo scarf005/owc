@@ -25,6 +25,10 @@ type GuideData = {
 }
 
 const guideData = data as GuideData
+const guideImageVersion = "portrait-20260612"
+
+const versionedGuideImage = (path: string) =>
+  path.includes("?") ? path : `${path}?v=${guideImageVersion}`
 
 const mapImageExtensions: Record<string, string> = { "네온-정션": "svg" }
 
@@ -32,9 +36,13 @@ const localMapImage = (mode: MapMode): MapMode => ({
   ...mode,
   maps: mode.maps.map((map) => ({
     ...map,
-    image: map.image.startsWith("./guide-images/")
-      ? map.image
-      : `./guide-images/maps/${map.id}.${mapImageExtensions[map.id] ?? "webp"}`,
+    image: versionedGuideImage(
+      map.image.startsWith("./guide-images/")
+        ? map.image
+        : `./guide-images/maps/${map.id}.${
+          mapImageExtensions[map.id] ?? "webp"
+        }`,
+    ),
   })),
 })
 
