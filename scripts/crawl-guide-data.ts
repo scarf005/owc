@@ -228,6 +228,34 @@ const ogImage = (html: string) =>
       /<meta\b[^>]*content=['"]([^'"]+)['"][^>]*property=['"]og:image['"][^>]*>/,
     )?.[1]
 
+const normalizedImageLabel = (value: string) =>
+  value.toLowerCase().replace(
+    /overwatch2|오버워치2|초상화?|[\s:.'’…\.]+/g,
+    "",
+  )
+
+const heroPortraitAliases: Record<string, string[]> = {
+  "d-va": ["디바"],
+  "soldier-76": ["솔저76"],
+}
+
+const heroPortraitImage = (html: string, hero: Hero) => {
+  const labels = [hero.name, ...(heroPortraitAliases[hero.id] ?? [])].map(
+    normalizedImageLabel,
+  )
+
+  for (const match of html.matchAll(/<img\b[^>]*>/g)) {
+    const alt = attr(match[0], "alt") ?? ""
+    if (!alt.includes("초")) continue
+    const image = attr(match[0], "data-src") ?? attr(match[0], "src")
+    if (
+      image && labels.some((label) => normalizedImageLabel(alt).includes(label))
+    ) return absoluteUrl(image)
+  }
+
+  return undefined
+}
+
 const sectionByHeading = (html: string, level: 2 | 3 | 4, spanId: string) => {
   const start = html.indexOf(`<span id='${spanId}'`)
   if (start < 0) return ""
@@ -512,7 +540,7 @@ for (const [index, hero] of heroes.entries()) {
     id: hero.id,
     kind: "heroes",
     referer: hero.page,
-    url: absoluteUrl(ogImage(html) ?? hero.avatar),
+    url: heroPortraitImage(html, hero) ?? absoluteUrl(hero.avatar),
   })
   crawledHeroes.push({ ...hero, avatar })
   const matchupGroups = parseRatedHeroSections(html, "상성", classifyMatchup)

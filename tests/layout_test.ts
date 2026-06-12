@@ -174,6 +174,13 @@ Deno.test({
         }).isVisible(),
         "hero was not restored from query params",
       )
+      assert(
+        await page.locator(".selected-hero img").evaluate((node) => {
+          const image = node as HTMLImageElement
+          return image.naturalWidth === 256 && image.naturalHeight === 256
+        }),
+        "selected hero image must stay the 256x256 portrait asset",
+      )
       const heroTitle = page.locator(".selected-hero .selected-title")
       assert(
         (await heroTitle.getAttribute("href"))?.includes("namu.wiki/w/"),
