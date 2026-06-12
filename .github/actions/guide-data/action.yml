@@ -51,13 +51,6 @@ runs:
         else
           echo "::warning::guide-data artifact ${artifact_id} did not contain guide.json and overwatch.json."
         fi
-        if [ -d guide-data-cache/public/guide-images ]; then
-          rm -rf public/guide-images
-          cp -R guide-data-cache/public/guide-images public/guide-images
-        elif [ -d guide-data-cache/guide-images ]; then
-          rm -rf public/guide-images
-          cp -R guide-data-cache/guide-images public/guide-images
-        fi
     - name: Crawl guide data or use cache
       shell: bash
       run: |
