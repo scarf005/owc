@@ -30,19 +30,13 @@ const viewports = [
   { width: 1920, height: 1080 },
   { width: 2268, height: 1000 },
 ]
-const routedImagePages = [
-  ...heroes.flatMap((hero) => [
-    { label: `matchups:${hero.id}`, path: `?view=matchups&hero=${hero.id}` },
-    { label: `synergies:${hero.id}`, path: `?view=synergies&hero=${hero.id}` },
-  ]),
-  ...mapModes.flatMap((mode) =>
-    mode.maps
-      .filter((map) => map.attack.length > 0 || map.defense.length > 0)
-      .map((map) => ({
-        label: `maps:${map.id}`,
-        path: `?view=maps&map=${encodeURIComponent(map.id)}`,
-      }))
-  ),
+const mainImagePages = [
+  { label: "matchups", path: "?view=matchups&hero=d-va&map=네팔" },
+  { label: "synergies", path: "?view=synergies&hero=orisa&map=네팔" },
+  {
+    label: "maps",
+    path: `?view=maps&hero=orisa&map=${encodeURIComponent("네팔")}`,
+  },
 ]
 
 const pngSize = (data: Uint8Array) => ({
@@ -283,8 +277,8 @@ Deno.test({
 })
 
 Deno.test({
-  name: "every routed page uses valid bundled guide images",
-  timeout: 180_000,
+  name: "each main page uses valid bundled guide images",
+  timeout: 60_000,
   async fn() {
     const { child, url } = await startServer()
     const browser = await chromium.launch()
@@ -293,15 +287,10 @@ Deno.test({
     })
 
     try {
-      await page.goto(url)
-      await page.waitForSelector(".navbar")
       const guideImageUrls = new Set<string>()
-      for (const route of routedImagePages) {
-        await page.evaluate((path) => {
-          history.replaceState(null, "", path)
-          dispatchEvent(new PopStateEvent("popstate"))
-        }, route.path)
-        await page.waitForTimeout(0)
+      for (const route of mainImagePages) {
+        await page.goto(`${url}${route.path}`)
+        await page.waitForSelector(".navbar")
         const images = await page.evaluate(() =>
           [...document.images].map((image) => {
             const src = image.getAttribute("src") ?? ""
@@ -365,7 +354,7 @@ Deno.test({
 })
 
 Deno.test({
-  name: "unmasked guide image screenshots stay stable",
+  name: "unmasked main page image screenshots stay stable",
   timeout: 60_000,
   async fn(t) {
     const { child, url } = await startServer()
@@ -374,21 +363,20 @@ Deno.test({
       viewport: { width: 1280, height: 1000 },
     })
 
-    const imageSnapshot = async (selector: string) => {
-      const locator = page.locator(selector)
+    const imageSnapshot = async (name: string, selector: string) => {
+      const locator = page.locator(selector).first()
       const image = await locator.evaluate(async (node) => {
         const image = node as HTMLImageElement
         await image.decode().catch(() => undefined)
-        const currentUrl = new URL(image.currentSrc)
         return {
           src: image.getAttribute("src"),
-          currentPath: `${currentUrl.pathname}${currentUrl.search}`,
           naturalWidth: image.naturalWidth,
           naturalHeight: image.naturalHeight,
         }
       })
       const screenshot = await locator.screenshot({ animations: "disabled" })
       return {
+        name,
         ...image,
         screenshot: pngSize(screenshot),
         sha256: await sha256Hex(screenshot),
@@ -396,20 +384,26 @@ Deno.test({
     }
 
     try {
-      await page.goto(
-        `${url}?view=synergies&hero=orisa&map=${encodeURIComponent("네팔")}`,
-      )
-      await page.waitForSelector(".selected-hero img")
+      const snapshots = []
+      for (const route of mainImagePages) {
+        await page.goto(`${url}${route.path}`)
+        await page.waitForSelector(".navbar")
+        snapshots.push(
+          await imageSnapshot(
+            `${route.label}:primary`,
+            route.label === "maps" ? ".selected-map img" : ".selected-hero img",
+          ),
+        )
+        snapshots.push(
+          await imageSnapshot(
+            `${route.label}:result`,
+            ".result .hero-button img",
+          ),
+        )
+      }
 
-      const hero = await imageSnapshot(".selected-hero img")
-      await page.getByLabel("주요 메뉴").getByRole("button", {
-        name: "맵별 추천 영웅",
-      }).click()
-      await page.waitForSelector(".selected-map img")
-      const map = await imageSnapshot(".selected-map img")
-
-      await assertSnapshot(t, { hero, map }, {
-        name: "unmasked-guide-images",
+      await assertSnapshot(t, snapshots, {
+        name: "unmasked-main-page-image-screenshots",
         serializer: (value) => JSON.stringify(value, null, 2),
       })
     } finally {

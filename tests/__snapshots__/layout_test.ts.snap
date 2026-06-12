@@ -1,10 +1,32 @@
 export const snapshot = {};
 
-snapshot[`unmasked-guide-images 1`] = `
-{
-  "hero": {
+snapshot[`unmasked-main-page-image-screenshots 1`] = `
+[
+  {
+    "name": "matchups:primary",
+    "src": "./guide-images/heroes/d-va.webp?v=portrait-20260612",
+    "naturalWidth": 256,
+    "naturalHeight": 256,
+    "screenshot": {
+      "width": 52,
+      "height": 52
+    },
+    "sha256": "3ed1b3654edfe7ad8b0f511ac080aa7244658da04e042c1921fdd3e8c233d02d"
+  },
+  {
+    "name": "matchups:result",
+    "src": "./guide-images/heroes/zarya.webp?v=portrait-20260612",
+    "naturalWidth": 256,
+    "naturalHeight": 256,
+    "screenshot": {
+      "width": 50,
+      "height": 56
+    },
+    "sha256": "ed85312e9a41dd11226e4300da7eab520dcb4f68f7d70620e54bc5354dc0c274"
+  },
+  {
+    "name": "synergies:primary",
     "src": "./guide-images/heroes/orisa.webp?v=portrait-20260612",
-    "currentPath": "/guide-images/heroes/orisa.webp?v=portrait-20260612",
     "naturalWidth": 256,
     "naturalHeight": 256,
     "screenshot": {
@@ -13,9 +35,20 @@ snapshot[`unmasked-guide-images 1`] = `
     },
     "sha256": "38365158f13a73304bd90c84bb75c148397454809fa326333278dfd2718c3fd4"
   },
-  "map": {
+  {
+    "name": "synergies:result",
+    "src": "./guide-images/heroes/roadhog.webp?v=portrait-20260612",
+    "naturalWidth": 256,
+    "naturalHeight": 256,
+    "screenshot": {
+      "width": 50,
+      "height": 56
+    },
+    "sha256": "b7fc7d7699eb4d80fbb0302d66714df388a874f7c42617b27a1faadb739de74d"
+  },
+  {
+    "name": "maps:primary",
     "src": "./guide-images/maps/네팔.webp?v=portrait-20260612",
-    "currentPath": "/guide-images/maps/%EB%84%A4%ED%8C%94.webp?v=portrait-20260612",
     "naturalWidth": 200,
     "naturalHeight": 125,
     "screenshot": {
@@ -23,8 +56,19 @@ snapshot[`unmasked-guide-images 1`] = `
       "height": 46
     },
     "sha256": "2b77bc31d5dc7a25fef731a050a06f70fdf3c8830f41405b02984b76d65cb8b6"
+  },
+  {
+    "name": "maps:result",
+    "src": "./guide-images/heroes/roadhog.webp?v=portrait-20260612",
+    "naturalWidth": 256,
+    "naturalHeight": 256,
+    "screenshot": {
+      "width": 50,
+      "height": 56
+    },
+    "sha256": "fa80e7436dc520a56475fa0e7349a10b032164929eb3f7f960cbbfaf6d33d1e4"
   }
-}
+]
 `;
 
 snapshot[`tab-interaction-screenshots 1`] = `
