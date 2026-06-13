@@ -411,11 +411,19 @@ function GuideDetail(props: { entry: HeroRowItem }) {
   )
 }
 
+function GuideDetailPanel(props: { entry: HeroRowItem }) {
+  return (
+    <section class="pick guide-detail-panel" aria-label="영웅 문서 본문">
+      <GuideDetail entry={props.entry} />
+    </section>
+  )
+}
+
 function GuidePanel(props: {
-  detailEntry: HeroRowItem | undefined
   hero: Hero | undefined
   groups: { key?: string; label: string; heroes: HeroRowItem[] }[]
   onSelect: (entry: HeroRowItem) => void
+  selectedDetailId: string | undefined
 }) {
   return (
     <Show when={props.hero}>
@@ -433,13 +441,10 @@ function GuidePanel(props: {
               updatedAt={hero().updatedAt}
             />
           </div>
-          <Show when={props.detailEntry}>
-            {(entry) => <GuideDetail entry={entry()} />}
-          </Show>
           <HeroRows
             groups={props.groups}
             onSelect={props.onSelect}
-            selectedId={props.detailEntry?.hero.id}
+            selectedId={props.selectedDetailId}
           />
         </>
       )}
@@ -589,7 +594,17 @@ function App() {
         <Show
           when={state.view === "maps"}
           fallback={
-            <HeroPicker selectedId={state.heroId} onSelect={setSelectedId} />
+            <Show
+              when={detailEntry()}
+              fallback={
+                <HeroPicker
+                  selectedId={state.heroId}
+                  onSelect={setSelectedId}
+                />
+              }
+            >
+              {(entry) => <GuideDetailPanel entry={entry()} />}
+            </Show>
           }
         >
           <MapPicker selectedId={state.mapId} onSelect={setSelectedMapId} />
@@ -600,10 +615,10 @@ function App() {
             when={state.view === "maps"}
             fallback={
               <GuidePanel
-                detailEntry={detailEntry()}
                 hero={selectedHero()}
                 groups={guideGroups()}
                 onSelect={setGuideDetail}
+                selectedDetailId={detailEntry()?.hero.id}
               />
             }
           >

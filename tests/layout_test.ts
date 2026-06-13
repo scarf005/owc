@@ -483,8 +483,9 @@ Deno.test({
         "detail card click should not change the source hero",
       )
       assert(
-        await page.locator(".guide-detail").getByText(bodyPattern).isVisible(),
-        `detail body was not visible: ${name}`,
+        await page.locator(".pick .guide-detail").getByText(bodyPattern)
+          .isVisible(),
+        `detail body was not visible in the left column: ${name}`,
       )
     }
 
@@ -693,9 +694,9 @@ Deno.test({
         "right-column hero pick should not change the source hero",
       )
       assert(
-        await page.locator(".guide-detail").getByText(/안란의 좌클릭/)
+        await page.locator(".pick .guide-detail").getByText(/안란의 좌클릭/)
           .isVisible(),
-        "right-column hero pick did not show the crawled body",
+        "right-column hero pick did not show the crawled body in the left column",
       )
       assert(
         new URL(page.url()).searchParams.get("hero") === "d-va",
@@ -706,6 +707,10 @@ Deno.test({
       assert(
         await page.locator(".guide-detail").count() === 0,
         "clicking the same right-column hero again should hide the body",
+      )
+      assert(
+        await page.getByLabel("영웅 선택").isVisible(),
+        "hiding the body should restore the left-column hero picker",
       )
     } finally {
       await page.close().catch(() => undefined)
@@ -815,9 +820,11 @@ Deno.test({
         "matchup card click should keep the source hero selected",
       )
       assert(
-        await page.locator(".guide-detail").getByText(/둠피스트가 딜러였던/)
+        await page.locator(".pick .guide-detail").getByText(
+          /둠피스트가 딜러였던/,
+        )
           .isVisible(),
-        "matchup card click should show the crawled body",
+        "matchup card click should show the crawled body in the left column",
       )
       assert(
         new URL(page.url()).searchParams.get("hero") === "d-va",
@@ -854,14 +861,15 @@ Deno.test({
         "synergy card click should keep the source hero selected",
       )
       assert(
-        await page.locator(".guide-detail").getByText(/파르시 조합/)
+        await page.locator(".pick .guide-detail").getByText(/파르시 조합/)
           .isVisible(),
-        "synergy card click should show the crawled body",
+        "synergy card click should show the crawled body in the left column",
       )
       assert(
         new URL(page.url()).searchParams.get("hero") === "d-va",
         "synergy card click should not update hero query param",
       )
+      await pharahCard.click()
       await page.getByLabel("영웅 선택").getByRole("button", { name: "오리사" })
         .click()
       assert(
@@ -1025,7 +1033,7 @@ Deno.test({
 })
 
 Deno.test({
-  name: "right-column body uses result scrolling without resizing cards",
+  name: "right-column body opens in the left column without resizing cards",
   timeout: 60_000,
   async fn() {
     const { child, url } = await startServer()
@@ -1044,7 +1052,6 @@ Deno.test({
         return {
           cardHeight: Math.round(card?.getBoundingClientRect().height ?? 0),
           imageHeight: Math.round(image?.getBoundingClientRect().height ?? 0),
-          overflowY: getComputedStyle(node).overflowY,
           counterIcon: getComputedStyle(node).getPropertyValue(
             "--counter-icon",
           ),
@@ -1052,24 +1059,39 @@ Deno.test({
       })
 
       await result.getByRole("button", { name: "둠피스트" }).click()
-      await page.waitForSelector(".guide-detail")
+      await page.waitForSelector(".pick .guide-detail")
 
-      const after = await result.evaluate((node) => {
-        const card = node.querySelector<HTMLButtonElement>(".hero-button")
+      const after = await page.evaluate(() => {
+        const result = document.querySelector<HTMLElement>(".result")!
+        const left = document.querySelector<HTMLElement>(".pick")!
+        const card = result.querySelector<HTMLButtonElement>(".hero-button")
         const image = card?.querySelector("img")
         return {
           cardHeight: Math.round(card?.getBoundingClientRect().height ?? 0),
           imageHeight: Math.round(image?.getBoundingClientRect().height ?? 0),
-          overflowY: getComputedStyle(node).overflowY,
-          counterIcon: getComputedStyle(node).getPropertyValue(
+          counterIcon: getComputedStyle(result).getPropertyValue(
             "--counter-icon",
           ),
-          scrolls: node.scrollHeight > node.clientHeight,
+          leftLabel: left.getAttribute("aria-label"),
+          leftOverflowY: getComputedStyle(left).overflowY,
+          leftScrolls: left.scrollHeight > left.clientHeight,
+          resultContainsBody: Boolean(result.querySelector(".guide-detail")),
         }
       })
 
-      assert(before.overflowY === "auto", "result should allow vertical scroll")
-      assert(after.scrolls, "body selection should scroll the result panel")
+      assert(
+        after.leftLabel === "영웅 문서 본문",
+        "body should replace the left column",
+      )
+      assert(
+        after.leftOverflowY === "auto",
+        "left body panel should allow vertical scroll",
+      )
+      assert(after.leftScrolls, "body selection should scroll the left column")
+      assert(
+        !after.resultContainsBody,
+        "body should not open in the right column",
+      )
       assert(
         before.cardHeight === after.cardHeight &&
           before.imageHeight === after.imageHeight,
