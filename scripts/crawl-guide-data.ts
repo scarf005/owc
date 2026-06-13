@@ -343,7 +343,7 @@ const parseRatedHeroSections = (
         !target || result[role].some((entry) => entry.target === target)
       ) continue
       const notes = parseNoteTitles(listItem[0])
-      const body = bodyWithNotes(listItemBody(listItem[0]), notes)
+      const body = listItemBody(listItem[0])
       const note = notes.join("\n")
       result[role].push({
         target,
@@ -401,18 +401,19 @@ const parseNoteTitles = (html: string) =>
     .filter((note): note is string => Boolean(note))
     .map((note) => cleanText(note))
 
-const withoutFootnoteAnchors = (html: string) =>
-  html.replace(/<a\b[^>]*href=['"]#fn-[^'"]+['"][\s\S]*?<\/a>/g, "")
+const withInlineFootnoteTitles = (html: string) =>
+  html.replace(
+    /<a\b[^>]*href=['"]#fn-[^'"]+['"][\s\S]*?<\/a>/g,
+    (anchor) => {
+      const note = attr(anchor, "title")
+      return note ? ` [주석: ${cleanText(note)}]` : ""
+    },
+  )
 
 const listItemBody = (html: string) => {
   const bodyMatch = html.match(/<br\b[^>]*>([\s\S]*)<\/li>\s*$/)
-  return cleanText(withoutFootnoteAnchors(bodyMatch?.[1] ?? html))
+  return cleanText(withInlineFootnoteTitles(bodyMatch?.[1] ?? html))
 }
-
-const bodyWithNotes = (body: string, notes: string[]) =>
-  [body, notes.length > 0 ? `주석\n${notes.join("\n")}` : ""]
-    .filter(Boolean)
-    .join("\n\n")
 
 const parseMapRecommendationCell = (html: string) => {
   const anchors = [...html.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)]

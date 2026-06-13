@@ -383,7 +383,7 @@ function NamuTitle(props: { href: string; name: string; updatedAt?: string }) {
   )
 }
 
-function GuideDetail(props: { entry: HeroRowItem }) {
+function GuideDetail(props: { entry: HeroRowItem; sourceHero?: Hero }) {
   const paragraphs = createMemo(() =>
     props.entry.body?.split(/\n{2,}/).filter(Boolean) ?? []
   )
@@ -397,9 +397,9 @@ function GuideDetail(props: { entry: HeroRowItem }) {
           src={props.entry.hero.avatar}
         />
         <NamuTitle
-          href={props.entry.hero.page}
+          href={(props.sourceHero ?? props.entry.hero).page}
           name={props.entry.hero.name}
-          updatedAt={props.entry.hero.updatedAt}
+          updatedAt={(props.sourceHero ?? props.entry.hero).updatedAt}
         />
       </div>
       <div class="guide-detail-body">
@@ -411,10 +411,10 @@ function GuideDetail(props: { entry: HeroRowItem }) {
   )
 }
 
-function GuideDetailPanel(props: { entry: HeroRowItem }) {
+function GuideDetailPanel(props: { entry: HeroRowItem; sourceHero?: Hero }) {
   return (
     <section class="pick guide-detail-panel" aria-label="영웅 문서 본문">
-      <GuideDetail entry={props.entry} />
+      <GuideDetail entry={props.entry} sourceHero={props.sourceHero} />
     </section>
   )
 }
@@ -603,7 +603,9 @@ function App() {
                 />
               }
             >
-              {(entry) => <GuideDetailPanel entry={entry()} />}
+              {(entry) => (
+                <GuideDetailPanel entry={entry()} sourceHero={selectedHero()} />
+              )}
             </Show>
           }
         >

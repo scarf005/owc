@@ -316,9 +316,9 @@ footer {
   display: grid;
   gap: 8px;
   color: var(--text);
-  font-size: 13px;
-  font-weight: 650;
-  line-height: 1.55;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
 }
 
 .guide-detail-body p {

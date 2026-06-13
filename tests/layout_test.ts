@@ -89,18 +89,17 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
   )
   assert(
     dVaDoomfist?.body?.includes("둠피스트가 딜러였던") &&
-      dVaDoomfist.body.includes("주석") &&
-      dVaDoomfist.body.includes("파워 블락"),
-    "D.Va vs Doomfist matchup body and notes must be crawled from Namu",
+      dVaDoomfist.body.includes("[주석: 특히 마이크로 미사일") &&
+      dVaDoomfist.body.includes("파워 블락을 금방 채워주기 쉽고 [주석:"),
+    "D.Va vs Doomfist matchup body and inline notes must be crawled from Namu",
   )
   const dVaPharah = heroSynergies["d-va"]?.find((entry) =>
     entry.target === "pharah"
   )
   assert(
     dVaPharah?.body?.includes("파르시 조합") &&
-      dVaPharah.body.includes("주석") &&
-      dVaPharah.body.includes("파라는 모든 디바"),
-    "D.Va and Pharah synergy body and notes must be crawled from Namu",
+      dVaPharah.body.includes("[주석: 참고로 파라는 모든 디바"),
+    "D.Va and Pharah synergy body and inline notes must be crawled from Namu",
   )
   assert(source.name === "Namu Wiki", "guide source must be Namu Wiki")
   assert(
@@ -701,6 +700,21 @@ Deno.test({
       assert(
         new URL(page.url()).searchParams.get("hero") === "d-va",
         "right-column hero pick should not update the hero query param",
+      )
+      const sourceTitle = page.locator(".result .selected-hero .selected-title")
+      const detailTitle = page.locator(".pick .guide-detail .selected-title")
+      assert(
+        await detailTitle.getAttribute("href") ===
+          await sourceTitle.getAttribute("href"),
+        "body title should link to the source hero document",
+      )
+      const sourceUpdate = (await sourceTitle.textContent())?.match(
+        /마지막 업데이트: .*/,
+      )?.[0]
+      assert(
+        sourceUpdate &&
+          (await detailTitle.textContent())?.includes(sourceUpdate),
+        "body title should show the source hero document update time",
       )
 
       await result.getByRole("button", { name: "안란" }).click()
