@@ -3,33 +3,10 @@
 import { retry } from "@std/async/retry"
 import { assert } from "@std/assert"
 import { assertSnapshot } from "@std/testing/snapshot"
-import { chromium, type Page } from "playwright"
+import { chromium } from "playwright"
 import { heroSynergies, mapModes, source } from "../src/data/guide.ts"
 import { heroes, matchups } from "../src/data/overwatch.ts"
 
-type Metrics = {
-  hero: string | undefined
-  icon: number
-  counter: string
-  pageOverflow: boolean
-  pickOverflow: boolean
-  resultOverflow: boolean
-  button: {
-    width: number
-    height: number
-    imageHeight: number
-    gridTemplateColumns: string
-    borderColor: string
-    className: string
-  }
-}
-
-const viewports = [
-  { width: 1280, height: 1000 },
-  { width: 1440, height: 900 },
-  { width: 1920, height: 1080 },
-  { width: 2268, height: 1000 },
-]
 const mainImagePages = [
   { label: "matchups", path: "?view=matchups&hero=d-va&map=네팔" },
   { label: "synergies", path: "?view=synergies&hero=orisa&map=네팔" },
@@ -651,56 +628,6 @@ Deno.test({
   },
 })
 
-const clickHeroAndMeasure = async (page: Page, name: string) => {
-  return await page.evaluate((heroName): Metrics => {
-    const heroButton = [...document.querySelectorAll<HTMLButtonElement>(
-      ".pick .hero-button",
-    )].find((button) => button.textContent?.includes(heroName))
-    if (!heroButton) throw new Error(`Hero button not found: ${heroName}`)
-
-    heroButton.click()
-
-    const pick = document.querySelector<HTMLElement>(".pick")
-    const result = document.querySelector<HTMLElement>(".result")
-    const selectedButton = [...document.querySelectorAll<HTMLButtonElement>(
-      ".pick .hero-button",
-    )].find((button) => button.textContent?.includes(heroName))
-    const selectedImage = selectedButton?.querySelector("img")
-    const counterImage = document.querySelector<HTMLImageElement>(
-      ".result .grid.small .hero-button img",
-    )
-
-    if (!pick || !result || !selectedButton || !selectedImage) {
-      throw new Error("Layout elements not found")
-    }
-
-    const selectedRect = selectedButton.getBoundingClientRect()
-    const selectedImageRect = selectedImage.getBoundingClientRect()
-
-    return {
-      hero: document.querySelector(".selected-hero strong")?.textContent ??
-        undefined,
-      icon: Math.round(counterImage?.getBoundingClientRect().height ?? 0),
-      counter: getComputedStyle(result).getPropertyValue("--counter-icon")
-        .trim(),
-      pageOverflow:
-        document.documentElement.scrollHeight > globalThis.innerHeight ||
-        document.body.scrollHeight > globalThis.innerHeight,
-      pickOverflow: pick.scrollHeight > pick.clientHeight,
-      resultOverflow: result.scrollHeight > result.clientHeight,
-      button: {
-        width: Math.round(selectedRect.width),
-        height: Math.round(selectedRect.height),
-        imageHeight: Math.round(selectedImageRect.height),
-        gridTemplateColumns: getComputedStyle(selectedButton)
-          .gridTemplateColumns,
-        borderColor: getComputedStyle(selectedButton).borderColor,
-        className: selectedButton.className,
-      },
-    }
-  }, name)
-}
-
 Deno.test({
   name: "map note tooltips stay inside the viewport when panels are clipped",
   timeout: 60_000,
@@ -773,6 +700,12 @@ Deno.test({
       assert(
         new URL(page.url()).searchParams.get("hero") === "d-va",
         "right-column hero pick should not update the hero query param",
+      )
+
+      await result.getByRole("button", { name: "안란" }).click()
+      assert(
+        await page.locator(".guide-detail").count() === 0,
+        "clicking the same right-column hero again should hide the body",
       )
     } finally {
       await page.close().catch(() => undefined)
@@ -1092,102 +1025,60 @@ Deno.test({
 })
 
 Deno.test({
-  name: "hero changes do not render a transient broken counter layout",
+  name: "right-column body uses result scrolling without resizing cards",
   timeout: 60_000,
   async fn() {
     const { child, url } = await startServer()
     const browser = await chromium.launch()
-    const page = await browser.newPage()
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 520 },
+    })
 
     try {
-      for (const viewport of viewports) {
-        await page.setViewportSize(viewport)
-        await page.goto(url)
-        await page.waitForSelector(".pick .hero-button")
+      await page.goto(`${url}?view=matchups&hero=d-va&map=부산`)
+      await page.waitForSelector(".result .hero-button")
+      const result = page.locator(".result")
+      const before = await result.evaluate((node) => {
+        const card = node.querySelector<HTMLButtonElement>(".hero-button")
+        const image = card?.querySelector("img")
+        return {
+          cardHeight: Math.round(card?.getBoundingClientRect().height ?? 0),
+          imageHeight: Math.round(image?.getBoundingClientRect().height ?? 0),
+          overflowY: getComputedStyle(node).overflowY,
+          counterIcon: getComputedStyle(node).getPropertyValue(
+            "--counter-icon",
+          ),
+        }
+      })
 
-        await clickHeroAndMeasure(page, "마우가")
-        await page.waitForTimeout(100)
+      await result.getByRole("button", { name: "둠피스트" }).click()
+      await page.waitForSelector(".guide-detail")
 
-        const immediate = await clickHeroAndMeasure(page, "오리사")
-        const afterOneFrame = await page.evaluate(
-          async (): Promise<Metrics> => {
-            await new Promise(requestAnimationFrame)
-            const pick = document.querySelector<HTMLElement>(".pick")
-            const result = document.querySelector<HTMLElement>(".result")
-            const selectedButton = document.querySelector<HTMLButtonElement>(
-              ".pick .hero-button.is-selected",
-            )
-            const selectedImage = selectedButton?.querySelector("img")
-            const counterImage = document.querySelector<HTMLImageElement>(
-              ".result .grid.small .hero-button img",
-            )
+      const after = await result.evaluate((node) => {
+        const card = node.querySelector<HTMLButtonElement>(".hero-button")
+        const image = card?.querySelector("img")
+        return {
+          cardHeight: Math.round(card?.getBoundingClientRect().height ?? 0),
+          imageHeight: Math.round(image?.getBoundingClientRect().height ?? 0),
+          overflowY: getComputedStyle(node).overflowY,
+          counterIcon: getComputedStyle(node).getPropertyValue(
+            "--counter-icon",
+          ),
+          scrolls: node.scrollHeight > node.clientHeight,
+        }
+      })
 
-            if (!pick || !result || !selectedButton || !selectedImage) {
-              throw new Error("Layout elements not found after frame")
-            }
-
-            const selectedRect = selectedButton.getBoundingClientRect()
-            const selectedImageRect = selectedImage.getBoundingClientRect()
-
-            return {
-              hero:
-                document.querySelector(".selected-hero strong")?.textContent ??
-                  undefined,
-              icon: Math.round(
-                counterImage?.getBoundingClientRect().height ?? 0,
-              ),
-              counter: getComputedStyle(result).getPropertyValue(
-                "--counter-icon",
-              )
-                .trim(),
-              pageOverflow: document.documentElement.scrollHeight >
-                  globalThis.innerHeight ||
-                document.body.scrollHeight > globalThis.innerHeight,
-              pickOverflow: pick.scrollHeight > pick.clientHeight,
-              resultOverflow: result.scrollHeight > result.clientHeight,
-              button: {
-                width: Math.round(selectedRect.width),
-                height: Math.round(selectedRect.height),
-                imageHeight: Math.round(selectedImageRect.height),
-                gridTemplateColumns: getComputedStyle(selectedButton)
-                  .gridTemplateColumns,
-                borderColor: getComputedStyle(selectedButton).borderColor,
-                className: selectedButton.className,
-              },
-            }
-          },
-        )
-
-        const label = `${viewport.width}x${viewport.height}`
-        assert(immediate.hero === "오리사", `${label}: Orisa was not selected`)
-        assert(!immediate.pageOverflow, `${label}: page overflowed immediately`)
-        assert(!immediate.pickOverflow, `${label}: pick overflowed immediately`)
-        assert(
-          !immediate.resultOverflow,
-          `${label}: result overflowed immediately`,
-        )
-        assert(
-          immediate.icon === afterOneFrame.icon,
-          `${label}: counter icon changed after first paint (${immediate.icon} -> ${afterOneFrame.icon})`,
-        )
-        assert(
-          immediate.counter === afterOneFrame.counter,
-          `${label}: counter CSS variable changed after first paint (${immediate.counter} -> ${afterOneFrame.counter})`,
-        )
-        assert(
-          immediate.button.className === "hero-button role-tank is-selected",
-          `${label}: selected button class leaked: ${immediate.button.className}`,
-        )
-        assert(
-          immediate.button.borderColor === "rgb(247, 147, 30)",
-          `${label}: selected border was ${immediate.button.borderColor}`,
-        )
-        assert(
-          JSON.stringify(immediate.button) ===
-            JSON.stringify(afterOneFrame.button),
-          `${label}: selected card layout changed after first paint`,
-        )
-      }
+      assert(before.overflowY === "auto", "result should allow vertical scroll")
+      assert(after.scrolls, "body selection should scroll the result panel")
+      assert(
+        before.cardHeight === after.cardHeight &&
+          before.imageHeight === after.imageHeight,
+        "right-column cards should not be resized after selecting a body",
+      )
+      assert(
+        !before.counterIcon && !after.counterIcon,
+        "result panel should not use counter sizing CSS variables",
+      )
     } finally {
       await page.close().catch(() => undefined)
       await browser.close().catch(() => undefined)

@@ -109,8 +109,6 @@ footer {
 }
 
 .result {
-  --counter-cell: 54px;
-  --counter-icon: 56px;
   position: sticky;
   top: 16px;
 }
@@ -129,9 +127,8 @@ footer {
 }
 
 .grid.small {
-  grid-template-columns: repeat(auto-fill, minmax(var(--counter-cell), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
 }
-
 .hero-role,
 .map-mode {
   padding-left: 8px;
@@ -273,9 +270,8 @@ footer {
 }
 
 .grid.small .hero-button img {
-  height: var(--counter-icon);
+  height: 56px;
 }
-
 .selected-hero,
 .selected-map,
 .guide-detail {
@@ -345,8 +341,10 @@ footer {
 }
 
 .selected-title {
-  display: inline-grid;
-  gap: 5px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
   color: inherit;
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -361,6 +359,10 @@ footer {
   font-size: 11px;
   font-weight: 800;
   line-height: 1.2;
+}
+
+.selected-title strong {
+  display: inline-block;
 }
 
 .selected-title-icon {
@@ -500,11 +502,6 @@ footer a,
     padding: 12px;
   }
 
-  .result {
-    --counter-cell: 42px;
-    --counter-icon: 44px;
-  }
-
   .pick,
   .role,
   .result,
@@ -518,7 +515,7 @@ footer a,
   }
 
   .grid.small {
-    grid-template-columns: repeat(auto-fill, minmax(var(--counter-cell), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
   }
 
   .hero-button img {
@@ -532,7 +529,7 @@ footer a,
   }
 
   .grid.small .hero-button img {
-    height: var(--counter-icon);
+    height: 44px;
   }
 
   .selected-hero {

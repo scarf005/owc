@@ -19,10 +19,10 @@ snapshot[`unmasked-main-page-image-screenshots 1`] = `
     "naturalWidth": 256,
     "naturalHeight": 256,
     "screenshot": {
-      "width": 50,
-      "height": 56
+      "width": 40,
+      "height": 44
     },
-    "sha256": "25553e324d6447889a1efebd50dddc640e9f9ccb671add34224c01c7456364fc"
+    "sha256": "17f7020da0bb613948702844271fd8378461ec3ba3faf9080d3facedd58ba788"
   },
   {
     "name": "synergies:primary",
@@ -41,10 +41,10 @@ snapshot[`unmasked-main-page-image-screenshots 1`] = `
     "naturalWidth": 256,
     "naturalHeight": 256,
     "screenshot": {
-      "width": 50,
-      "height": 56
+      "width": 40,
+      "height": 44
     },
-    "sha256": "b7fc7d7699eb4d80fbb0302d66714df388a874f7c42617b27a1faadb739de74d"
+    "sha256": "96d559f66b480e3ab04a0ac9919be5f977efa42781a7cd70278d71f7cf1e9b35"
   },
   {
     "name": "maps:primary",
@@ -53,9 +53,9 @@ snapshot[`unmasked-main-page-image-screenshots 1`] = `
     "naturalHeight": 125,
     "screenshot": {
       "width": 72,
-      "height": 47
+      "height": 46
     },
-    "sha256": "f82f3629674828b8b515199c2e19f9911e01422bea1c8803ae2129740feaaf41"
+    "sha256": "2b77bc31d5dc7a25fef731a050a06f70fdf3c8830f41405b02984b76d65cb8b6"
   },
   {
     "name": "maps:result",
@@ -63,10 +63,10 @@ snapshot[`unmasked-main-page-image-screenshots 1`] = `
     "naturalWidth": 256,
     "naturalHeight": 256,
     "screenshot": {
-      "width": 50,
-      "height": 56
+      "width": 40,
+      "height": 44
     },
-    "sha256": "fa80e7436dc520a56475fa0e7349a10b032164929eb3f7f960cbbfaf6d33d1e4"
+    "sha256": "8042b705c014b7bdde572605e1f33f23fc08fd3f38f8e4836c9188c1d82aee14"
   }
 ]
 `;
@@ -301,7 +301,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 2889
+      "height": 2861
     },
     "metrics": {
       "activeNav": "상성",
@@ -367,7 +367,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 2486
+      "height": 2458
     },
     "metrics": {
       "activeNav": "궁합",
@@ -411,7 +411,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1462
+      "height": 1463
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -433,7 +433,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1462
+      "height": 1463
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -455,7 +455,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1462
+      "height": 1463
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",

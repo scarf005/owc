@@ -2,7 +2,6 @@ import "./App.css"
 import {
   createEffect,
   createMemo,
-  createRenderEffect,
   createSignal,
   For,
   onCleanup,
@@ -384,14 +383,13 @@ function NamuTitle(props: { href: string; name: string; updatedAt?: string }) {
   )
 }
 
-function GuideDetail(props: { entry: HeroRowItem; label: string }) {
+function GuideDetail(props: { entry: HeroRowItem }) {
   const paragraphs = createMemo(() =>
     props.entry.body?.split(/\n{2,}/).filter(Boolean) ?? []
   )
 
   return (
     <article class="guide-detail">
-      <div class="label">{props.label}</div>
       <div class="guide-detail-title">
         <img
           alt={props.entry.hero.name}
@@ -415,7 +413,6 @@ function GuideDetail(props: { entry: HeroRowItem; label: string }) {
 
 function GuidePanel(props: {
   detailEntry: HeroRowItem | undefined
-  detailLabel: string
   hero: Hero | undefined
   groups: { key?: string; label: string; heroes: HeroRowItem[] }[]
   onSelect: (entry: HeroRowItem) => void
@@ -437,9 +434,7 @@ function GuidePanel(props: {
             />
           </div>
           <Show when={props.detailEntry}>
-            {(entry) => (
-              <GuideDetail entry={entry()} label={props.detailLabel} />
-            )}
+            {(entry) => <GuideDetail entry={entry()} />}
           </Show>
           <HeroRows
             groups={props.groups}
@@ -516,73 +511,19 @@ function App() {
   const [noticeOpen, setNoticeOpen] = createSignal(false)
   const [selectedGuideTarget, setSelectedGuideTarget] = createSignal<string>()
   const selectedHero = createMemo(() => heroById.get(state.heroId))
-  let resultRef: HTMLElement | undefined
-  let fitFrame = 0
-  const setCounterSize = (size: number) => {
-    resultRef?.style.setProperty("--counter-icon", `${size}px`)
-    resultRef?.style.setProperty(
-      "--counter-cell",
-      `${Math.max(38, size - 2)}px`,
-    )
+  const setActiveView = (view: View) => {
+    setSelectedGuideTarget()
+    setState("view", view)
   }
-  const counterSizeFits = (size: number) => {
-    if (!resultRef) return true
-    setCounterSize(size)
-    return resultRef.scrollHeight <= resultRef.clientHeight
+  const setSelectedId = (heroId: string) => {
+    setSelectedGuideTarget()
+    setState("heroId", heroId)
   }
-  const fitCounterSize = () => {
-    if (!resultRef) return
-    const max = globalThis.matchMedia?.("(max-width: 1500px)").matches ? 56 : 64
-    const min = 34
-
-    if (counterSizeFits(max)) return
-
-    let low = min
-    let high = max
-    let best = min
-    while (low <= high) {
-      const mid = Math.floor((low + high) / 2)
-      if (counterSizeFits(mid)) {
-        best = mid
-        low = mid + 1
-      } else {
-        high = mid - 1
-      }
-    }
-    setCounterSize(best)
-  }
-  const queueFitCounterSize = () => {
-    cancelAnimationFrame(fitFrame)
-    fitFrame = requestAnimationFrame(() => {
-      fitFrame = requestAnimationFrame(fitCounterSize)
-    })
-  }
-  const refitAfterStateChange = (update: () => void) => {
-    update()
-    fitCounterSize()
-    queueFitCounterSize()
-  }
-  const setActiveView = (view: View) =>
-    refitAfterStateChange(() => {
-      setSelectedGuideTarget()
-      setState("view", view)
-    })
-  const setSelectedId = (heroId: string) =>
-    refitAfterStateChange(() => {
-      setSelectedGuideTarget()
-      setState("heroId", heroId)
-    })
-  const setSelectedMapId = (mapId: string) =>
-    refitAfterStateChange(() => setState("mapId", mapId))
+  const setSelectedMapId = (mapId: string) => setState("mapId", mapId)
   const setGuideDetail = (entry: HeroRowItem) =>
-    refitAfterStateChange(() => setSelectedGuideTarget(entry.hero.id))
-
-  createRenderEffect(() => {
-    state.heroId
-    state.mapId
-    state.view
-    fitCounterSize()
-  })
+    setSelectedGuideTarget((current) =>
+      current === entry.hero.id ? undefined : entry.hero.id
+    )
 
   createEffect(() => {
     writeQueryState({
@@ -592,21 +533,16 @@ function App() {
     })
   })
 
-  const applyQueryState = () =>
-    refitAfterStateChange(() => {
-      setSelectedGuideTarget()
-      setState(readQueryState())
-    })
+  const applyQueryState = () => {
+    setSelectedGuideTarget()
+    setState(readQueryState())
+  }
 
   onMount(() => {
-    globalThis.addEventListener("resize", queueFitCounterSize)
     globalThis.addEventListener("popstate", applyQueryState)
-    queueFitCounterSize()
   })
 
   onCleanup(() => {
-    cancelAnimationFrame(fitFrame)
-    globalThis.removeEventListener("resize", queueFitCounterSize)
     globalThis.removeEventListener("popstate", applyQueryState)
   })
   const matchupGroups = createMemo(() =>
@@ -624,9 +560,6 @@ function App() {
       .find((entry) =>
         entry.hero.id === selectedGuideTarget() && Boolean(entry.body)
       )
-  )
-  const detailLabel = createMemo(() =>
-    state.view === "matchups" ? "나무위키 상성 본문" : "나무위키 궁합 본문"
   )
 
   return (
@@ -662,13 +595,12 @@ function App() {
           <MapPicker selectedId={state.mapId} onSelect={setSelectedMapId} />
         </Show>
 
-        <section class="result" aria-label={state.view} ref={resultRef}>
+        <section class="result" aria-label={state.view}>
           <Show
             when={state.view === "maps"}
             fallback={
               <GuidePanel
                 detailEntry={detailEntry()}
-                detailLabel={detailLabel()}
                 hero={selectedHero()}
                 groups={guideGroups()}
                 onSelect={setGuideDetail}
