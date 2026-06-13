@@ -107,15 +107,23 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
       ?.rating === "veryGood",
     "Orisa vs Junker Queen matchup must be veryGood from Namu crawl",
   )
-  assert(
-    matchups["d-va"]?.find((matchup) => matchup.target === "doomfist")?.note
-      ?.includes("파워 블락"),
-    "D.Va vs Doomfist matchup note must be crawled from Namu",
+  const dVaDoomfist = matchups["d-va"]?.find((matchup) =>
+    matchup.target === "doomfist"
   )
   assert(
-    heroSynergies["d-va"]?.find((entry) => entry.target === "pharah")?.note
-      ?.includes("파라는 모든 디바"),
-    "D.Va and Pharah synergy note must be crawled from Namu",
+    dVaDoomfist?.body?.includes("둠피스트가 딜러였던") &&
+      dVaDoomfist.body.includes("주석") &&
+      dVaDoomfist.body.includes("파워 블락"),
+    "D.Va vs Doomfist matchup body and notes must be crawled from Namu",
+  )
+  const dVaPharah = heroSynergies["d-va"]?.find((entry) =>
+    entry.target === "pharah"
+  )
+  assert(
+    dVaPharah?.body?.includes("파르시 조합") &&
+      dVaPharah.body.includes("주석") &&
+      dVaPharah.body.includes("파라는 모든 디바"),
+    "D.Va and Pharah synergy body and notes must be crawled from Namu",
   )
   assert(source.name === "Namu Wiki", "guide source must be Namu Wiki")
   assert(
@@ -132,10 +140,25 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
     "each crawled hero must use a local image artifact",
   )
   assert(
+    heroes.every((hero) =>
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:/.test(hero.updatedAt ?? "")
+    ),
+    "each crawled hero must include a minute-level Namu document update time",
+  )
+  assert(
     mapModes.every((mode) =>
       mode.maps.every((map) => map.image.startsWith("./guide-images/maps/"))
     ),
     "each crawled map must use a local image artifact",
+  )
+  assert(
+    mapModes.every((mode) =>
+      mode.maps.every((map) =>
+        (map.attack.length === 0 && map.defense.length === 0) ||
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:/.test(map.updatedAt ?? "")
+      )
+    ),
+    "each selectable map must include a minute-level Namu document update time",
   )
   const nepal = mapModes.flatMap((mode) => mode.maps).find((map) =>
     map.name === "네팔"
@@ -207,14 +230,18 @@ Deno.test({
       assert(
         await heroTitle.evaluate((link) => {
           const strong = link.querySelector("strong")
-          const linkStyle = getComputedStyle(link)
-          const iconStyle = getComputedStyle(link, "::after")
-          return strong && linkStyle.textDecorationLine.includes("underline") &&
-            linkStyle.color === getComputedStyle(strong).color &&
+          const iconStyle = getComputedStyle(
+            link.querySelector(".selected-title-icon")!,
+          )
+          return strong &&
+            getComputedStyle(link).textDecorationLine.includes("underline") &&
             iconStyle.backgroundImage !== "none" &&
-            iconStyle.width === "18px"
+            iconStyle.width === "18px" &&
+            /마지막 업데이트: \d{4}-\d{2}-\d{2} (오전|오후) \d{1,2}:\d{2}/.test(
+              link.textContent ?? "",
+            )
         }),
-        "hero title link should show only underline plus Namu Wiki logo",
+        "hero title link should show a Namu Wiki logo and minute update time",
       )
 
       await page.getByLabel("주요 메뉴").getByRole("button", {
@@ -234,14 +261,18 @@ Deno.test({
       assert(
         await mapTitle.evaluate((link) => {
           const strong = link.querySelector("strong")
-          const linkStyle = getComputedStyle(link)
-          const iconStyle = getComputedStyle(link, "::after")
-          return strong && linkStyle.textDecorationLine.includes("underline") &&
-            linkStyle.color === getComputedStyle(strong).color &&
+          const iconStyle = getComputedStyle(
+            link.querySelector(".selected-title-icon")!,
+          )
+          return strong &&
+            getComputedStyle(link).textDecorationLine.includes("underline") &&
             iconStyle.backgroundImage !== "none" &&
-            iconStyle.width === "18px"
+            iconStyle.width === "18px" &&
+            /마지막 업데이트: \d{4}-\d{2}-\d{2} (오전|오후) \d{1,2}:\d{2}/.test(
+              link.textContent ?? "",
+            )
         }),
-        "map title link should show only underline plus Namu Wiki logo",
+        "map title link should show a Namu Wiki logo and minute update time",
       )
       await page.locator(".map-button").filter({ hasText: "왕의 길" }).click()
       assert(
@@ -444,11 +475,11 @@ Deno.test({
       "notice-modal",
     ]
 
+    const resultCard = (name: string) =>
+      page.locator(".result .hero-button").filter({ hasText: name }).first()
+
     const hoverCard = async (name: string, notePattern: RegExp) => {
-      const card = page.locator(".result .hero-button").filter({
-        hasText: name,
-      })
-        .first()
+      const card = resultCard(name)
       const note = card.getByLabel(notePattern)
       assert(await note.isVisible(), `note icon was not visible: ${name}`)
       await card.hover()
@@ -457,6 +488,26 @@ Deno.test({
           getComputedStyle(tooltip).opacity === "1"
         ),
         `note tooltip was not shown: ${name}`,
+      )
+    }
+
+    const selectDetailCard = async (name: string, bodyPattern: RegExp) => {
+      const before = page.url()
+      assert(
+        await page.locator(".result .info-note").count() === 0,
+        "body-backed hero cards must not show note icons",
+      )
+      await resultCard(name).click()
+      assert(page.url() === before, "detail card click should not update query")
+      assert(
+        await page.locator(".selected-hero strong").getByText("D.Va", {
+          exact: true,
+        }).isVisible(),
+        "detail card click should not change the source hero",
+      )
+      assert(
+        await page.locator(".guide-detail").getByText(bodyPattern).isVisible(),
+        `detail body was not visible: ${name}`,
       )
     }
 
@@ -488,7 +539,7 @@ Deno.test({
           )
           return
         }
-        await hoverCard("둠피스트", /추천 주석: .*파워 블락/)
+        await selectDetailCard("둠피스트", /둠피스트가 딜러였던/)
         return
       }
 
@@ -505,7 +556,7 @@ Deno.test({
           )
           return
         }
-        await hoverCard("파라", /추천 주석: .*파라는 모든 디바/)
+        await selectDetailCard("파라", /파르시 조합/)
         return
       }
 
@@ -651,7 +702,7 @@ const clickHeroAndMeasure = async (page: Page, name: string) => {
 }
 
 Deno.test({
-  name: "note tooltips stay inside the viewport when panels are clipped",
+  name: "map note tooltips stay inside the viewport when panels are clipped",
   timeout: 60_000,
   async fn() {
     const { child, url } = await startServer()
@@ -661,13 +712,13 @@ Deno.test({
     })
 
     try {
-      await page.goto(`${url}?view=synergies&hero=d-va&map=부산`)
+      await page.goto(`${url}?view=maps&hero=d-va&map=부산`)
       await page.waitForSelector(".result .hero-button:has(.info-note)")
 
       const card = page.locator(".result .hero-button").filter({
-        hasText: "파라",
+        hasText: "시메트라",
       }).first()
-      const tooltip = card.getByLabel(/추천 주석: .*파라는 모든 디바/)
+      const tooltip = card.getByLabel(/추천 주석: 사찰맵 한정/)
         .locator(".tooltip")
       await card.hover()
       assert(
@@ -691,7 +742,7 @@ Deno.test({
 })
 
 Deno.test({
-  name: "right-column hero selection resizes result cards before clipping",
+  name: "right-column hero selection shows the Namu body without changing hero",
   timeout: 60_000,
   async fn() {
     const { child, url } = await startServer()
@@ -709,14 +760,19 @@ Deno.test({
       await page.waitForTimeout(50)
 
       assert(
-        await page.locator(".selected-hero strong").getByText("안란", {
+        await page.locator(".selected-hero strong").getByText("D.Va", {
           exact: true,
         }).isVisible(),
-        "right-column hero pick was not reflected",
+        "right-column hero pick should not change the source hero",
       )
       assert(
-        await result.evaluate((node) => node.scrollHeight <= node.clientHeight),
-        "result cards were not resized after a right-column hero pick",
+        await page.locator(".guide-detail").getByText(/안란의 좌클릭/)
+          .isVisible(),
+        "right-column hero pick did not show the crawled body",
+      )
+      assert(
+        new URL(page.url()).searchParams.get("hero") === "d-va",
+        "right-column hero pick should not update the hero query param",
       )
     } finally {
       await page.close().catch(() => undefined)
@@ -814,17 +870,25 @@ Deno.test({
       const doomfistCard = matchupResult.locator(".hero-button").filter({
         hasText: "둠피스트",
       }).first()
-      const doomfistNote = doomfistCard.getByLabel(/추천 주석: .*파워 블락/)
       assert(
-        await doomfistNote.isVisible(),
-        "matchup note icon was not visible",
+        await doomfistCard.locator(".info-note").count() === 0,
+        "matchup body cards should not show note icons",
       )
-      await doomfistCard.hover()
+      await doomfistCard.click()
       assert(
-        await doomfistNote.locator(".tooltip").evaluate((tooltip) =>
-          getComputedStyle(tooltip).opacity === "1"
-        ),
-        "matchup note tooltip was not shown on card hover",
+        await page.locator(".selected-hero strong").getByText("D.Va", {
+          exact: true,
+        }).isVisible(),
+        "matchup card click should keep the source hero selected",
+      )
+      assert(
+        await page.locator(".guide-detail").getByText(/둠피스트가 딜러였던/)
+          .isVisible(),
+        "matchup card click should show the crawled body",
+      )
+      assert(
+        new URL(page.url()).searchParams.get("hero") === "d-va",
+        "matchup card click should not update the hero query param",
       )
 
       assert(
@@ -839,10 +903,9 @@ Deno.test({
       const pharahCard = matchupResult.locator(".hero-button").filter({
         hasText: "파라",
       }).first()
-      const pharahNote = pharahCard.getByLabel(/추천 주석: .*파라는 모든 디바/)
       assert(
-        await pharahNote.isVisible(),
-        "synergy note icon was not visible",
+        await pharahCard.locator(".info-note").count() === 0,
+        "synergy body cards should not show note icons",
       )
       assert(
         await pharahCard.evaluate((card) =>
@@ -850,23 +913,21 @@ Deno.test({
         ),
         "synergy cards should be role-colored",
       )
-      await pharahCard.hover()
-      assert(
-        await pharahNote.locator(".tooltip").evaluate((tooltip) =>
-          getComputedStyle(tooltip).opacity === "1"
-        ),
-        "synergy note tooltip was not shown on card hover",
-      )
       await pharahCard.click()
       assert(
-        await page.locator(".selected-hero strong").getByText("파라", {
+        await page.locator(".selected-hero strong").getByText("D.Va", {
           exact: true,
         }).isVisible(),
-        "synergy card click did not select that hero",
+        "synergy card click should keep the source hero selected",
       )
       assert(
-        new URL(page.url()).searchParams.get("hero") === "pharah",
-        "synergy card click did not update hero query param",
+        await page.locator(".guide-detail").getByText(/파르시 조합/)
+          .isVisible(),
+        "synergy card click should show the crawled body",
+      )
+      assert(
+        new URL(page.url()).searchParams.get("hero") === "d-va",
+        "synergy card click should not update hero query param",
       )
       await page.getByLabel("영웅 선택").getByRole("button", { name: "오리사" })
         .click()

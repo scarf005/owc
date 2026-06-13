@@ -16,11 +16,13 @@ export type Hero = {
   role: Role
   avatar: string
   page: string
+  updatedAt?: string
 }
 
 export type Matchup = {
   target: HeroId
   rating: Rating
+  body?: string
   note?: string
 }
 
@@ -29,6 +31,7 @@ export type SynergyRating = "veryGood" | "good" | "neutral" | "bad" | "veryBad"
 export type SynergyEntry = {
   target: HeroId
   rating: SynergyRating
+  body?: string
   note?: string
 }
 
@@ -42,6 +45,7 @@ export type MapInfo = {
   name: string
   page: string
   image: string
+  updatedAt?: string
   attack: MapRecommendation[]
   defense: MapRecommendation[]
 }

@@ -22,7 +22,7 @@ snapshot[`unmasked-main-page-image-screenshots 1`] = `
       "width": 50,
       "height": 56
     },
-    "sha256": "ed85312e9a41dd11226e4300da7eab520dcb4f68f7d70620e54bc5354dc0c274"
+    "sha256": "25553e324d6447889a1efebd50dddc640e9f9ccb671add34224c01c7456364fc"
   },
   {
     "name": "synergies:primary",
@@ -53,9 +53,9 @@ snapshot[`unmasked-main-page-image-screenshots 1`] = `
     "naturalHeight": 125,
     "screenshot": {
       "width": 72,
-      "height": 46
+      "height": 47
     },
-    "sha256": "2b77bc31d5dc7a25fef731a050a06f70fdf3c8830f41405b02984b76d65cb8b6"
+    "sha256": "f82f3629674828b8b515199c2e19f9911e01422bea1c8803ae2129740feaaf41"
   },
   {
     "name": "maps:result",
@@ -111,7 +111,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
       "selectedMap": null,
       "workspaceColumns": "592px 640px",
       "dialogVisible": false,
-      "tooltipVisible": true,
+      "tooltipVisible": false,
       "pageOverflow": false,
       "pickOverflow": false,
       "resultOverflow": false
@@ -177,7 +177,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
       "selectedMap": null,
       "workspaceColumns": "592px 640px",
       "dialogVisible": false,
-      "tooltipVisible": true,
+      "tooltipVisible": false,
       "pageOverflow": false,
       "pickOverflow": false,
       "resultOverflow": false
@@ -301,7 +301,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1982
+      "height": 2889
     },
     "metrics": {
       "activeNav": "상성",
@@ -309,7 +309,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
       "selectedMap": null,
       "workspaceColumns": "374px",
       "dialogVisible": false,
-      "tooltipVisible": true,
+      "tooltipVisible": false,
       "pageOverflow": false,
       "pickOverflow": false,
       "resultOverflow": false
@@ -367,7 +367,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1982
+      "height": 2486
     },
     "metrics": {
       "activeNav": "궁합",
@@ -375,7 +375,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
       "selectedMap": null,
       "workspaceColumns": "374px",
       "dialogVisible": false,
-      "tooltipVisible": true,
+      "tooltipVisible": false,
       "pageOverflow": false,
       "pickOverflow": false,
       "resultOverflow": false
@@ -411,7 +411,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1451
+      "height": 1462
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -433,7 +433,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1451
+      "height": 1462
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -455,7 +455,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1451
+      "height": 1462
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",

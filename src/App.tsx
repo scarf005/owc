@@ -26,7 +26,7 @@ import {
 } from "./data/overwatch.ts"
 
 type View = "matchups" | "synergies" | "maps"
-type HeroRowItem = { hero: Hero; note?: string }
+type HeroRowItem = { hero: Hero; body?: string; note?: string }
 type TooltipState = { left: number; note: string; top: number; width: number }
 
 const roles: { key: Role; label: string; color: string }[] = [
@@ -66,6 +66,30 @@ const viewKeys = new Set<View>(views.map((view) => view.key))
 const validView = (value: string | null): View | undefined =>
   value && viewKeys.has(value as View) ? value as View : undefined
 
+const twoDigits = (value: number) => value.toString().padStart(2, "0")
+
+const formattedUpdatedAt = (value?: string) => {
+  if (!value) return undefined
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return undefined
+
+  const parts = new Intl.DateTimeFormat("ko-KR", {
+    day: "2-digit",
+    hour: "numeric",
+    hour12: true,
+    minute: "2-digit",
+    month: "2-digit",
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+  }).formatToParts(date)
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((entry) => entry.type === type)?.value ?? ""
+
+  return `${part("year")}-${part("month")}-${part("day")} ${
+    part("dayPeriod")
+  } ${part("hour")}:${twoDigits(Number(part("minute")))}`
+}
+
 const readQueryState = () => {
   const params = new URLSearchParams(globalThis.location?.search ?? "")
   const view = validView(params.get("view")) ?? "matchups"
@@ -103,25 +127,36 @@ const writeQueryState = (
 }
 
 const heroItemsFromEntries = (
-  entries: { id: string; note?: string }[],
+  entries: { body?: string; id: string; note?: string }[],
 ): HeroRowItem[] =>
   entries.flatMap((entry) => {
     const hero = heroById.get(entry.id)
-    return hero ? [{ hero, ...(entry.note ? { note: entry.note } : {}) }] : []
+    return hero
+      ? [{
+        hero,
+        ...(entry.body ? { body: entry.body } : {}),
+        ...(entry.note ? { note: entry.note } : {}),
+      }]
+      : []
   }).sort((a, b) =>
     (roleRank.get(a.hero.role) ?? 0) - (roleRank.get(b.hero.role) ?? 0)
   )
 
 const heroGroupsByRating = (
   ratings: { key: string; label: string }[],
-  entries: { target: string; rating: string; note?: string }[] = [],
+  entries: { body?: string; target: string; rating: string; note?: string }[] =
+    [],
 ) =>
   ratings.map((rating) => ({
     ...rating,
     heroes: heroItemsFromEntries(
       entries
         .filter((entry) => entry.rating === rating.key)
-        .map((entry) => ({ id: entry.target, note: entry.note })),
+        .map((entry) => ({
+          body: entry.body,
+          id: entry.target,
+          note: entry.note,
+        })),
     ),
   }))
 
@@ -298,7 +333,9 @@ function MapPicker(
 function HeroRows(
   props: {
     groups: { key?: string; label: string; heroes: HeroRowItem[] }[]
-    onSelect?: (id: string) => void
+    onSelect?: (entry: HeroRowItem) => void
+    selectedId?: string
+    showNotes?: boolean
   },
 ) {
   return (
@@ -312,8 +349,9 @@ function HeroRows(
                 {(entry) => (
                   <HeroButton
                     hero={entry.hero}
-                    note={entry.note}
-                    onClick={() => props.onSelect?.(entry.hero.id)}
+                    note={props.showNotes ? entry.note : undefined}
+                    onClick={() => props.onSelect?.(entry)}
+                    selected={props.selectedId === entry.hero.id}
                   />
                 )}
               </For>
@@ -325,10 +363,62 @@ function HeroRows(
   )
 }
 
+function NamuTitle(props: { href: string; name: string; updatedAt?: string }) {
+  const updatedAt = createMemo(() => formattedUpdatedAt(props.updatedAt))
+
+  return (
+    <a
+      class="selected-title"
+      href={props.href}
+      rel="noreferrer"
+      target="_blank"
+    >
+      <strong>{props.name}</strong>
+      <span class="selected-title-meta">
+        <span aria-hidden="true" class="selected-title-icon" />
+        <Show when={updatedAt()}>
+          {(value) => <span>마지막 업데이트: {value()}</span>}
+        </Show>
+      </span>
+    </a>
+  )
+}
+
+function GuideDetail(props: { entry: HeroRowItem; label: string }) {
+  const paragraphs = createMemo(() =>
+    props.entry.body?.split(/\n{2,}/).filter(Boolean) ?? []
+  )
+
+  return (
+    <article class="guide-detail">
+      <div class="label">{props.label}</div>
+      <div class="guide-detail-title">
+        <img
+          alt={props.entry.hero.name}
+          referrerpolicy="no-referrer"
+          src={props.entry.hero.avatar}
+        />
+        <NamuTitle
+          href={props.entry.hero.page}
+          name={props.entry.hero.name}
+          updatedAt={props.entry.hero.updatedAt}
+        />
+      </div>
+      <div class="guide-detail-body">
+        <For each={paragraphs()}>
+          {(paragraph) => <p>{paragraph}</p>}
+        </For>
+      </div>
+    </article>
+  )
+}
+
 function GuidePanel(props: {
+  detailEntry: HeroRowItem | undefined
+  detailLabel: string
   hero: Hero | undefined
   groups: { key?: string; label: string; heroes: HeroRowItem[] }[]
-  onSelect: (id: string) => void
+  onSelect: (entry: HeroRowItem) => void
 }) {
   return (
     <Show when={props.hero}>
@@ -340,16 +430,22 @@ function GuidePanel(props: {
               referrerpolicy="no-referrer"
               src={hero().avatar}
             />
-            <a
-              class="selected-title"
+            <NamuTitle
               href={hero().page}
-              rel="noreferrer"
-              target="_blank"
-            >
-              <strong>{hero().name}</strong>
-            </a>
+              name={hero().name}
+              updatedAt={hero().updatedAt}
+            />
           </div>
-          <HeroRows groups={props.groups} onSelect={props.onSelect} />
+          <Show when={props.detailEntry}>
+            {(entry) => (
+              <GuideDetail entry={entry()} label={props.detailLabel} />
+            )}
+          </Show>
+          <HeroRows
+            groups={props.groups}
+            onSelect={props.onSelect}
+            selectedId={props.detailEntry?.hero.id}
+          />
         </>
       )}
     </Show>
@@ -396,21 +492,18 @@ function MapPanel(props: { mapId: string }) {
             />
             <div>
               <span>{map().mode.label}</span>
-              <a
-                class="selected-title"
+              <NamuTitle
                 href={map().page}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <strong>{map().name}</strong>
-              </a>
+                name={map().name}
+                updatedAt={map().updatedAt}
+              />
             </div>
           </div>
           <Show
             when={hasRecommendations()}
             fallback={<div class="empty-state">추천 영웅 데이터 없음</div>}
           >
-            <HeroRows groups={recommendationGroups()} />
+            <HeroRows groups={recommendationGroups()} showNotes />
           </Show>
         </>
       )}
@@ -421,6 +514,7 @@ function MapPanel(props: { mapId: string }) {
 function App() {
   const [state, setState] = createStore(readQueryState())
   const [noticeOpen, setNoticeOpen] = createSignal(false)
+  const [selectedGuideTarget, setSelectedGuideTarget] = createSignal<string>()
   const selectedHero = createMemo(() => heroById.get(state.heroId))
   let resultRef: HTMLElement | undefined
   let fitFrame = 0
@@ -469,11 +563,19 @@ function App() {
     queueFitCounterSize()
   }
   const setActiveView = (view: View) =>
-    refitAfterStateChange(() => setState("view", view))
+    refitAfterStateChange(() => {
+      setSelectedGuideTarget()
+      setState("view", view)
+    })
   const setSelectedId = (heroId: string) =>
-    refitAfterStateChange(() => setState("heroId", heroId))
+    refitAfterStateChange(() => {
+      setSelectedGuideTarget()
+      setState("heroId", heroId)
+    })
   const setSelectedMapId = (mapId: string) =>
     refitAfterStateChange(() => setState("mapId", mapId))
+  const setGuideDetail = (entry: HeroRowItem) =>
+    refitAfterStateChange(() => setSelectedGuideTarget(entry.hero.id))
 
   createRenderEffect(() => {
     state.heroId
@@ -491,7 +593,10 @@ function App() {
   })
 
   const applyQueryState = () =>
-    refitAfterStateChange(() => setState(readQueryState()))
+    refitAfterStateChange(() => {
+      setSelectedGuideTarget()
+      setState(readQueryState())
+    })
 
   onMount(() => {
     globalThis.addEventListener("resize", queueFitCounterSize)
@@ -512,6 +617,16 @@ function App() {
   )
   const guideGroups = createMemo(() =>
     state.view === "matchups" ? matchupGroups() : synergyGroups()
+  )
+  const detailEntry = createMemo(() =>
+    guideGroups()
+      .flatMap((group) => group.heroes)
+      .find((entry) =>
+        entry.hero.id === selectedGuideTarget() && Boolean(entry.body)
+      )
+  )
+  const detailLabel = createMemo(() =>
+    state.view === "matchups" ? "나무위키 상성 본문" : "나무위키 궁합 본문"
   )
 
   return (
@@ -552,9 +667,11 @@ function App() {
             when={state.view === "maps"}
             fallback={
               <GuidePanel
+                detailEntry={detailEntry()}
+                detailLabel={detailLabel()}
                 hero={selectedHero()}
                 groups={guideGroups()}
-                onSelect={setSelectedId}
+                onSelect={setGuideDetail}
               />
             }
           >

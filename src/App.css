@@ -50,7 +50,8 @@ footer {
 }
 
 .result {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .navbar {
@@ -276,7 +277,8 @@ footer {
 }
 
 .selected-hero,
-.selected-map {
+.selected-map,
+.guide-detail {
   display: grid;
   gap: 10px;
   border-bottom: 1px solid var(--line);
@@ -286,6 +288,46 @@ footer {
 .selected-hero {
   grid-template-columns: 64px 1fr;
   align-items: end;
+}
+
+.guide-detail {
+  border-left: 4px solid var(--accent);
+  padding-left: 8px;
+}
+
+.guide-detail-title {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.guide-detail-title img {
+  width: 40px;
+  aspect-ratio: 1;
+  background: #e9eef3;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.guide-detail-title strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.guide-detail-body {
+  display: grid;
+  gap: 8px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.guide-detail-body p {
+  margin: 0;
+  white-space: pre-line;
 }
 
 .selected-map {
@@ -303,24 +345,29 @@ footer {
 }
 
 .selected-title {
+  display: inline-grid;
+  gap: 5px;
   color: inherit;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
 
-.selected-title[href*="namu.wiki"] {
+.selected-title-meta {
   display: inline-flex;
-  align-items: center;
   gap: 6px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
-.selected-title[href*="namu.wiki"]::after {
+.selected-title-icon {
   flex: 0 0 auto;
   width: 18px;
   height: 18px;
   background: url("./assets/namu-favicon.svg") center / contain no-repeat;
-  content: "";
 }
 
 .selected-hero strong,
@@ -655,6 +702,7 @@ footer a,
   .hero-button img,
   .selected-hero img,
   .selected-map img,
+  .guide-detail-title img,
   .map-button img {
     background: #2a333d;
   }

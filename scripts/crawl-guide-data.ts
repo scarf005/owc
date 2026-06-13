@@ -9,6 +9,7 @@ type Rating = "veryGood" | "good" | "neutral" | "bad" | "veryBad"
 type RatedHero = {
   target: string
   rating: Rating
+  body?: string
   note?: string
 }
 
@@ -29,6 +30,7 @@ type MapInfo = {
   name: string
   page: string
   image: string
+  updatedAt?: string
   attack: MapRecommendation[]
   defense: MapRecommendation[]
 }
@@ -58,6 +60,7 @@ const modeColors: Record<string, string> = {
   "격돌": "#00a7a7",
 }
 const sourceModifiedTimes: string[] = []
+const sourceModifiedTimeByUrl = new Map<string, string>()
 
 const heroBySlug = new Map<string, Hero>()
 const heroByName = new Map<string, Hero>()
@@ -120,9 +123,14 @@ const fetchNamu = async (url: string) => {
     /최근 수정 시각:\s*<time datetime=["']([^"']+)["']/,
   )
     ?.[1]
-  if (modifiedAt) sourceModifiedTimes.push(modifiedAt)
+  if (modifiedAt) {
+    sourceModifiedTimes.push(modifiedAt)
+    sourceModifiedTimeByUrl.set(url, modifiedAt)
+  }
   return html
 }
+
+const pageUpdatedAt = (url: string) => sourceModifiedTimeByUrl.get(url)
 
 const decode = (value: string) =>
   value
@@ -334,10 +342,13 @@ const parseRatedHeroSections = (
       if (
         !target || result[role].some((entry) => entry.target === target)
       ) continue
-      const note = parseNoteTitles(listItem[0]).join("\n")
+      const notes = parseNoteTitles(listItem[0])
+      const body = bodyWithNotes(listItemBody(listItem[0]), notes)
+      const note = notes.join("\n")
       result[role].push({
         target,
         rating: classify(cleanText(listItem[0])),
+        ...(body ? { body } : {}),
         ...(note ? { note } : {}),
       })
     }
@@ -390,6 +401,19 @@ const parseNoteTitles = (html: string) =>
     .filter((note): note is string => Boolean(note))
     .map((note) => cleanText(note))
 
+const withoutFootnoteAnchors = (html: string) =>
+  html.replace(/<a\b[^>]*href=['"]#fn-[^'"]+['"][\s\S]*?<\/a>/g, "")
+
+const listItemBody = (html: string) => {
+  const bodyMatch = html.match(/<br\b[^>]*>([\s\S]*)<\/li>\s*$/)
+  return cleanText(withoutFootnoteAnchors(bodyMatch?.[1] ?? html))
+}
+
+const bodyWithNotes = (body: string, notes: string[]) =>
+  [body, notes.length > 0 ? `주석\n${notes.join("\n")}` : ""]
+    .filter(Boolean)
+    .join("\n\n")
+
 const parseMapRecommendationCell = (html: string) => {
   const anchors = [...html.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)]
     .map((match) => ({ html: match[0], index: match.index ?? 0 }))
@@ -438,7 +462,12 @@ const parseMapRecommendations = (html: string) => {
 
 const mapDetailsCache = new Map<
   string,
-  { image: string; attack: MapRecommendation[]; defense: MapRecommendation[] }
+  {
+    image: string
+    updatedAt?: string
+    attack: MapRecommendation[]
+    defense: MapRecommendation[]
+  }
 >()
 
 const fetchMapDetails = async (page: string, fallback: string) => {
@@ -449,13 +478,19 @@ const fetchMapDetails = async (page: string, fallback: string) => {
     const image = ogImage(html)
     const details = {
       image: image ? absoluteUrl(image) : fallback,
+      ...(pageUpdatedAt(page) ? { updatedAt: pageUpdatedAt(page) } : {}),
       ...parseMapRecommendations(html),
     }
     mapDetailsCache.set(page, details)
     await new Promise((resolve) => setTimeout(resolve, 80))
     return details
   } catch {
-    const details = { image: fallback, attack: [], defense: [] }
+    const details: {
+      image: string
+      updatedAt?: string
+      attack: MapRecommendation[]
+      defense: MapRecommendation[]
+    } = { image: fallback, attack: [], defense: [] }
     mapDetailsCache.set(page, details)
     return details
   }
@@ -510,6 +545,7 @@ const parseMapModes = async (html: string) => {
         name,
         page,
         image,
+        ...(details.updatedAt ? { updatedAt: details.updatedAt } : {}),
         attack: details.attack,
         defense: details.defense,
       })
@@ -542,7 +578,13 @@ for (const [index, hero] of heroes.entries()) {
     referer: hero.page,
     url: heroPortraitImage(html, hero) ?? absoluteUrl(hero.avatar),
   })
-  crawledHeroes.push({ ...hero, avatar })
+  crawledHeroes.push({
+    ...hero,
+    avatar,
+    ...(pageUpdatedAt(hero.page)
+      ? { updatedAt: pageUpdatedAt(hero.page) }
+      : {}),
+  })
   const matchupGroups = parseRatedHeroSections(html, "상성", classifyMatchup)
   const synergyGroups = parseRatedHeroSections(html, "궁합", classifySynergy)
   matchups[hero.id] = uniqueEntries([
