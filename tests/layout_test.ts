@@ -93,6 +93,10 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
       dVaDoomfist.note?.includes("특히 마이크로 미사일"),
     "D.Va vs Doomfist matchup body and footnotes must be crawled from Namu",
   )
+  assert(
+    !matchups.hazard?.find((matchup) => matchup.target === "vendetta")?.body,
+    "Hazard vs Vendetta must not get a fake body when Namu only lists a rating",
+  )
   const dVaPharah = heroSynergies["d-va"]?.find((entry) =>
     entry.target === "pharah"
   )
@@ -191,6 +195,24 @@ Deno.test({
           exact: true,
         }).isVisible(),
         "hero was not restored from query params",
+      )
+
+      await page.goto(
+        `${url}?view=matchups&hero=d-va&target=doomfist&map=${
+          encodeURIComponent("네팔")
+        }`,
+      )
+      await page.waitForSelector(".navbar")
+      assert(
+        await page.locator(".pick .guide-detail").getByText(
+          /둠피스트가 딜러였던/,
+        )
+          .isVisible(),
+        "target hero body was not restored from query params",
+      )
+      assert(
+        new URL(page.url()).searchParams.get("target") === "doomfist",
+        "target query param was not preserved for a body-backed target",
       )
       assert(
         await page.locator(".selected-hero img").evaluate((node) => {
@@ -464,14 +486,20 @@ Deno.test({
       )
     }
 
-    const selectDetailCard = async (name: string, bodyPattern: RegExp) => {
-      const before = page.url()
+    const selectDetailCard = async (
+      name: string,
+      bodyPattern: RegExp,
+      expectedTarget: string,
+    ) => {
       assert(
         await page.locator(".result .info-note").count() === 0,
         "body-backed hero cards must not show note icons",
       )
       await resultCard(name).click()
-      assert(page.url() === before, "detail card click should not update query")
+      assert(
+        new URL(page.url()).searchParams.get("target") === expectedTarget,
+        "detail card click should update the target query",
+      )
       assert(
         await page.locator(".selected-hero strong").getByText("D.Va", {
           exact: true,
@@ -513,7 +541,7 @@ Deno.test({
           )
           return
         }
-        await selectDetailCard("둠피스트", /둠피스트가 딜러였던/)
+        await selectDetailCard("둠피스트", /둠피스트가 딜러였던/, "doomfist")
         return
       }
 
@@ -530,7 +558,7 @@ Deno.test({
           )
           return
         }
-        await selectDetailCard("파라", /파르시 조합/)
+        await selectDetailCard("파라", /파르시 조합/, "pharah")
         return
       }
 
@@ -694,9 +722,14 @@ Deno.test({
         await detail.getByText(/안란의 좌클릭/).isVisible(),
         "right-column hero pick did not show the crawled body in the left column",
       )
+      const paramsAfterAnran = new URL(page.url()).searchParams
       assert(
-        new URL(page.url()).searchParams.get("hero") === "d-va",
+        paramsAfterAnran.get("hero") === "d-va",
         "right-column hero pick should not update the hero query param",
+      )
+      assert(
+        paramsAfterAnran.get("target") === "anran",
+        "right-column hero pick should update the target query param",
       )
       const sourceTitle = page.locator(".result .selected-hero .selected-title")
       const detailTitle = detail.locator(".selected-title")
@@ -735,8 +768,24 @@ Deno.test({
         "clicking the same right-column hero again should hide the body",
       )
       assert(
+        new URL(page.url()).searchParams.get("target") === null,
+        "clicking the same right-column hero again should clear the target query param",
+      )
+      assert(
         await page.getByLabel("영웅 선택").isVisible(),
         "hiding the body should restore the left-column hero picker",
+      )
+
+      await page.getByLabel("영웅 선택").getByRole("button", { name: "해저드" })
+        .click()
+      await result.getByRole("button", { name: "벤데타" }).click()
+      assert(
+        await page.locator(".guide-detail").count() === 0,
+        "target without a crawled body should not open an empty body panel",
+      )
+      assert(
+        new URL(page.url()).searchParams.get("target") === null,
+        "target without a crawled body should not update the target query param",
       )
     } finally {
       await page.close().catch(() => undefined)

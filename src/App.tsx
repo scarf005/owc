@@ -77,20 +77,33 @@ const readQueryState = () => {
       map.id === params.get("map") && hasMapRecommendations(map)
     )?.id ?? defaultMapId
 
+  const resolvedView = view === "maps" && !hasAnyMapRecommendations
+    ? "matchups"
+    : view
+  const targetId = heroById.has(params.get("target") ?? "")
+    ? params.get("target")!
+    : undefined
+
   return {
-    view: view === "maps" && !hasAnyMapRecommendations ? "matchups" : view,
+    view: resolvedView,
     heroId,
     mapId,
+    targetId: resolvedView === "maps" ? undefined : targetId,
   }
 }
 
 const writeQueryState = (
-  state: { view: View; heroId: string; mapId: string },
+  state: { view: View; heroId: string; mapId: string; targetId?: string },
 ) => {
   const params = new URLSearchParams(globalThis.location.search)
   params.set("view", state.view)
   params.set("hero", state.heroId)
   params.set("map", state.mapId)
+  if (state.view === "maps" || !state.targetId) {
+    params.delete("target")
+  } else {
+    params.set("target", state.targetId)
+  }
   const search = `?${params.toString()}`
   const nextUrl =
     `${globalThis.location.pathname}${search}${globalThis.location.hash}`
@@ -415,7 +428,9 @@ function GuideDetail(props: { entry: HeroRowItem; sourceHero?: Hero }) {
         />
         <NamuTitle
           href={(props.sourceHero ?? props.entry.hero).page}
-          name={props.entry.hero.name}
+          name={props.sourceHero
+            ? `${props.sourceHero.name} - ${props.entry.hero.name}`
+            : props.entry.hero.name}
         />
       </div>
       <GuideBody
@@ -522,20 +537,20 @@ function MapPanel(props: { mapId: string }) {
 function App() {
   const [state, setState] = createStore(readQueryState())
   const [noticeOpen, setNoticeOpen] = createSignal(false)
-  const [selectedGuideTarget, setSelectedGuideTarget] = createSignal<string>()
   const selectedHero = createMemo(() => heroById.get(state.heroId))
   const setActiveView = (view: View) => {
-    setSelectedGuideTarget()
-    setState("view", view)
+    setState({ targetId: undefined, view })
   }
   const setSelectedId = (heroId: string) => {
-    setSelectedGuideTarget()
-    setState("heroId", heroId)
+    setState({ heroId, targetId: undefined })
   }
   const setSelectedMapId = (mapId: string) => setState("mapId", mapId)
   const setGuideDetail = (entry: HeroRowItem) =>
-    setSelectedGuideTarget((current) =>
-      current === entry.hero.id ? undefined : entry.hero.id
+    setState(
+      "targetId",
+      !entry.body || state.targetId === entry.hero.id
+        ? undefined
+        : entry.hero.id,
     )
 
   createEffect(() => {
@@ -543,13 +558,11 @@ function App() {
       view: state.view,
       heroId: state.heroId,
       mapId: state.mapId,
+      targetId: detailEntry()?.hero.id,
     })
   })
 
-  const applyQueryState = () => {
-    setSelectedGuideTarget()
-    setState(readQueryState())
-  }
+  const applyQueryState = () => setState(readQueryState())
 
   onMount(() => {
     globalThis.addEventListener("popstate", applyQueryState)
@@ -570,9 +583,7 @@ function App() {
   const detailEntry = createMemo(() =>
     guideGroups()
       .flatMap((group) => group.heroes)
-      .find((entry) =>
-        entry.hero.id === selectedGuideTarget() && Boolean(entry.body)
-      )
+      .find((entry) => entry.hero.id === state.targetId && Boolean(entry.body))
   )
 
   return (

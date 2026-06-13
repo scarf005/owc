@@ -411,7 +411,7 @@ const withFootnoteMarkers = (html: string) => {
 
 const listItemBody = (html: string) => {
   const bodyMatch = html.match(/<br\b[^>]*>([\s\S]*)<\/li>\s*$/)
-  return cleanText(withFootnoteMarkers(bodyMatch?.[1] ?? html))
+  return bodyMatch ? cleanText(withFootnoteMarkers(bodyMatch[1])) : ""
 }
 
 const parseMapRecommendationCell = (html: string) => {
