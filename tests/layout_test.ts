@@ -89,17 +89,18 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
   )
   assert(
     dVaDoomfist?.body?.includes("둠피스트가 딜러였던") &&
-      dVaDoomfist.body.includes("[주석: 특히 마이크로 미사일") &&
-      dVaDoomfist.body.includes("파워 블락을 금방 채워주기 쉽고 [주석:"),
-    "D.Va vs Doomfist matchup body and inline notes must be crawled from Namu",
+      dVaDoomfist.body.includes("파워 블락을 금방 채워주기 쉽고{{fn:0}}") &&
+      dVaDoomfist.note?.includes("특히 마이크로 미사일"),
+    "D.Va vs Doomfist matchup body and footnotes must be crawled from Namu",
   )
   const dVaPharah = heroSynergies["d-va"]?.find((entry) =>
     entry.target === "pharah"
   )
   assert(
     dVaPharah?.body?.includes("파르시 조합") &&
-      dVaPharah.body.includes("[주석: 참고로 파라는 모든 디바"),
-    "D.Va and Pharah synergy body and inline notes must be crawled from Namu",
+      dVaPharah.body.includes("{{fn:0}}") &&
+      dVaPharah.note?.includes("참고로 파라는 모든 디바"),
+    "D.Va and Pharah synergy body and footnotes must be crawled from Namu",
   )
   assert(source.name === "Namu Wiki", "guide source must be Namu Wiki")
   assert(
@@ -213,11 +214,9 @@ Deno.test({
             getComputedStyle(link).textDecorationLine.includes("underline") &&
             iconStyle.backgroundImage !== "none" &&
             iconStyle.width === "18px" &&
-            /마지막 업데이트: \d{4}-\d{2}-\d{2} (오전|오후) \d{1,2}:\d{2}/.test(
-              link.textContent ?? "",
-            )
+            !(link.textContent ?? "").includes("마지막 업데이트")
         }),
-        "hero title link should show a Namu Wiki logo and minute update time",
+        "hero title link should show a Namu Wiki logo without update text",
       )
 
       await page.getByLabel("주요 메뉴").getByRole("button", {
@@ -244,11 +243,9 @@ Deno.test({
             getComputedStyle(link).textDecorationLine.includes("underline") &&
             iconStyle.backgroundImage !== "none" &&
             iconStyle.width === "18px" &&
-            /마지막 업데이트: \d{4}-\d{2}-\d{2} (오전|오후) \d{1,2}:\d{2}/.test(
-              link.textContent ?? "",
-            )
+            !(link.textContent ?? "").includes("마지막 업데이트")
         }),
-        "map title link should show a Namu Wiki logo and minute update time",
+        "map title link should show a Namu Wiki logo without update text",
       )
       await page.locator(".map-button").filter({ hasText: "왕의 길" }).click()
       assert(
@@ -692,9 +689,9 @@ Deno.test({
         }).isVisible(),
         "right-column hero pick should not change the source hero",
       )
+      const detail = page.locator(".pick .guide-detail")
       assert(
-        await page.locator(".pick .guide-detail").getByText(/안란의 좌클릭/)
-          .isVisible(),
+        await detail.getByText(/안란의 좌클릭/).isVisible(),
         "right-column hero pick did not show the crawled body in the left column",
       )
       assert(
@@ -702,22 +699,37 @@ Deno.test({
         "right-column hero pick should not update the hero query param",
       )
       const sourceTitle = page.locator(".result .selected-hero .selected-title")
-      const detailTitle = page.locator(".pick .guide-detail .selected-title")
+      const detailTitle = detail.locator(".selected-title")
       assert(
         await detailTitle.getAttribute("href") ===
           await sourceTitle.getAttribute("href"),
         "body title should link to the source hero document",
       )
-      const sourceUpdate = (await sourceTitle.textContent())?.match(
-        /마지막 업데이트: .*/,
-      )?.[0]
       assert(
-        sourceUpdate &&
-          (await detailTitle.textContent())?.includes(sourceUpdate),
-        "body title should show the source hero document update time",
+        !((await sourceTitle.textContent()) ?? "").includes(
+          "마지막 업데이트",
+        ) &&
+          !((await detailTitle.textContent()) ?? "").includes(
+            "마지막 업데이트",
+          ),
+        "body title should not show update text",
       )
 
-      await result.getByRole("button", { name: "안란" }).click()
+      await result.getByRole("button", { name: "둠피스트" }).click()
+      assert(
+        await detail.locator(".footnote-ref a").first().isVisible(),
+        "body should render footnote references instead of inline note text",
+      )
+      assert(
+        await detail.locator(".footnotes").getByText(/파워 블락/).isVisible(),
+        "body should render footnote text in a footnote list",
+      )
+      assert(
+        !(await detail.getByText(/\[주석:/).isVisible()),
+        "body should not render note text inline with [주석:]",
+      )
+
+      await result.getByRole("button", { name: "둠피스트" }).click()
       assert(
         await page.locator(".guide-detail").count() === 0,
         "clicking the same right-column hero again should hide the body",

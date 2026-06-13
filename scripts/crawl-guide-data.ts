@@ -401,18 +401,17 @@ const parseNoteTitles = (html: string) =>
     .filter((note): note is string => Boolean(note))
     .map((note) => cleanText(note))
 
-const withInlineFootnoteTitles = (html: string) =>
-  html.replace(
+const withFootnoteMarkers = (html: string) => {
+  let index = 0
+  return html.replace(
     /<a\b[^>]*href=['"]#fn-[^'"]+['"][\s\S]*?<\/a>/g,
-    (anchor) => {
-      const note = attr(anchor, "title")
-      return note ? ` [주석: ${cleanText(note)}]` : ""
-    },
+    (anchor) => attr(anchor, "title") ? `{{fn:${index++}}}` : "",
   )
+}
 
 const listItemBody = (html: string) => {
   const bodyMatch = html.match(/<br\b[^>]*>([\s\S]*)<\/li>\s*$/)
-  return cleanText(withInlineFootnoteTitles(bodyMatch?.[1] ?? html))
+  return cleanText(withFootnoteMarkers(bodyMatch?.[1] ?? html))
 }
 
 const parseMapRecommendationCell = (html: string) => {

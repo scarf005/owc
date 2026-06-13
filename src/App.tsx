@@ -26,6 +26,7 @@ import {
 
 type View = "matchups" | "synergies" | "maps"
 type HeroRowItem = { hero: Hero; body?: string; note?: string }
+type GuideBodyPart = { text: string } | { noteIndex: number }
 type TooltipState = { left: number; note: string; top: number; width: number }
 
 const roles: { key: Role; label: string; color: string }[] = [
@@ -64,30 +65,6 @@ const viewKeys = new Set<View>(views.map((view) => view.key))
 
 const validView = (value: string | null): View | undefined =>
   value && viewKeys.has(value as View) ? value as View : undefined
-
-const twoDigits = (value: number) => value.toString().padStart(2, "0")
-
-const formattedUpdatedAt = (value?: string) => {
-  if (!value) return undefined
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return undefined
-
-  const parts = new Intl.DateTimeFormat("ko-KR", {
-    day: "2-digit",
-    hour: "numeric",
-    hour12: true,
-    minute: "2-digit",
-    month: "2-digit",
-    timeZone: "Asia/Seoul",
-    year: "numeric",
-  }).formatToParts(date)
-  const part = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((entry) => entry.type === type)?.value ?? ""
-
-  return `${part("year")}-${part("month")}-${part("day")} ${
-    part("dayPeriod")
-  } ${part("hour")}:${twoDigits(Number(part("minute")))}`
-}
 
 const readQueryState = () => {
   const params = new URLSearchParams(globalThis.location?.search ?? "")
@@ -362,9 +339,7 @@ function HeroRows(
   )
 }
 
-function NamuTitle(props: { href: string; name: string; updatedAt?: string }) {
-  const updatedAt = createMemo(() => formattedUpdatedAt(props.updatedAt))
-
+function NamuTitle(props: { href: string; name: string }) {
   return (
     <a
       class="selected-title"
@@ -375,19 +350,61 @@ function NamuTitle(props: { href: string; name: string; updatedAt?: string }) {
       <strong>{props.name}</strong>
       <span class="selected-title-meta">
         <span aria-hidden="true" class="selected-title-icon" />
-        <Show when={updatedAt()}>
-          {(value) => <span>마지막 업데이트: {value()}</span>}
-        </Show>
       </span>
     </a>
   )
 }
 
-function GuideDetail(props: { entry: HeroRowItem; sourceHero?: Hero }) {
+function GuideBody(props: { body?: string; heroId: string; note?: string }) {
+  const notes = createMemo(() => props.note?.split("\n").filter(Boolean) ?? [])
   const paragraphs = createMemo(() =>
-    props.entry.body?.split(/\n{2,}/).filter(Boolean) ?? []
+    props.body?.split(/\n{2,}/).filter(Boolean) ?? []
   )
+  const parts = (paragraph: string): GuideBodyPart[] =>
+    paragraph.split(/(\{\{fn:\d+\}\})/g).flatMap((part): GuideBodyPart[] => {
+      const noteIndex = part.match(/^\{\{fn:(\d+)\}\}$/)?.[1]
+      return noteIndex === undefined
+        ? part ? [{ text: part }] : []
+        : [{ noteIndex: Number(noteIndex) }]
+    })
+  const noteId = (index: number) => `note-${props.heroId}-${index + 1}`
 
+  return (
+    <div class="guide-detail-body">
+      <For each={paragraphs()}>
+        {(paragraph) => (
+          <p>
+            <For each={parts(paragraph)}>
+              {(part) =>
+                "text" in part ? part.text : (
+                  <sup class="footnote-ref">
+                    <a
+                      aria-label={`주석 ${part.noteIndex + 1}: ${
+                        notes()[part.noteIndex] ?? ""
+                      }`}
+                      href={`#${noteId(part.noteIndex)}`}
+                      title={notes()[part.noteIndex]}
+                    >
+                      {part.noteIndex + 1}
+                    </a>
+                  </sup>
+                )}
+            </For>
+          </p>
+        )}
+      </For>
+      <Show when={notes().length > 0}>
+        <ol class="footnotes">
+          <For each={notes()}>
+            {(note, index) => <li id={noteId(index())}>{note}</li>}
+          </For>
+        </ol>
+      </Show>
+    </div>
+  )
+}
+
+function GuideDetail(props: { entry: HeroRowItem; sourceHero?: Hero }) {
   return (
     <article class="guide-detail">
       <div class="guide-detail-title">
@@ -399,14 +416,13 @@ function GuideDetail(props: { entry: HeroRowItem; sourceHero?: Hero }) {
         <NamuTitle
           href={(props.sourceHero ?? props.entry.hero).page}
           name={props.entry.hero.name}
-          updatedAt={(props.sourceHero ?? props.entry.hero).updatedAt}
         />
       </div>
-      <div class="guide-detail-body">
-        <For each={paragraphs()}>
-          {(paragraph) => <p>{paragraph}</p>}
-        </For>
-      </div>
+      <GuideBody
+        body={props.entry.body}
+        heroId={props.entry.hero.id}
+        note={props.entry.note}
+      />
     </article>
   )
 }
@@ -435,11 +451,7 @@ function GuidePanel(props: {
               referrerpolicy="no-referrer"
               src={hero().avatar}
             />
-            <NamuTitle
-              href={hero().page}
-              name={hero().name}
-              updatedAt={hero().updatedAt}
-            />
+            <NamuTitle href={hero().page} name={hero().name} />
           </div>
           <HeroRows
             groups={props.groups}
@@ -492,11 +504,7 @@ function MapPanel(props: { mapId: string }) {
             />
             <div>
               <span>{map().mode.label}</span>
-              <NamuTitle
-                href={map().page}
-                name={map().name}
-                updatedAt={map().updatedAt}
-              />
+              <NamuTitle href={map().page} name={map().name} />
             </div>
           </div>
           <Show
