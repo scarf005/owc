@@ -168,6 +168,18 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
     antarctic.attack.length === 0 && antarctic.defense.length === 0,
     "maps without Namu recommendations must stay empty",
   )
+  const neonCrossroads = mapModes.flatMap((mode) => mode.maps).find((map) =>
+    map.name === "네온 교차로"
+  )
+  assert(
+    neonCrossroads,
+    "Neon Crossroads must be shown in the map list by its Korean name",
+  )
+  assert(
+    decodeURIComponent(new URL(neonCrossroads.page).pathname) ===
+      "/w/네온 교차로",
+    "Neon Crossroads must link to the Namu Wiki Neon Crossroads page",
+  )
 })
 
 Deno.test({

@@ -31,11 +31,18 @@ const versionedGuideImage = (path: string) =>
   path.includes("?") ? path : `${path}?v=${guideImageVersion}`
 
 const mapImageExtensions: Record<string, string> = { "네온-정션": "svg" }
+const mapOverrides: Record<string, { name: string; page: string }> = {
+  "네온-정션": {
+    name: "네온 교차로",
+    page: "https://namu.wiki/w/네온%20교차로",
+  },
+}
 
 const localMapImage = (mode: MapMode): MapMode => ({
   ...mode,
   maps: mode.maps.map((map) => ({
     ...map,
+    ...mapOverrides[map.id],
     image: versionedGuideImage(
       map.image.startsWith("./guide-images/")
         ? map.image
