@@ -813,14 +813,15 @@ Deno.test({
 
       await page.getByLabel("영웅 선택").getByRole("button", { name: "해저드" })
         .click()
-      await result.getByRole("button", { name: "벤데타" }).click()
+      const bodylessTarget = result.getByRole("button", { name: "벤데타" })
       assert(
-        await page.locator(".guide-detail").count() === 0,
-        "target without a crawled body should not open an empty body panel",
+        await bodylessTarget.isDisabled(),
+        "target without a crawled body should be disabled instead of silently doing nothing",
       )
       assert(
-        new URL(page.url()).searchParams.get("target") === null,
-        "target without a crawled body should not update the target query param",
+        await bodylessTarget.getAttribute("title") ===
+          "벤데타: 본문 데이터 없음",
+        "disabled bodyless target should explain that body data is unavailable",
       )
     } finally {
       await page.close().catch(() => undefined)

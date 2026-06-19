@@ -174,7 +174,13 @@ const heroGroupsByRating = (
   }))
 
 function HeroButton(
-  props: { hero: Hero; note?: string; selected?: boolean; onClick: () => void },
+  props: {
+    disabled?: boolean
+    hero: Hero
+    note?: string
+    selected?: boolean
+    onClick?: () => void
+  },
 ) {
   const [tooltip, setTooltip] = createSignal<TooltipState>()
   let noteRef: HTMLSpanElement | undefined
@@ -224,12 +230,15 @@ function HeroButton(
         "is-selected": props.selected,
         [`role-${props.hero.role}`]: true,
       }}
+      disabled={props.disabled}
       onBlur={hideTooltip}
-      onClick={props.onClick}
+      onClick={() => !props.disabled && props.onClick?.()}
       onFocus={showTooltip}
       onMouseEnter={showTooltip}
       onMouseLeave={hideTooltip}
-      title={props.hero.name}
+      title={props.disabled
+        ? `${props.hero.name}: 본문 데이터 없음`
+        : props.hero.name}
       type="button"
     >
       <img
@@ -359,14 +368,18 @@ function HeroRows(
             <div class="label">{group.label}</div>
             <div class="grid small">
               <For each={group.heroes}>
-                {(entry) => (
-                  <HeroButton
-                    hero={entry.hero}
-                    note={props.showNotes ? entry.note : undefined}
-                    onClick={() => props.onSelect?.(entry)}
-                    selected={props.selectedId === entry.hero.id}
-                  />
-                )}
+                {(entry) => {
+                  const disabled = Boolean(props.onSelect && !entry.body)
+                  return (
+                    <HeroButton
+                      disabled={disabled}
+                      hero={entry.hero}
+                      note={props.showNotes ? entry.note : undefined}
+                      onClick={() => props.onSelect?.(entry)}
+                      selected={props.selectedId === entry.hero.id}
+                    />
+                  )
+                }}
               </For>
             </div>
           </div>
