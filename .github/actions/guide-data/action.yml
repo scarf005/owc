@@ -43,10 +43,12 @@ runs:
           exit 0
         fi
         if [ -f guide-data-cache/guide.json ] && [ -f guide-data-cache/overwatch.json ]; then
-          cp guide-data-cache/*.json src/data/
           echo "Downloaded guide-data artifact ${artifact_id}."
         elif [ -f guide-data-cache/src/data/guide.json ] && [ -f guide-data-cache/src/data/overwatch.json ]; then
-          cp guide-data-cache/src/data/*.json src/data/
+          mkdir -p guide-data-cache-flat
+          cp guide-data-cache/src/data/*.json guide-data-cache-flat/
+          rm -rf guide-data-cache
+          mv guide-data-cache-flat guide-data-cache
           echo "Downloaded guide-data artifact ${artifact_id}."
         else
           echo "::warning::guide-data artifact ${artifact_id} did not contain guide.json and overwatch.json."
@@ -58,6 +60,9 @@ runs:
         if deno task crawl:guide; then
           echo "Using freshly crawled guide data."
         elif [ -f src/data/guide.json ] && [ -f src/data/overwatch.json ]; then
+          echo "Crawl failed; using repository guide data."
+        elif [ -f guide-data-cache/guide.json ] && [ -f guide-data-cache/overwatch.json ]; then
+          cp guide-data-cache/*.json src/data/
           echo "Crawl failed; using cached guide data artifact."
         else
           echo "Crawl failed and no cached guide data artifact was available; restoring seed data."

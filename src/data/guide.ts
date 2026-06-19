@@ -1,6 +1,5 @@
 import data from "./guide.json" with { type: "json" }
 import { heroes as seedHeroes } from "./heroes.ts"
-import { synergyOverrides } from "./guide-overrides.ts"
 import type {
   DataSource,
   HeroId,
@@ -69,33 +68,10 @@ export const source = guideData.source ?? {
   updatedAt: "unknown",
 }
 export const synergyRatings = guideData.synergyRatings
-
-const withOverrideBodies = (
-  entries: SynergyEntry[] = [],
-  overrides: SynergyEntry[] = [],
-) => {
-  const entryTargets = new Set(entries.map((entry) => entry.target))
-  const overrideByTarget = new Map(
-    overrides.map((entry) => [entry.target, entry]),
-  )
-  return [
-    ...entries.map((entry) => ({
-      ...overrideByTarget.get(entry.target),
-      ...entry,
-      body: entry.body ?? overrideByTarget.get(entry.target)?.body,
-      note: entry.note ?? overrideByTarget.get(entry.target)?.note,
-    })),
-    ...overrides.filter((entry) => !entryTargets.has(entry.target)),
-  ]
-}
-
 export const heroSynergies = Object.fromEntries(
   seedHeroes.map((hero) => [
     hero.id,
-    withOverrideBodies(
-      guideData.heroSynergies[hero.id],
-      synergyOverrides[hero.id],
-    ),
+    guideData.heroSynergies[hero.id] ?? [],
   ]),
 )
 export const mapModes = guideData.mapModes.map(localMapImage)
