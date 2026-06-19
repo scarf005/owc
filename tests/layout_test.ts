@@ -84,6 +84,16 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
     decodeURIComponent(new URL(shion.page).pathname) === "/w/시온(오버워치)",
     "Shion must link to the Namu Wiki Overwatch hero page",
   )
+  const shionDva = matchups.shion?.find((matchup) => matchup.target === "d-va")
+  assert(
+    shionDva?.rating === "bad" &&
+      shionDva.body?.includes("시온의 조이라이드를 제외한 모든 공격"),
+    "Shion matchup details must be available from Namu data",
+  )
+  assert(
+    heroSynergies.shion?.some((entry) => entry.target === "ana"),
+    "Shion synergy entries must be available from Namu data",
+  )
   assert(
     matchups.orisa?.find((matchup) => matchup.target === "sigma")?.rating ===
       "veryBad",
@@ -189,6 +199,10 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
     decodeURIComponent(new URL(neonCrossroads.page).pathname) ===
       "/w/네온 교차로",
     "Neon Crossroads must link to the Namu Wiki Neon Crossroads page",
+  )
+  assert(
+    neonCrossroads.image.includes("/네온-교차로.jpg?"),
+    "Neon Crossroads must use the map thumbnail instead of the Japan flag",
   )
 })
 

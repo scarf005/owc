@@ -59,6 +59,10 @@ const modeColors: Record<string, string> = {
   "플래시포인트": "#eb5757",
   "격돌": "#00a7a7",
 }
+const mapImageOverrides: Record<string, string> = {
+  "네온 교차로":
+    "https://bnetcmsus-a.akamaihd.net/cms/page_media/fk/FKMOU1K95QU91781145184691.png",
+}
 const sourceModifiedTimes: string[] = []
 const sourceModifiedTimeByUrl = new Map<string, string>()
 
@@ -180,16 +184,16 @@ const prepareImageStore = async () => {
 }
 
 const imageExtension = (url: string, contentType: string | null) => {
-  const pathExtension = new URL(url).pathname.match(
-    /\.(avif|gif|jpe?g|png|svg|webp)$/i,
-  )?.[1]
-  if (pathExtension) return pathExtension.toLowerCase().replace("jpeg", "jpg")
-
   const mimeType = contentType?.split(";")[0]?.trim().toLowerCase()
   if (mimeType === "image/jpeg") return "jpg"
   if (mimeType === "image/svg+xml") return "svg"
   const mimeExtension = mimeType?.match(/^image\/(avif|gif|png|webp)$/)?.[1]
   if (mimeExtension) return mimeExtension
+
+  const pathExtension = new URL(url).pathname.match(
+    /\.(avif|gif|jpe?g|png|svg|webp)$/i,
+  )?.[1]
+  if (pathExtension) return pathExtension.toLowerCase().replace("jpeg", "jpg")
 
   throw new Error(`unknown image type for ${url}: ${contentType ?? "missing"}`)
 }
@@ -531,14 +535,15 @@ const parseMapModes = async (html: string) => {
       const page = absoluteUrl(href)
       const details = await fetchMapDetails(
         page,
-        fallbackImage ? absoluteUrl(fallbackImage) : "",
+        mapImageOverrides[name] ??
+          (fallbackImage ? absoluteUrl(fallbackImage) : ""),
       )
       const id = slugify(name)
       const image = await downloadGuideImage({
         id,
         kind: "maps",
         referer: page,
-        url: details.image,
+        url: mapImageOverrides[name] ?? details.image,
       })
       maps.push({
         id,

@@ -1,5 +1,6 @@
 import data from "./overwatch.json" with { type: "json" }
 import { heroes as seedHeroes } from "./heroes.ts"
+import { matchupOverrides } from "./guide-overrides.ts"
 import type { Hero, Matchup } from "./schema.ts"
 
 export type { Hero, Matchup, Rating, Role } from "./schema.ts"
@@ -35,5 +36,10 @@ const mergedHeroes = [
 
 export const heroes = mergedHeroes.map(localHeroImage)
 export const matchups = Object.fromEntries(
-  heroes.map((hero) => [hero.id, overwatchData.matchups[hero.id] ?? []]),
+  heroes.map((hero) => [
+    hero.id,
+    overwatchData.matchups[hero.id]?.length
+      ? overwatchData.matchups[hero.id]
+      : matchupOverrides[hero.id] ?? [],
+  ]),
 )
