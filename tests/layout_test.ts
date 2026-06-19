@@ -69,10 +69,20 @@ const startServer = async () => {
 }
 
 Deno.test("generated Namu datasets keep required source-backed invariants", () => {
-  assert(Object.keys(matchups).length === 51, "matchups must cover 51 heroes")
+  assert(Object.keys(matchups).length === 52, "matchups must cover 52 heroes")
   assert(
-    Object.keys(heroSynergies).length === 51,
-    "synergies must cover 51 heroes",
+    Object.keys(heroSynergies).length === 52,
+    "synergies must cover 52 heroes",
+  )
+  const shion = heroes.find((hero) => hero.id === "shion")
+  if (!shion) throw new Error("Shion must be available")
+  assert(
+    shion.name === "시온" && shion.role === "damage",
+    "Shion must be available as a damage hero",
+  )
+  assert(
+    decodeURIComponent(new URL(shion.page).pathname) === "/w/시온(오버워치)",
+    "Shion must link to the Namu Wiki Overwatch hero page",
   )
   assert(
     matchups.orisa?.find((matchup) => matchup.target === "sigma")?.rating ===

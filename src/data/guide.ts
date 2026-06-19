@@ -1,4 +1,5 @@
 import data from "./guide.json" with { type: "json" }
+import { heroes as seedHeroes } from "./heroes.ts"
 import type {
   DataSource,
   HeroId,
@@ -59,5 +60,10 @@ export const source = guideData.source ?? {
   updatedAt: "unknown",
 }
 export const synergyRatings = guideData.synergyRatings
-export const heroSynergies = guideData.heroSynergies
+export const heroSynergies = Object.fromEntries(
+  seedHeroes.map((hero) => [
+    hero.id,
+    guideData.heroSynergies[hero.id] ?? [],
+  ]),
+)
 export const mapModes = guideData.mapModes.map(localMapImage)

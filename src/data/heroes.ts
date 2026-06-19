@@ -1,6 +1,6 @@
 import type { Hero } from "./schema.ts"
 
-export const heroes = [
+export const heroes: Hero[] = [
   {
     "id": "d-va",
     "name": "D.Va",
@@ -255,6 +255,16 @@ export const heroes = [
       "https://namu.wiki/w/%EB%B2%A4%EC%B2%98(%EC%98%A4%EB%B2%84%EC%9B%8C%EC%B9%98)",
   },
   {
+    "id": "shion",
+    "name": "시온",
+    "role": "damage",
+    "avatar":
+      "https://i.namu.wiki/i/jV-Lq9BPZg4XHIuSCnHMCuS4dq6t1MHd0j9dFWQcZZHCDAyOqyHXR9V8pItWglrgxol08L6pmr1WFepxpHPlzz7lUb9x4rawN7t1-jLb6d1yldfW2XUU0e5kLTKp4CBxO4sBXNOq0bGOqc5TNlU0gA.webp",
+    "page":
+      "https://namu.wiki/w/%EC%8B%9C%EC%98%A8(%EC%98%A4%EB%B2%84%EC%9B%8C%EC%B9%98)",
+    "updatedAt": "2026-06-19T09:52:31.000Z",
+  },
+  {
     "id": "anran",
     "name": "안란",
     "role": "damage",
@@ -434,4 +444,4 @@ export const heroes = [
     "page":
       "https://namu.wiki/w/%EC%A3%BC%EB%85%B8(%EC%98%A4%EB%B2%84%EC%9B%8C%EC%B9%98)",
   },
-] satisfies Hero[]
+]
