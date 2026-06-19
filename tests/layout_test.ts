@@ -813,15 +813,15 @@ Deno.test({
 
       await page.getByLabel("영웅 선택").getByRole("button", { name: "해저드" })
         .click()
-      const bodylessTarget = result.getByRole("button", { name: "벤데타" })
+      const vendettaCard = result.getByRole("button", { name: "벤데타" })
       assert(
-        await bodylessTarget.isDisabled(),
-        "target without a crawled body should be disabled instead of silently doing nothing",
+        !(await vendettaCard.isDisabled()),
+        "right-column hero cards must stay clickable",
       )
+      await vendettaCard.click()
       assert(
-        await bodylessTarget.getAttribute("title") ===
-          "벤데타: 본문 데이터 없음",
-        "disabled bodyless target should explain that body data is unavailable",
+        new URL(page.url()).searchParams.get("target") === null,
+        "bodyless target should stay clickable without changing the target query param",
       )
     } finally {
       await page.close().catch(() => undefined)

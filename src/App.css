@@ -93,8 +93,7 @@ footer {
 }
 
 .nav-button:disabled,
-.map-button:disabled,
-.hero-button:disabled {
+.map-button:disabled {
   border-color: var(--line);
   color: var(--muted);
   cursor: not-allowed;

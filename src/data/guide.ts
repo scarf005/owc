@@ -69,12 +69,33 @@ export const source = guideData.source ?? {
   updatedAt: "unknown",
 }
 export const synergyRatings = guideData.synergyRatings
+
+const withOverrideBodies = (
+  entries: SynergyEntry[] = [],
+  overrides: SynergyEntry[] = [],
+) => {
+  const entryTargets = new Set(entries.map((entry) => entry.target))
+  const overrideByTarget = new Map(
+    overrides.map((entry) => [entry.target, entry]),
+  )
+  return [
+    ...entries.map((entry) => ({
+      ...overrideByTarget.get(entry.target),
+      ...entry,
+      body: entry.body ?? overrideByTarget.get(entry.target)?.body,
+      note: entry.note ?? overrideByTarget.get(entry.target)?.note,
+    })),
+    ...overrides.filter((entry) => !entryTargets.has(entry.target)),
+  ]
+}
+
 export const heroSynergies = Object.fromEntries(
   seedHeroes.map((hero) => [
     hero.id,
-    guideData.heroSynergies[hero.id]?.length
-      ? guideData.heroSynergies[hero.id]
-      : synergyOverrides[hero.id] ?? [],
+    withOverrideBodies(
+      guideData.heroSynergies[hero.id],
+      synergyOverrides[hero.id],
+    ),
   ]),
 )
 export const mapModes = guideData.mapModes.map(localMapImage)

@@ -34,12 +34,32 @@ const mergedHeroes = [
   ...(overwatchData.heroes ?? []).filter((hero) => !seedHeroById.has(hero.id)),
 ]
 
+const withOverrideBodies = (
+  entries: Matchup[] = [],
+  overrides: Matchup[] = [],
+) => {
+  const entryTargets = new Set(entries.map((entry) => entry.target))
+  const overrideByTarget = new Map(
+    overrides.map((entry) => [entry.target, entry]),
+  )
+  return [
+    ...entries.map((entry) => ({
+      ...overrideByTarget.get(entry.target),
+      ...entry,
+      body: entry.body ?? overrideByTarget.get(entry.target)?.body,
+      note: entry.note ?? overrideByTarget.get(entry.target)?.note,
+    })),
+    ...overrides.filter((entry) => !entryTargets.has(entry.target)),
+  ]
+}
+
 export const heroes = mergedHeroes.map(localHeroImage)
 export const matchups = Object.fromEntries(
   heroes.map((hero) => [
     hero.id,
-    overwatchData.matchups[hero.id]?.length
-      ? overwatchData.matchups[hero.id]
-      : matchupOverrides[hero.id] ?? [],
+    withOverrideBodies(
+      overwatchData.matchups[hero.id],
+      matchupOverrides[hero.id],
+    ),
   ]),
 )
