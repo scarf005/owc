@@ -301,7 +301,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 2099
+      "height": 2101
     },
     "metrics": {
       "activeNav": "상성",
@@ -367,7 +367,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1521
+      "height": 1523
     },
     "metrics": {
       "activeNav": "궁합",
@@ -411,7 +411,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1451
+      "height": 1463
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -433,7 +433,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1451
+      "height": 1463
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
@@ -455,7 +455,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1451
+      "height": 1463
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",

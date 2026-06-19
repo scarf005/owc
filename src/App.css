@@ -619,6 +619,10 @@ footer a,
     max-height: none;
     order: -1;
   }
+
+  .workspace.has-detail .result {
+    order: 0;
+  }
 }
 
 @media (max-width: 720px) {

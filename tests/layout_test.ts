@@ -272,9 +272,9 @@ Deno.test({
             getComputedStyle(link).textDecorationLine.includes("underline") &&
             iconStyle.backgroundImage !== "none" &&
             iconStyle.width === "18px" &&
-            !(link.textContent ?? "").includes("마지막 업데이트")
+            (link.textContent ?? "").includes("마지막 업데이트")
         }),
-        "hero title link should show a Namu Wiki logo without update text",
+        "hero title link should show a Namu Wiki logo and update text",
       )
 
       await page.getByLabel("주요 메뉴").getByRole("button", {
@@ -301,9 +301,9 @@ Deno.test({
             getComputedStyle(link).textDecorationLine.includes("underline") &&
             iconStyle.backgroundImage !== "none" &&
             iconStyle.width === "18px" &&
-            !(link.textContent ?? "").includes("마지막 업데이트")
+            (link.textContent ?? "").includes("마지막 업데이트")
         }),
-        "map title link should show a Namu Wiki logo without update text",
+        "map title link should show a Namu Wiki logo and update text",
       )
       await page.locator(".map-button").filter({ hasText: "왕의 길" }).click()
       assert(
@@ -774,14 +774,13 @@ Deno.test({
           await sourceTitle.getAttribute("href"),
         "body title should link to the source hero document",
       )
+      const sourceUpdate = (await sourceTitle.textContent())?.match(
+        /마지막 업데이트: .*/,
+      )?.[0]
       assert(
-        !((await sourceTitle.textContent()) ?? "").includes(
-          "마지막 업데이트",
-        ) &&
-          !((await detailTitle.textContent()) ?? "").includes(
-            "마지막 업데이트",
-          ),
-        "body title should not show update text",
+        sourceUpdate &&
+          (await detailTitle.textContent())?.includes(sourceUpdate),
+        "body title should show the source hero document update time",
       )
 
       await result.getByRole("button", { name: "둠피스트" }).click()
@@ -822,6 +821,45 @@ Deno.test({
       assert(
         new URL(page.url()).searchParams.get("target") === null,
         "target without a crawled body should not update the target query param",
+      )
+    } finally {
+      await page.close().catch(() => undefined)
+      await browser.close().catch(() => undefined)
+      child.kill("SIGTERM")
+      await child.status.catch(() => undefined)
+    }
+  },
+})
+
+Deno.test({
+  name: "mobile right-column body selection scrolls the opened body into view",
+  timeout: 60_000,
+  async fn() {
+    const { child, url } = await startServer()
+    const browser = await chromium.launch()
+    const page = await browser.newPage({
+      isMobile: true,
+      viewport: { width: 390, height: 844 },
+    })
+
+    try {
+      await page.goto(`${url}?view=matchups&hero=shion&map=부산`)
+      await page.waitForSelector(".result .hero-button")
+      await page.locator(".result .hero-button").filter({ hasText: "D.Va" })
+        .click()
+      const detail = page.locator(".guide-detail-panel")
+      await page.waitForFunction(() => globalThis.scrollY > 0)
+      assert(
+        await detail.getByText(/시온의 조이라이드를 제외한 모든 공격/)
+          .isVisible(),
+        "mobile right-column card pick should open the crawled body",
+      )
+      assert(
+        await detail.evaluate((node) => {
+          const rect = node.getBoundingClientRect()
+          return rect.top >= 0 && rect.top < globalThis.innerHeight / 2
+        }),
+        "opened body should be scrolled into the visible mobile viewport",
       )
     } finally {
       await page.close().catch(() => undefined)

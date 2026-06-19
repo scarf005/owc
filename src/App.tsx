@@ -66,6 +66,30 @@ const viewKeys = new Set<View>(views.map((view) => view.key))
 const validView = (value: string | null): View | undefined =>
   value && viewKeys.has(value as View) ? value as View : undefined
 
+const twoDigits = (value: number) => value.toString().padStart(2, "0")
+
+const formattedUpdatedAt = (value?: string) => {
+  if (!value) return undefined
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return undefined
+
+  const parts = new Intl.DateTimeFormat("ko-KR", {
+    day: "2-digit",
+    hour: "numeric",
+    hour12: true,
+    minute: "2-digit",
+    month: "2-digit",
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+  }).formatToParts(date)
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((entry) => entry.type === type)?.value ?? ""
+
+  return `${part("year")}-${part("month")}-${part("day")} ${
+    part("dayPeriod")
+  } ${part("hour")}:${twoDigits(Number(part("minute")))}`
+}
+
 const readQueryState = () => {
   const params = new URLSearchParams(globalThis.location?.search ?? "")
   const view = validView(params.get("view")) ?? "matchups"
@@ -352,7 +376,9 @@ function HeroRows(
   )
 }
 
-function NamuTitle(props: { href: string; name: string }) {
+function NamuTitle(props: { href: string; name: string; updatedAt?: string }) {
+  const updatedAt = createMemo(() => formattedUpdatedAt(props.updatedAt))
+
   return (
     <a
       class="selected-title"
@@ -363,6 +389,9 @@ function NamuTitle(props: { href: string; name: string }) {
       <strong>{props.name}</strong>
       <span class="selected-title-meta">
         <span aria-hidden="true" class="selected-title-icon" />
+        <Show when={updatedAt()}>
+          {(value) => <span>마지막 업데이트: {value()}</span>}
+        </Show>
       </span>
     </a>
   )
@@ -431,6 +460,7 @@ function GuideDetail(props: { entry: HeroRowItem; sourceHero?: Hero }) {
           name={props.sourceHero
             ? `${props.sourceHero.name} - ${props.entry.hero.name}`
             : props.entry.hero.name}
+          updatedAt={(props.sourceHero ?? props.entry.hero).updatedAt}
         />
       </div>
       <GuideBody
@@ -466,7 +496,11 @@ function GuidePanel(props: {
               referrerpolicy="no-referrer"
               src={hero().avatar}
             />
-            <NamuTitle href={hero().page} name={hero().name} />
+            <NamuTitle
+              href={hero().page}
+              name={hero().name}
+              updatedAt={hero().updatedAt}
+            />
           </div>
           <HeroRows
             groups={props.groups}
@@ -519,7 +553,11 @@ function MapPanel(props: { mapId: string }) {
             />
             <div>
               <span>{map().mode.label}</span>
-              <NamuTitle href={map().page} name={map().name} />
+              <NamuTitle
+                href={map().page}
+                name={map().name}
+                updatedAt={map().updatedAt}
+              />
             </div>
           </div>
           <Show
@@ -585,6 +623,22 @@ function App() {
       .flatMap((group) => group.heroes)
       .find((entry) => entry.hero.id === state.targetId && Boolean(entry.body))
   )
+  let lastScrolledDetailId: string | undefined
+  createEffect(() => {
+    const entry = detailEntry()
+    if (!entry || state.view === "maps") {
+      lastScrolledDetailId = undefined
+      return
+    }
+    if (lastScrolledDetailId === entry.hero.id) return
+    lastScrolledDetailId = entry.hero.id
+    requestAnimationFrame(() => {
+      if (globalThis.innerWidth > 1100) return
+      document.querySelector(".guide-detail-panel")?.scrollIntoView({
+        block: "start",
+      })
+    })
+  })
 
   return (
     <main class="app">
@@ -609,7 +663,10 @@ function App() {
         </For>
       </nav>
 
-      <div class="workspace">
+      <div
+        class="workspace"
+        classList={{ "has-detail": Boolean(detailEntry()) }}
+      >
         <Show
           when={state.view === "maps"}
           fallback={
