@@ -472,10 +472,19 @@ function GuideDetail(props: { entry: HeroRowItem; sourceHero?: Hero }) {
   )
 }
 
-function GuideDetailPanel(props: { entry: HeroRowItem; sourceHero?: Hero }) {
+function GuideDetailPanel(
+  props: { entry: HeroRowItem; onClose: () => void; sourceHero?: Hero },
+) {
   return (
     <section class="pick guide-detail-panel" aria-label="영웅 문서 본문">
       <GuideDetail entry={props.entry} sourceHero={props.sourceHero} />
+      <button
+        class="guide-detail-close"
+        onClick={props.onClose}
+        type="button"
+      >
+        닫기
+      </button>
     </section>
   )
 }
@@ -590,6 +599,7 @@ function App() {
         ? undefined
         : entry.hero.id,
     )
+  const closeGuideDetail = () => setState("targetId", undefined)
 
   createEffect(() => {
     writeQueryState({
@@ -680,7 +690,11 @@ function App() {
               }
             >
               {(entry) => (
-                <GuideDetailPanel entry={entry()} sourceHero={selectedHero()} />
+                <GuideDetailPanel
+                  entry={entry()}
+                  onClose={closeGuideDetail}
+                  sourceHero={selectedHero()}
+                />
               )}
             </Show>
           }

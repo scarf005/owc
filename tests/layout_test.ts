@@ -797,6 +797,22 @@ Deno.test({
         "body should not render note text inline with [주석:]",
       )
 
+      const detailPanel = page.getByLabel("영웅 문서 본문")
+      await detailPanel.getByRole("button", { name: "닫기" }).click()
+      assert(
+        await page.locator(".guide-detail").count() === 0,
+        "closing the body should hide the body",
+      )
+      assert(
+        new URL(page.url()).searchParams.get("target") === null,
+        "closing the body should clear the target query param",
+      )
+      assert(
+        await page.getByLabel("영웅 선택").isVisible(),
+        "closing the body should restore the left-column hero picker",
+      )
+
+      await result.getByRole("button", { name: "둠피스트" }).click()
       await result.getByRole("button", { name: "둠피스트" }).click()
       assert(
         await page.locator(".guide-detail").count() === 0,
@@ -805,10 +821,6 @@ Deno.test({
       assert(
         new URL(page.url()).searchParams.get("target") === null,
         "clicking the same right-column hero again should clear the target query param",
-      )
-      assert(
-        await page.getByLabel("영웅 선택").isVisible(),
-        "hiding the body should restore the left-column hero picker",
       )
 
       await page.getByLabel("영웅 선택").getByRole("button", { name: "해저드" })

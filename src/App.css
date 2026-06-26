@@ -68,7 +68,8 @@ footer {
 }
 
 .nav-button,
-.map-button {
+.map-button,
+.guide-detail-close {
   border: 1px solid var(--line);
   background: transparent;
   color: var(--text);
@@ -87,7 +88,9 @@ footer {
 .nav-button.is-selected,
 .map-button:hover,
 .map-button:focus-visible,
-.map-button.is-selected {
+.map-button.is-selected,
+.guide-detail-close:hover,
+.guide-detail-close:focus-visible {
   border-color: var(--accent);
   outline: none;
 }
@@ -146,6 +149,11 @@ footer {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
   gap: 6px;
+}
+
+.guide-detail-close {
+  justify-self: end;
+  padding: 5px 14px;
 }
 
 .map-button {
