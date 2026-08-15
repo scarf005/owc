@@ -10,6 +10,15 @@ export const heroes: Hero[] = [
     "page": "https://namu.wiki/w/D.Va",
   },
   {
+    "id": "d-mon",
+    "name": "D.Mon",
+    "role": "tank",
+    "avatar":
+      "https://i.namu.wiki/i/L7pvwVKoEEunLiIqWejwLJ_4gmZiUH5Jgr5tLYsyIbJAlpHpouUr0cjJU81HTb3JBZp0sZd3GGzLGvhm3VDuKys_pYVqVssqS9YXDkx5QVpdfzY5TRe1gEZ2wSNUGBqG3Vsb_Qn7I3CAr4PnzRUS3w.webp",
+    "page": "https://namu.wiki/w/D.Mon",
+    "updatedAt": "2026-08-15T22:11:27.000Z",
+  },
+  {
     "id": "doomfist",
     "name": "둠피스트",
     "role": "tank",
