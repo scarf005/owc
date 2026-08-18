@@ -12097,6 +12097,219 @@
         "rating": "bad",
         "body": "부적이 유도 힐이라서 공중을 날아다니는 주노를 케어하기 괜찮고 세이브 스킬이 있어서 주노의 부족한 수비력을 메꿀 수 있다. 둘의 궁극기가 강화형 궁극기라 궁 사이클이 빠르다는 것도 상당한 이점이다. 또한 하이퍼 링을 깔고 여우길을 쓰면 순식간에 적진에 침투해서 난전을 유발할 수 있다. 키리코 자체가 러쉬 계열 힐러랑 잘 맞아서 키리코가 본대에 있어도 좋지만 본대 힐을 위주로 하는 주노, 사이드를 위주로 가는 키리코로 운영해도 주노 힐량이 나쁘지 않아서 괜찮다. 단점은 주노의 자힐기가 궁극기 외에는 없고 키리코 또한 방울을 써줘야 할곳이 많은 편이라 힐돕힐 난이도가 높다는 점이 있다."
       }
+    ],
+    "d-mon": [
+      {
+        "target": "d-va",
+        "rating": "neutral"
+      },
+      {
+        "target": "domina",
+        "rating": "neutral"
+      },
+      {
+        "target": "doomfist",
+        "rating": "neutral"
+      },
+      {
+        "target": "ramattra",
+        "rating": "neutral"
+      },
+      {
+        "target": "reinhardt",
+        "rating": "neutral"
+      },
+      {
+        "target": "wrecking-ball",
+        "rating": "neutral"
+      },
+      {
+        "target": "roadhog",
+        "rating": "neutral"
+      },
+      {
+        "target": "mauga",
+        "rating": "neutral"
+      },
+      {
+        "target": "sigma",
+        "rating": "neutral"
+      },
+      {
+        "target": "orisa",
+        "rating": "neutral"
+      },
+      {
+        "target": "winston",
+        "rating": "neutral"
+      },
+      {
+        "target": "zarya",
+        "rating": "neutral"
+      },
+      {
+        "target": "junker-queen",
+        "rating": "neutral"
+      },
+      {
+        "target": "hazard",
+        "rating": "neutral"
+      },
+      {
+        "target": "genji",
+        "rating": "neutral"
+      },
+      {
+        "target": "reaper",
+        "rating": "neutral"
+      },
+      {
+        "target": "mei",
+        "rating": "neutral"
+      },
+      {
+        "target": "bastion",
+        "rating": "neutral"
+      },
+      {
+        "target": "vendetta",
+        "rating": "neutral"
+      },
+      {
+        "target": "venture",
+        "rating": "neutral"
+      },
+      {
+        "target": "sojourn",
+        "rating": "neutral"
+      },
+      {
+        "target": "soldier-76",
+        "rating": "neutral"
+      },
+      {
+        "target": "sombra",
+        "rating": "neutral"
+      },
+      {
+        "target": "symmetra",
+        "rating": "neutral"
+      },
+      {
+        "target": "sierra",
+        "rating": "neutral"
+      },
+      {
+        "target": "shion",
+        "rating": "neutral"
+      },
+      {
+        "target": "anran",
+        "rating": "neutral"
+      },
+      {
+        "target": "ashe",
+        "rating": "neutral"
+      },
+      {
+        "target": "echo",
+        "rating": "neutral"
+      },
+      {
+        "target": "emre",
+        "rating": "neutral"
+      },
+      {
+        "target": "widowmaker",
+        "rating": "neutral"
+      },
+      {
+        "target": "junkrat",
+        "rating": "neutral"
+      },
+      {
+        "target": "cassidy",
+        "rating": "neutral"
+      },
+      {
+        "target": "torbjorn",
+        "rating": "neutral"
+      },
+      {
+        "target": "tracer",
+        "rating": "neutral"
+      },
+      {
+        "target": "pharah",
+        "rating": "neutral"
+      },
+      {
+        "target": "freja",
+        "rating": "neutral"
+      },
+      {
+        "target": "hanzo",
+        "rating": "neutral"
+      },
+      {
+        "target": "lifeweaver",
+        "rating": "neutral"
+      },
+      {
+        "target": "lucio",
+        "rating": "neutral"
+      },
+      {
+        "target": "mercy",
+        "rating": "neutral"
+      },
+      {
+        "target": "moira",
+        "rating": "neutral"
+      },
+      {
+        "target": "mizuki",
+        "rating": "neutral"
+      },
+      {
+        "target": "baptiste",
+        "rating": "neutral"
+      },
+      {
+        "target": "brigitte",
+        "rating": "neutral"
+      },
+      {
+        "target": "ana",
+        "rating": "veryGood",
+        "body": "디몬의 상당히 잘녹는 내구성을 커버칠 수준의 치유 능력과 더불어 나노 강화제는 디몬의 부족한 체급을 원없이 매꿔줌으로 디몬이 날뛸수 있도록 해주는 아주 절실한 지원가다. 하지만 본대 앞에서 싸우는 디몬과 최후방에서 힐을 주는 아나를 디몬이 지켜줄 수단도, 뭘 해줄것도 없기에 디몬에게는 최고이지만 아나에게는 딱히 좋을게 없는 탱커인게 흠."
+      },
+      {
+        "target": "wuyang",
+        "rating": "neutral"
+      },
+      {
+        "target": "illari",
+        "rating": "neutral"
+      },
+      {
+        "target": "jetpack-cat",
+        "rating": "veryGood",
+        "body": "라인하르트와 제법 비슷한 맥락으로, 제트팩 캣의 생명줄은 이동기의 범위가 수평으로 제한되어있는 디몬에게 Z축 이동을 더해줘서 기동성을 크게 보완시켜주는 건 물론 생존력도 모자라 킬 캐치 능력까지 커버가 가능하니 디몬 입장에선 고마운 지원가가 아닐 수가 없다."
+      },
+      {
+        "target": "zenyatta",
+        "rating": "neutral"
+      },
+      {
+        "target": "juno",
+        "rating": "good",
+        "body": "기동성을 보완해주는 하이퍼 링과의 궁합이 좋다."
+      },
+      {
+        "target": "kiriko",
+        "rating": "neutral"
+      }
     ]
   },
   "mapModes": [

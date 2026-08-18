@@ -59,12 +59,12 @@ runs:
         set -euo pipefail
         if deno task crawl:guide; then
           echo "Using freshly crawled guide data."
-        elif [ -f src/data/guide.json ] && [ -f src/data/overwatch.json ]; then
+        elif deno run --allow-read scripts/validate-guide-data.ts src/data; then
           echo "Crawl failed; using repository guide data."
-        elif [ -f guide-data-cache/guide.json ] && [ -f guide-data-cache/overwatch.json ]; then
+        elif deno run --allow-read scripts/validate-guide-data.ts guide-data-cache; then
           cp guide-data-cache/*.json src/data/
           echo "Crawl failed; using cached guide data artifact."
         else
-          echo "Crawl failed and no cached guide data artifact was available; restoring seed data."
+          echo "Crawl failed and no complete guide data was available; restoring seed data."
           deno task restore:guide
         fi

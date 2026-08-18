@@ -87,6 +87,11 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
     decodeURIComponent(new URL(dMon.page).pathname) === "/w/D.Mon",
     "D.Mon must link to the Namu Wiki hero page",
   )
+  assert(
+    matchups["d-mon"]?.length === heroes.length - 1 &&
+      matchups["d-mon"]?.some((matchup) => matchup.target === "d-va"),
+    "D.Mon matchup details must be available from Namu data",
+  )
   const shion = heroes.find((hero) => hero.id === "shion")
   if (!shion) throw new Error("Shion must be available")
   assert(
