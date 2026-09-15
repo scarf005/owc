@@ -1,0 +1,16 @@
+name: Diagnose Namu Crawl
+
+on: workflow_dispatch
+
+permissions: { contents: read }
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with: { deno-version: v2.x, cache: true }
+      - run: deno run -A npm:playwright@1.60.0 install --with-deps chromium
+      - run: xvfb-run deno run --allow-env --allow-read --allow-write --allow-run --allow-net --allow-sys scripts/diagnose-namu.ts
