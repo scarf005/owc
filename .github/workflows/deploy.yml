@@ -19,12 +19,15 @@ concurrency:
 
 jobs:
   keepalive:
-    if: ${{ github.event_name == 'schedule' }}
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     permissions: { actions: write, contents: read }
     steps:
       - uses: actions/checkout@v4
-      - uses: gautamkrishnar/keepalive-workflow@v2
+      # The former keepalive action repository is blocked by GitHub.
+      - run: gh api --method PUT "repos/$GITHUB_REPOSITORY/actions/workflows/deploy.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   deploy:
     runs-on: ubuntu-latest
