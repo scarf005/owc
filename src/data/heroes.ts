@@ -335,6 +335,15 @@ export const heroes: Hero[] = [
       "https://namu.wiki/w/%ED%95%9C%EC%A1%B0(%EC%98%A4%EB%B2%84%EC%9B%8C%EC%B9%98)",
   },
   {
+    "id": "doctrine",
+    "name": "독트린",
+    "role": "support",
+    "avatar":
+      "https://i.namu.wiki/i/Pkrnr0PxBGxnejHHKUxi5UY8iluZeJTsVUxCJCBmjIPl5Ah0B8fPPGcVFRBWVTznZfTgGX7DpvjPpkm8i_OMlItqUi-EoyOR0E2drj6ZqAeT9kMtPQZEwU5Plxed21vQ_BMJvYu1nkhCBkaq-RFbwg.webp",
+    "page":
+      "https://namu.wiki/w/%EB%8F%85%ED%8A%B8%EB%A6%B0(%EC%98%A4%EB%B2%84%EC%9B%8C%EC%B9%98)",
+  },
+  {
     "id": "lucio",
     "name": "루시우",
     "role": "support",

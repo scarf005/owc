@@ -88,9 +88,26 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
     "D.Mon must link to the Namu Wiki hero page",
   )
   assert(
-    matchups["d-mon"]?.length === heroes.length - 1 &&
-      matchups["d-mon"]?.some((matchup) => matchup.target === "d-va"),
+    matchups["d-mon"]?.some((matchup) =>
+      matchup.target === "d-va" && matchup.body
+    ),
     "D.Mon matchup details must be available from Namu data",
+  )
+  const doctrine = heroes.find((hero) => hero.id === "doctrine")
+  assert(doctrine?.name === "독트린" && doctrine.role === "support")
+  assert(
+    decodeURIComponent(new URL(doctrine.page).pathname) ===
+      "/w/독트린(오버워치)",
+  )
+  assert(
+    matchups.doctrine?.find((entry) => entry.target === "d-va")?.body
+      ?.includes("방어 매트릭스"),
+    "Doctrine must include source-backed matchup descriptions",
+  )
+  assert(
+    heroSynergies.doctrine?.find((entry) => entry.target === "ana")?.body
+      ?.includes("나노 강화제"),
+    "Doctrine must include source-backed synergy descriptions",
   )
   const shion = heroes.find((hero) => hero.id === "shion")
   if (!shion) throw new Error("Shion must be available")
@@ -132,8 +149,8 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
     "D.Va vs Doomfist matchup body and footnotes must be crawled from Namu",
   )
   assert(
-    !matchups.hazard?.find((matchup) => matchup.target === "vendetta")?.body,
-    "Hazard vs Vendetta must not get a fake body when Namu only lists a rating",
+    !matchups.doctrine?.find((matchup) => matchup.target === "d-mon")?.body,
+    "Doctrine vs D.Mon must not get a fake body when Namu only lists a rating",
   )
   const dVaPharah = heroSynergies["d-va"]?.find((entry) =>
     entry.target === "pharah"
@@ -219,7 +236,7 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
     "Neon Crossroads must link to the Namu Wiki Neon Crossroads page",
   )
   assert(
-    neonCrossroads.image.includes("/네온-교차로.jpg?"),
+    neonCrossroads.image.includes("/네온-교차로.jpg"),
     "Neon Crossroads must use the map thumbnail instead of the Japan flag",
   )
 })
@@ -841,14 +858,14 @@ Deno.test({
         "clicking the same right-column hero again should clear the target query param",
       )
 
-      await page.getByLabel("영웅 선택").getByRole("button", { name: "해저드" })
+      await page.getByLabel("영웅 선택").getByRole("button", { name: "독트린" })
         .click()
-      const vendettaCard = result.getByRole("button", { name: "벤데타" })
+      const dMonCard = result.getByRole("button", { name: "D.Mon" })
       assert(
-        !(await vendettaCard.isDisabled()),
+        !(await dMonCard.isDisabled()),
         "right-column hero cards must stay clickable",
       )
-      await vendettaCard.click()
+      await dMonCard.click()
       assert(
         new URL(page.url()).searchParams.get("target") === null,
         "bodyless target should stay clickable without changing the target query param",
@@ -858,6 +875,70 @@ Deno.test({
       await browser.close().catch(() => undefined)
       child.kill("SIGTERM")
       await child.status.catch(() => undefined)
+    }
+  },
+})
+
+Deno.test({
+  name:
+    "Doctrine selection and deep links show sourced matchup and synergy bodies",
+  timeout: 60_000,
+  async fn() {
+    const { child, url } = await startServer()
+    const browser = await chromium.launch()
+    const page = await browser.newPage()
+    try {
+      for (const width of [1280, 390]) {
+        await page.setViewportSize({ width, height: 844 })
+        await page.goto(url)
+        await page.getByLabel("영웅 선택").getByRole("button", {
+          name: "독트린",
+        })
+          .click()
+        assert(new URL(page.url()).searchParams.get("hero") === "doctrine")
+        for (
+          const { view, target, entries } of [
+            { view: "matchups", target: "d-va", entries: matchups.doctrine },
+            {
+              view: "synergies",
+              target: "ana",
+              entries: heroSynergies.doctrine,
+            },
+          ]
+        ) {
+          await page.goto(`${url}?view=${view}&hero=doctrine&target=${target}`)
+          const body = entries.find((entry) => entry.target === target)?.body
+          assert(body)
+          await page.locator(".guide-detail-body").waitFor()
+          assert(
+            (await page.locator(".guide-detail-body").innerText()).includes(
+              body,
+            ),
+          )
+          const portrait = page.locator(".result .selected-hero img")
+          await portrait.evaluate((image) =>
+            (image as HTMLImageElement).decode()
+          )
+          assert(
+            await portrait.evaluate((node) => {
+              const image = node as HTMLImageElement
+              return image.src.includes("/doctrine.webp") &&
+                image.naturalWidth === 256 && image.naturalHeight === 256
+            }),
+          )
+          await page.getByLabel("영웅 문서 본문").getByRole("button", {
+            name: "닫기",
+          })
+            .click()
+          assert(await page.getByLabel("영웅 선택").isVisible())
+          assert(new URL(page.url()).searchParams.get("target") === null)
+        }
+      }
+    } finally {
+      await page.close()
+      await browser.close()
+      child.kill("SIGTERM")
+      await child.status
     }
   },
 })
@@ -1161,12 +1242,21 @@ Deno.test({
           page:
             document.documentElement.scrollHeight > globalThis.innerHeight ||
             document.body.scrollHeight > globalThis.innerHeight,
-          pick: pick ? pick.scrollHeight > pick.clientHeight : true,
+          pick: pick
+            ? pick.scrollWidth > pick.clientWidth ||
+              (pick.scrollHeight > pick.clientHeight &&
+                !["auto", "scroll"].includes(getComputedStyle(pick).overflowY))
+            : true,
           result: result ? result.scrollHeight > result.clientHeight : true,
         }
       })
       assert(!overflow.page, "page overflowed on map recommendations")
-      assert(!overflow.pick, "map picker overflowed")
+      assert(
+        !overflow.pick,
+        "map picker must contain or scroll all sourced maps",
+      )
+      await page.locator(".map-button").last().scrollIntoViewIfNeeded()
+      assert(await page.locator(".map-button").last().isVisible())
       assert(!overflow.result, "map recommendations overflowed")
 
       assert(

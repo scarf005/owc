@@ -13,7 +13,11 @@
     "pre-commit": "deno fmt --check && deno task lint && deno task test",
     "validate": "deno fmt --check && deno task check && deno task lint && deno task test && deno task build"
   },
-  "fmt": { "semiColons": false, "proseWrap": "never" },
+  "fmt": {
+    "semiColons": false,
+    "proseWrap": "never",
+    "exclude": ["public/guide-images"]
+  },
   "compilerOptions": {
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",

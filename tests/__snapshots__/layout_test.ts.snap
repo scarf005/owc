@@ -66,7 +66,7 @@ snapshot[`unmasked-main-page-image-screenshots 1`] = `
       "width": 40,
       "height": 44
     },
-    "sha256": "8042b705c014b7bdde572605e1f33f23fc08fd3f38f8e4836c9188c1d82aee14"
+    "sha256": "8892515ce770ca3f65e2c04ac7613ba9b7b8d77d4110804cc0e399abb7eea367"
   }
 ]
 `;
@@ -279,7 +279,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 2048
+      "height": 2114
     },
     "metrics": {
       "activeNav": "상성",
@@ -301,7 +301,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 2136
+      "height": 2268
     },
     "metrics": {
       "activeNav": "상성",
@@ -323,7 +323,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1982
+      "height": 2114
     },
     "metrics": {
       "activeNav": "상성",
@@ -345,7 +345,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1982
+      "height": 2048
     },
     "metrics": {
       "activeNav": "궁합",
@@ -367,7 +367,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1558
+      "height": 1585
     },
     "metrics": {
       "activeNav": "궁합",
@@ -389,7 +389,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1982
+      "height": 2048
     },
     "metrics": {
       "activeNav": "궁합",
