@@ -187,7 +187,7 @@ export const heroes: Hero[] = [
   {
     "id": "sombra",
     "name": "솜브라",
-    "role": "damage",
+    "role": "support",
     "avatar":
       "https://i.namu.wiki/i/kBU9T7UEz1VvQIEZTmQ2frD73LHxvcWJhwHwl9ELnPbFEhCSXLwTAo0oHSbVu7y2G_jBdTIzcN_9T_TABVB4gtXS2YSRcWBtp7BU6j64vj-4zxI0BQicDHDQxG7m7xt3_fHjfOuUnrjPknjU--eAQA.webp",
     "page": "https://namu.wiki/w/%EC%86%9C%EB%B8%8C%EB%9D%BC",

@@ -78,6 +78,11 @@ for (const hero of heroes) {
   heroByName.set(hero.name.replace(": ", ":"), hero)
 }
 
+for (const [name, id] of [["디바", "d-va"], ["디몬", "d-mon"]]) {
+  const hero = heroes.find((hero) => hero.id === id)
+  if (hero) heroByName.set(name, hero)
+}
+
 const namuUserAgent =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
   "(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
@@ -438,10 +443,19 @@ const parseMapRecommendationCell = (html: string) => {
     recommendations.push({ id: anchor.heroId, ...(note ? { note } : {}) })
   }
 
+  if (heroAnchors.length === 0) {
+    for (const name of cleanText(html).split(/[,、\n]/)) {
+      const hero = heroByName.get(name.trim())
+      if (hero && !recommendations.some((entry) => entry.id === hero.id)) {
+        recommendations.push({ id: hero.id })
+      }
+    }
+  }
+
   return recommendations
 }
 
-const parseMapRecommendations = (html: string) => {
+export const parseMapRecommendations = (html: string) => {
   const result: { attack: MapRecommendation[]; defense: MapRecommendation[] } =
     {
       attack: [],
@@ -458,6 +472,10 @@ const parseMapRecommendations = (html: string) => {
       result.attack = parseMapRecommendationCell(cells[1])
     } else if (label.includes("방어 추천") || label.includes("수비 추천")) {
       result.defense = parseMapRecommendationCell(cells[1])
+    } else if (label === "추천 영웅") {
+      const recommendations = parseMapRecommendationCell(cells[1])
+      result.attack = recommendations
+      result.defense = recommendations
     }
   }
 
@@ -571,81 +589,83 @@ const uniqueEntries = (entries: RatedHero[]) => {
   })
 }
 
-const matchups: Record<string, RatedHero[]> = {}
-const heroSynergies: Record<string, RatedHero[]> = {}
-const crawledHeroes: Hero[] = []
-for (const [index, hero] of heroes.entries()) {
-  console.error(`[${index + 1}/${heroes.length}] ${hero.name}`)
-  const html = await fetchNamu(hero.page)
-  const avatar = await downloadGuideImage({
-    id: hero.id,
-    kind: "heroes",
-    referer: hero.page,
-    url: heroPortraitImage(html, hero) ?? absoluteUrl(hero.avatar),
+if (import.meta.main) {
+  const matchups: Record<string, RatedHero[]> = {}
+  const heroSynergies: Record<string, RatedHero[]> = {}
+  const crawledHeroes: Hero[] = []
+  for (const [index, hero] of heroes.entries()) {
+    console.error(`[${index + 1}/${heroes.length}] ${hero.name}`)
+    const html = await fetchNamu(hero.page)
+    const avatar = await downloadGuideImage({
+      id: hero.id,
+      kind: "heroes",
+      referer: hero.page,
+      url: heroPortraitImage(html, hero) ?? absoluteUrl(hero.avatar),
+    })
+    crawledHeroes.push({
+      ...hero,
+      avatar,
+      ...(pageUpdatedAt(hero.page)
+        ? { updatedAt: pageUpdatedAt(hero.page) }
+        : {}),
+    })
+    const matchupGroups = parseRatedHeroSections(html, "상성", classifyMatchup)
+    const synergyGroups = parseRatedHeroSections(html, "궁합", classifySynergy)
+    matchups[hero.id] = uniqueEntries([
+      ...matchupGroups.tank,
+      ...matchupGroups.damage,
+      ...matchupGroups.support,
+    ])
+    heroSynergies[hero.id] = uniqueEntries([
+      ...synergyGroups.tank,
+      ...synergyGroups.damage,
+      ...synergyGroups.support,
+    ])
+    await new Promise((resolve) => setTimeout(resolve, 120))
+  }
+
+  const mapModes = await parseMapModes(await fetchNamu(mapsUrl))
+  await publishGuideImages()
+
+  const sourceUpdatedAt = () =>
+    sourceModifiedTimes
+      .map((value) => new Date(value))
+      .filter((date) => !Number.isNaN(date.getTime()))
+      .sort((a, b) => b.getTime() - a.getTime())[0]
+      ?.toISOString()
+      .slice(0, 10) ?? "unknown"
+
+  const dataSource = (): DataSource => ({
+    name: "Namu Wiki",
+    url: namuOrigin,
+    updatedAt: sourceUpdatedAt(),
   })
-  crawledHeroes.push({
-    ...hero,
-    avatar,
-    ...(pageUpdatedAt(hero.page)
-      ? { updatedAt: pageUpdatedAt(hero.page) }
-      : {}),
-  })
-  const matchupGroups = parseRatedHeroSections(html, "상성", classifyMatchup)
-  const synergyGroups = parseRatedHeroSections(html, "궁합", classifySynergy)
-  matchups[hero.id] = uniqueEntries([
-    ...matchupGroups.tank,
-    ...matchupGroups.damage,
-    ...matchupGroups.support,
-  ])
-  heroSynergies[hero.id] = uniqueEntries([
-    ...synergyGroups.tank,
-    ...synergyGroups.damage,
-    ...synergyGroups.support,
-  ])
-  await new Promise((resolve) => setTimeout(resolve, 120))
+
+  const writeJson = (path: string, value: unknown) =>
+    Deno.writeTextFile(path, `${JSON.stringify(value, null, 2)}\n`)
+
+  await writeJson(
+    "src/data/overwatch.json",
+    { heroes: crawledHeroes, matchups },
+  )
+  await writeJson(
+    "src/data/guide.json",
+    {
+      source: dataSource(),
+      synergyRatings: [
+        { key: "veryGood", label: "매우 좋음" },
+        { key: "good", label: "좋음" },
+        { key: "neutral", label: "보통" },
+        { key: "bad", label: "나쁨" },
+        { key: "veryBad", label: "매우 나쁨" },
+      ],
+      heroSynergies,
+      mapModes,
+    },
+  )
+  console.error(
+    `wrote ${Object.keys(matchups).length} matchup sets, ${
+      Object.keys(heroSynergies).length
+    } synergy sets, and ${mapModes.length} map modes`,
+  )
 }
-
-const mapModes = await parseMapModes(await fetchNamu(mapsUrl))
-await publishGuideImages()
-
-const sourceUpdatedAt = () =>
-  sourceModifiedTimes
-    .map((value) => new Date(value))
-    .filter((date) => !Number.isNaN(date.getTime()))
-    .sort((a, b) => b.getTime() - a.getTime())[0]
-    ?.toISOString()
-    .slice(0, 10) ?? "unknown"
-
-const dataSource = (): DataSource => ({
-  name: "Namu Wiki",
-  url: namuOrigin,
-  updatedAt: sourceUpdatedAt(),
-})
-
-const writeJson = (path: string, value: unknown) =>
-  Deno.writeTextFile(path, `${JSON.stringify(value, null, 2)}\n`)
-
-await writeJson(
-  "src/data/overwatch.json",
-  { heroes: crawledHeroes, matchups },
-)
-await writeJson(
-  "src/data/guide.json",
-  {
-    source: dataSource(),
-    synergyRatings: [
-      { key: "veryGood", label: "매우 좋음" },
-      { key: "good", label: "좋음" },
-      { key: "neutral", label: "보통" },
-      { key: "bad", label: "나쁨" },
-      { key: "veryBad", label: "매우 나쁨" },
-    ],
-    heroSynergies,
-    mapModes,
-  },
-)
-console.error(
-  `wrote ${Object.keys(matchups).length} matchup sets, ${
-    Object.keys(heroSynergies).length
-  } synergy sets, and ${mapModes.length} map modes`,
-)

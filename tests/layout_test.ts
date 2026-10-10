@@ -55,7 +55,7 @@ const startServer = async () => {
       String(port),
     ],
     stdout: "null",
-    stderr: "null",
+    stderr: "inherit",
   }).spawn()
 
   try {
@@ -92,6 +92,10 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
       matchup.target === "d-va" && matchup.body
     ),
     "D.Mon matchup details must be available from Namu data",
+  )
+  assert(
+    heroes.find((hero) => hero.id === "sombra")?.role === "support",
+    "Sombra must use the support role from the current Namu hero page",
   )
   const doctrine = heroes.find((hero) => hero.id === "doctrine")
   assert(doctrine?.name === "독트린" && doctrine.role === "support")
@@ -201,8 +205,8 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
   )
   if (!nepal) throw new Error("Nepal map must be crawled")
   assert(
-    nepal.attack.some((entry) => entry.id === "roadhog") &&
-      nepal.defense.some((entry) => entry.id === "cassidy"),
+    nepal.attack.some((entry) => entry.id === "zarya") &&
+      nepal.defense.some((entry) => entry.id === "pharah"),
     "Nepal attack/defense recommendations must be crawled from Namu",
   )
   const busan = mapModes.flatMap((mode) => mode.maps).find((map) =>
@@ -210,17 +214,16 @@ Deno.test("generated Namu datasets keep required source-backed invariants", () =
   )
   if (!busan) throw new Error("Busan map must be crawled")
   assert(
-    busan.attack.find((entry) => entry.id === "symmetra")?.note?.includes(
-      "사찰맵 한정",
-    ),
-    "Busan Symmetra recommendation note must be crawled from Namu",
+    busan.attack.some((entry) => entry.id === "winston") &&
+      busan.defense.some((entry) => entry.id === "juno"),
+    "Busan general recommendations must be crawled from Namu",
   )
-  const antarctic = mapModes.flatMap((mode) => mode.maps).find((map) =>
-    map.name === "남극 반도"
+  const runasapi = mapModes.flatMap((mode) => mode.maps).find((map) =>
+    map.name === "루나사피"
   )
-  if (!antarctic) throw new Error("Antarctic Peninsula map must be crawled")
+  if (!runasapi) throw new Error("Runasapi map must be crawled")
   assert(
-    antarctic.attack.length === 0 && antarctic.defense.length === 0,
+    runasapi.attack.length === 0 && runasapi.defense.length === 0,
     "maps without Namu recommendations must stay empty",
   )
   const neonCrossroads = mapModes.flatMap((mode) => mode.maps).find((map) =>
@@ -356,10 +359,10 @@ Deno.test({
       assert(params.get("view") === "matchups", "view query was not updated")
       assert(params.get("hero") === "ramattra", "hero query was not updated")
 
-      await page.goto(`${url}?view=maps&map=${encodeURIComponent("남극-반도")}`)
+      await page.goto(`${url}?view=maps&map=${encodeURIComponent("루나사피")}`)
       await page.waitForSelector(".navbar")
       assert(
-        await page.locator(".selected-map strong").getByText("네팔", {
+        await page.locator(".selected-map strong").getByText("남극 반도", {
           exact: true,
         }).isVisible(),
         "map without recommendations was not replaced by the first enabled map",
@@ -532,7 +535,7 @@ Deno.test({
       { key: "synergies", path: "?view=synergies&hero=d-va&map=부산" },
       {
         key: "maps",
-        path: `?view=maps&hero=d-va&map=${encodeURIComponent("부산")}`,
+        path: `?view=maps&hero=d-va&map=${encodeURIComponent("리알토")}`,
       },
     ]
     const interactions: ScreenshotInteraction[] = [
@@ -643,7 +646,7 @@ Deno.test({
         )
         return
       }
-      await hoverCard("시메트라", /추천 주석: 사찰맵 한정/)
+      await hoverCard("파라", /추천 주석: 1, 2 경유지 한정/)
     }
 
     try {
@@ -735,13 +738,13 @@ Deno.test({
     })
 
     try {
-      await page.goto(`${url}?view=maps&hero=d-va&map=부산`)
+      await page.goto(`${url}?view=maps&hero=d-va&map=리알토`)
       await page.waitForSelector(".result .hero-button:has(.info-note)")
 
       const card = page.locator(".result .hero-button").filter({
-        hasText: "시메트라",
+        hasText: "파라",
       }).first()
-      const tooltip = card.getByLabel(/추천 주석: 사찰맵 한정/)
+      const tooltip = card.getByLabel(/추천 주석: 1, 2 경유지 한정/)
         .locator(".tooltip")
       await card.hover()
       assert(
@@ -1168,7 +1171,7 @@ Deno.test({
         "map image was not visible",
       )
       const emptyMapButton = page.locator(".map-button").filter({
-        hasText: "남극 반도",
+        hasText: "루나사피",
       }).first()
       assert(
         await emptyMapButton.isDisabled(),
@@ -1193,22 +1196,24 @@ Deno.test({
       )
       assert(
         await result.locator(".row.attack .hero-button.role-tank").filter({
-          hasText: "로드호그",
+          hasText: "자리야",
         }).isVisible(),
         "attack tank recommendation card was not role-colored",
       )
       assert(
         await result.locator(".row.defense .hero-button.role-damage").filter({
-          hasText: "캐서디",
+          hasText: "파라",
         }).isVisible(),
         "defense damage recommendation card was not role-colored",
       )
       assert(
-        await result.getByText("로드호그", { exact: true }).isVisible(),
+        await result.locator(".row.attack").getByText("자리야", { exact: true })
+          .isVisible(),
         "crawled attack hero was not visible",
       )
       assert(
-        await result.getByText("캐서디", { exact: true }).isVisible(),
+        await result.locator(".row.defense").getByText("파라", { exact: true })
+          .isVisible(),
         "crawled defense hero was not visible",
       )
       assert(
@@ -1217,18 +1222,20 @@ Deno.test({
         "empty recommendation state should not show for sourced maps",
       )
 
-      await page.locator(".map-button").filter({ hasText: "부산" }).click()
-      const symmetraCard = result.locator(".hero-button").filter({
-        hasText: "시메트라",
+      await page.locator(".map-button").filter({ hasText: "리알토" }).click()
+      const recommendedPharahCard = result.locator(".hero-button").filter({
+        hasText: "파라",
       }).first()
-      const symmetraNote = symmetraCard.getByLabel(/추천 주석: 사찰맵 한정/)
+      const pharahNote = recommendedPharahCard.getByLabel(
+        /추천 주석: 1, 2 경유지 한정/,
+      )
       assert(
-        await symmetraNote.isVisible(),
+        await pharahNote.isVisible(),
         "recommendation note icon was not visible",
       )
-      await symmetraCard.hover()
+      await recommendedPharahCard.hover()
       assert(
-        await symmetraNote.locator(".tooltip").evaluate((tooltip) =>
+        await pharahNote.locator(".tooltip").evaluate((tooltip) =>
           getComputedStyle(tooltip).opacity === "1"
         ),
         "recommendation note tooltip was not shown on card hover",

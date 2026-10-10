@@ -59,14 +59,14 @@ snapshot[`unmasked-main-page-image-screenshots 1`] = `
   },
   {
     "name": "maps:result",
-    "src": "./guide-images/heroes/roadhog.webp?v=portrait-20260612",
+    "src": "./guide-images/heroes/zarya.webp?v=portrait-20260612",
     "naturalWidth": 256,
     "naturalHeight": 256,
     "screenshot": {
       "width": 40,
       "height": 44
     },
-    "sha256": "8892515ce770ca3f65e2c04ac7613ba9b7b8d77d4110804cc0e399abb7eea367"
+    "sha256": "17f7020da0bb613948702844271fd8378461ec3ba3faf9080d3facedd58ba788"
   }
 ]
 `;
@@ -240,7 +240,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     "metrics": {
       "activeNav": "맵별 추천 영웅",
       "selectedHero": null,
-      "selectedMap": "부산",
+      "selectedMap": "리알토",
       "workspaceColumns": "592px 640px",
       "dialogVisible": false,
       "tooltipVisible": true,
@@ -262,7 +262,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     "metrics": {
       "activeNav": "맵별 추천 영웅",
       "selectedHero": null,
-      "selectedMap": "부산",
+      "selectedMap": "리알토",
       "workspaceColumns": "592px 640px",
       "dialogVisible": true,
       "tooltipVisible": false,
@@ -279,7 +279,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 2114
+      "height": 2201
     },
     "metrics": {
       "activeNav": "상성",
@@ -301,7 +301,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 2268
+      "height": 2334
     },
     "metrics": {
       "activeNav": "상성",
@@ -323,7 +323,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 2114
+      "height": 2267
     },
     "metrics": {
       "activeNav": "상성",
@@ -345,7 +345,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 2048
+      "height": 2135
     },
     "metrics": {
       "activeNav": "궁합",
@@ -389,7 +389,7 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 2048
+      "height": 2135
     },
     "metrics": {
       "activeNav": "궁합",
@@ -433,12 +433,12 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1463
+      "height": 1595
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
       "selectedHero": null,
-      "selectedMap": "부산",
+      "selectedMap": "리알토",
       "workspaceColumns": "374px",
       "dialogVisible": false,
       "tooltipVisible": true,
@@ -455,12 +455,12 @@ snapshot[`tab-interaction-screenshots 1`] = `
     },
     "screenshot": {
       "width": 390,
-      "height": 1463
+      "height": 1595
     },
     "metrics": {
       "activeNav": "맵별 추천 영웅",
       "selectedHero": null,
-      "selectedMap": "부산",
+      "selectedMap": "리알토",
       "workspaceColumns": "374px",
       "dialogVisible": true,
       "tooltipVisible": false,
