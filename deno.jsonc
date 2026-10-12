@@ -1,10 +1,11 @@
 {
   "tasks": {
     "dev": "deno run -A --node-modules-dir npm:vite",
-    "check": "deno check src/main.tsx scripts/crawl-guide-data.ts scripts/restore-guide-data.ts scripts/update-guide-data.ts tests/layout_test.ts tests/update_guide_data_test.ts",
+    "check": "deno check src/main.tsx scripts/crawl-guide-data.ts scripts/restore-guide-data.ts scripts/update-guide-data.ts scripts/publish-guide-data.ts tests/layout_test.ts tests/update_guide_data_test.ts",
     "lint": "deno lint",
     "crawl:namu": "deno run -A scripts/crawl-guide-data.ts",
     "crawl:guide": "deno task crawl:namu",
+    "publish:guide": "deno run -A scripts/publish-guide-data.ts",
     "restore:guide": "deno run --allow-net --allow-write scripts/restore-guide-data.ts",
     "build": "deno run -A --node-modules-dir npm:vite build",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
